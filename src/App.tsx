@@ -11,47 +11,51 @@ import iconUser from './assets/icon-user.svg';
 import iconCog from './assets/icon-cog.svg';
 import iconChart from './assets/icon-presentchart.svg';
 import iconQuestion from './assets/icon-questionmark-outline.svg';
+import iconWhatsApp from './assets/icon-brand-whatsapp.svg';
+import iconDots from './assets/icon-dotsvertical.svg';
 import './App.css';
-
 
 function App() {
 	const location = useLocation();
 	const [username, setUsername] = useState('Guest');
-	const [email, setEmail] = useState('guest@somewhere.com')
+	const [email, setEmail] = useState('guest@somewhere.com');
 	const [pageName, setPageName] = useState('Daftar Pesanan');
 	const pageNameList = {
 		orders: 'Daftar Pesanan',
 		to_be_sent: 'Daftar Kirim',
 		sent: 'Penjemputan',
-		new_order: 'Bikin Pesanan'
+		new_order: 'Bikin Pesanan',
 	};
 	const signIn = true;
-	// check if signed in, return to sign in form if not
+	// check if signed in, redirect to sign in form if not
 	if (signIn && username === 'Guest') {
-		setUsername('TauRentoo')
-		setEmail('taufiqm@outlook.com')
-	}	
+		setUsername('TauRentoo');
+		setEmail('taufiqm@outlook.com');
+	}
 
 	if (location.pathname === '/') {
 		return <Navigate to="orders" />;
 	}
-	const pathnames : string[] = location.pathname.split('/').filter((path) => path !== '').filter((path) => !path.match(/\d+/));
-	const pathNameKey : string = pathnames[pathnames.length - 1].replace(/-/g, "_") 
+	const pathnames: string[] = location.pathname
+		.split('/')
+		.filter((path) => path !== '')
+		.filter((path) => !path.match(/\d+/));
+	const pathNameKey: string = pathnames[pathnames.length - 1].replace(/-/g, '_');
 	const nameFromList = pageNameList[pathNameKey as keyof typeof pageNameList];
 	if (nameFromList && pageName !== nameFromList) {
 		setPageName(nameFromList);
 	}
 
-	console.log(pathNameKey)
+	console.log(pathNameKey);
 
 	return (
 		<div className="w-full min-h-screen bg-[#e5e7eb] pt-[3.75rem] min-[1200px]:pt-8 xl:pt-[4.75rem]">
 			<header className="fixed top-0 left-0 w-full shadow bg-white">
 				<div className="w-full h-[3.75rem] px-[16px] py-[10px] min-[1200px]:h-8 min-[1200px]:py-0 xl:hidden">
 					<div className="w-full h-full px-4 flex justify-between items-center">
-						<img src={iconHome} alt="Home" className="h-6 w-6" />
+						<img src={iconHome} alt="Home" className="h-6 w-6 cursor-pointer" />
 						<p className="px-4 font-semibold text-sm">{pageName}</p>
-						<img src={iconAnnounce} alt="Announcement" className="h-6 w-6" />
+						<img src={iconAnnounce} alt="Announcement" className="h-6 w-6 cursor-pointer" />
 					</div>
 				</div>
 				<div className="hidden xl:block w-full">
@@ -111,6 +115,45 @@ function App() {
 					</nav>
 				</div>
 			</header>
+			<nav className="fixed bottom-0 left-0 xl:hidden w-full flex justify-center">
+				<div className="w-full max-w-[48rem] h-[4.375rem] bg-white shadow-[0_-2px_4px_0_rgba(0,0,0,0.16)] flex text-center">
+					<NavLink to="orders" className="navlink-bottom">
+						<img src={iconShopBag} className="navicon-bottom" />
+						<div>
+							<p>Daftar Pesanan</p>
+							<div className="active-bar" />
+						</div>
+					</NavLink>
+					<NavLink to="items" className="navlink-bottom">
+						<img src={iconCalendar} className="navicon-bottom" />
+						<div>
+							<p>Cek Stok</p>
+							<div className="active-bar" />
+						</div>
+					</NavLink>
+					<NavLink to="new-order" className="navlink-bottom">
+						<img src={iconPlus} className="navicon-bottom" />
+						<div className='flex flex-col items-center'>
+							<p className='w-[50px]'>Bikin Pesanan</p>
+							<div className="active-bar" />
+						</div>
+					</NavLink>
+					<a href="#" className="navlink-bottom">
+						<img src={iconWhatsApp} className="navicon-bottom" />
+						<div>
+							<p>WhatsApp CS</p>
+							<div className="active-bar" />
+						</div>
+					</a>
+					<button className="navlink-bottom">
+						<img src={iconDots} className="navicon-bottom" />
+						<div>
+							<p>Lain-lain</p>
+							<div className="active-bar" />
+						</div>
+					</button>
+				</div>
+			</nav>
 			<main>
 				<Outlet />
 			</main>

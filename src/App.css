@@ -1,3 +1,7 @@
+:root {
+    --color-theme-blue: #00aff8;
+}
+
 .navlink-top {
     padding: 12px;
     border-left: 1px solid #e5e7eb;
@@ -8,7 +12,7 @@
     font-size: 0.875rem;
     font-weight: 500;
     line-height: 1.25rem;
-    transition: all 150ms ease-in-out;
+    transition: all 100ms ease-in-out;
 }
 
 .nav-announce {
@@ -16,22 +20,65 @@
     padding: 12px;
     border-left: 1px solid #e5e7eb;
     border-right: 1px solid #e5e7eb;
-    transition: all 150ms ease-in-out;
+    transition: all 100ms ease-in-out;
 }
 
 .nav-action:hover, .nav-action.active {
-    background-color: #00aff8;
+    background-color: var(--color-theme-blue);
     color: white;
 
 }
 
 .navicon-top {
-    transition: all 150ms ease-in-out;
+    transition: all 100ms ease-in-out;
     width: 20px;
     height: 20px
 }
 
 .nav-action:hover .navicon-top, .nav-action.active .navicon-top {
-    filter: grayscale(100%) invert(100%) contrast(160%) 
-    
+    filter: invert(100%)  
+}
+
+.navlink-bottom {
+    width: 20%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 10px;
+    font-size: .5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    text-transform: uppercase;
+    letter-spacing: 0.96px;
+    transition: all 100ms ease-in-out;
+}
+
+.navlink-bottom>div{
+    width: 100%;
+    transition: all 100ms ease-in-out;
+}
+
+.navicon-bottom {
+    width: 1.5rem;
+    height: 1.5rem;
+    transition: all 100ms ease-in-out;
+}
+
+.active-bar {
+    margin-top: 6px;
+    width: 100%;
+    height: 4px;
+}
+
+.navlink-bottom.active {
+    color: var(--color-theme-blue);
+}
+.navlink-bottom.active .active-bar {
+    background-color: var(--color-theme-blue);
+}
+
+.navlink-bottom.active .navicon-bottom {
+    filter: invert(53%) sepia(75%) saturate(2827%) hue-rotate(164deg) brightness(99%) contrast(102%);
 }
