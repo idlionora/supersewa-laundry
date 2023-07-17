@@ -1,0 +1,37 @@
+.navlink-top {
+    padding: 12px;
+    border-left: 1px solid #e5e7eb;
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.25rem;
+    transition: all 150ms ease-in-out;
+}
+
+.nav-announce {
+    width: 2.75rem;
+    padding: 12px;
+    border-left: 1px solid #e5e7eb;
+    border-right: 1px solid #e5e7eb;
+    transition: all 150ms ease-in-out;
+}
+
+.nav-action:hover, .nav-action.active {
+    background-color: #00aff8;
+    color: white;
+
+}
+
+.navicon-top {
+    transition: all 150ms ease-in-out;
+    width: 20px;
+    height: 20px
+}
+
+.nav-action:hover .navicon-top, .nav-action.active .navicon-top {
+    filter: grayscale(100%) invert(100%) contrast(160%) 
+    
+}
