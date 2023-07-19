@@ -49,13 +49,17 @@ function App() {
 	console.log(pathNameKey);
 
 	return (
-		<div className="w-full min-h-screen bg-[#e5e7eb] pt-[3.75rem] min-[1200px]:pt-8 xl:pt-[4.75rem]">
-			<header className="fixed top-0 left-0 w-full shadow bg-white">
+		<div className="w-full min-h-screen bg-[#e5e7eb] flex justify-center pt-[3.75rem] min-[1200px]:pt-8 xl:pt-[4.75rem] relative">
+			<header className="fixed z-[5] top-0 left-0 w-full shadow bg-white">
 				<div className="w-full h-[3.75rem] px-[16px] py-[10px] min-[1200px]:h-8 min-[1200px]:py-0 xl:hidden">
 					<div className="w-full h-full px-4 flex justify-between items-center">
 						<img src={iconHome} alt="Home" className="h-6 w-6 cursor-pointer" />
 						<p className="px-4 font-semibold text-sm">{pageName}</p>
-						<img src={iconAnnounce} alt="Announcement" className="h-6 w-6 cursor-pointer" />
+						<img
+							src={iconAnnounce}
+							alt="Announcement"
+							className="h-6 w-6 cursor-pointer"
+						/>
 					</div>
 				</div>
 				<div className="hidden xl:block w-full">
@@ -115,8 +119,8 @@ function App() {
 					</nav>
 				</div>
 			</header>
-			<nav className="fixed bottom-0 left-0 xl:hidden w-full flex justify-center">
-				<div className="w-full max-w-[48rem] h-[4.375rem] bg-white shadow-[0_-2px_4px_0_rgba(0,0,0,0.16)] flex text-center">
+			<nav className="fixed z-[6] bottom-0 left-0 xl:hidden w-full flex justify-center">
+				<div className="w-full max-w-[48rem] h-[4.375rem] bg-white shadow-[0_-2px_4px_0_rgba(108,114,124,0.16)] flex text-center">
 					<NavLink to="orders" className="navlink-bottom">
 						<img src={iconShopBag} className="navicon-bottom" />
 						<div>
@@ -133,8 +137,8 @@ function App() {
 					</NavLink>
 					<NavLink to="new-order" className="navlink-bottom">
 						<img src={iconPlus} className="navicon-bottom" />
-						<div className='flex flex-col items-center'>
-							<p className='w-[50px]'>Bikin Pesanan</p>
+						<div className="flex flex-col items-center">
+							<p className="w-[50px]">Bikin Pesanan</p>
 							<div className="active-bar" />
 						</div>
 					</NavLink>
@@ -154,9 +158,7 @@ function App() {
 					</button>
 				</div>
 			</nav>
-			<main>
 				<Outlet />
-			</main>
 		</div>
 	);
 }

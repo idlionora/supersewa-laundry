@@ -1,7 +1,10 @@
 :root {
     --color-theme-blue: #00aff8;
+    --color-theme-orange: #ff473a;
+    --color-theme-green: #16a34a;
 }
 
+/* NAVIGATION BARS */
 .navlink-top {
     padding: 12px;
     border-left: 1px solid #e5e7eb;
@@ -81,4 +84,122 @@
 
 .navlink-bottom.active .navicon-bottom {
     filter: invert(53%) sepia(75%) saturate(2827%) hue-rotate(164deg) brightness(99%) contrast(102%);
+}
+
+/* COMMON ELEMENTS*/
+
+.page-container {
+    width: 100%;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.page-section {
+    width: 100%;
+}
+
+@media (min-width: 575px) {
+    .page-container {
+        padding: 0 18px;
+    }
+    .page-section {
+        max-width: 33.75rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .page-container {
+        max-width: 48rem;
+    }
+    .page-section {
+        max-width: 100%;
+    }
+}
+
+.card-white {
+    background-color: white;
+    box-shadow: 0 1px 2px 0 rgba(0,0,0,.05);
+    border: 1px solid rgb(228, 228, 231);
+    border-radius: .25rem;
+}
+
+.hashtag-bullet {
+    margin-right: 1rem;
+    color: var(--color-theme-blue);
+}
+
+.button-color {
+    padding: 8px 12px;
+    background-color: var(--color-theme-blue);
+    color: white;
+    font-size: .8125rem;
+    font-weight: 500;
+    line-height: 1.5;
+    border-radius: .25rem;
+    border: 1px solid var(--color-theme-blue);
+}
+
+.button-color:hover {
+    filter: brightness(110%);
+}
+
+.button-color:active, .button-color:focus {
+    outline: 2px solid var(--color-theme-blue);
+    outline-offset: 2px;
+}
+
+.button-color img {
+    filter: invert(100%);  
+}
+
+.button-grey {
+    padding: 8px 12px;
+    background-color: rgb(249, 250, 251);
+    font-weight: 500;
+    line-height: 1.5;
+    border-radius: .25rem;
+    border: 1px solid rgb(209, 213, 219);
+    box-shadow: 0 1px 2px 0 #0000000d;;
+}
+
+.button-grey:active, .button-grey:focus {
+    outline: 2px solid rgb(209, 213, 219);
+    outline-offset: 2px;
+}
+
+.button-grey:hover {
+    background-color: rgb(243, 244, 246);
+}
+
+.text-clickable {
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.25rem; 
+    color: var(--color-theme-green);   
+}
+
+.form-label {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.5;
+    margin-bottom: 8px;
+}
+
+.form-input {
+    background-color: white;
+    border: 1px solid rgb(209, 213, 219);
+    font-size: 0.875rem;
+    font-stretch: 100%;
+    font-weight: 400;
+    line-height: 1.25rem;
+    height: 3rem;
+    padding: 8px 12px;
+}
+
+.form-input:focus {
+    border-color: var(--color-theme-green);
+    outline: 2px solid var(--color-theme-green);
+    outline-offset: 2px;
 }

@@ -1,0 +1,38 @@
+{
+  "status": "success",
+  "results": 5,
+  "data": {
+    "customers": [
+      {
+        "id": 1,
+        "name": "Gunawan",
+        "phone": "089089089032",
+        "address": "Jl. Moh Kahfi 2 no.15, Jakarta Selatan"
+      },
+      {
+        "id": 2,
+        "name": "Meliana",
+        "phone": "0821987897897",
+        "address": "Jl. Masjid Baitis Salmah I No. 50, Ciputat"
+      },
+      {
+        "id": 3,
+        "name": "Hanika",
+        "phone": "089023849048",
+        "address": "Regentown B3/b5 Banten 15339"
+      },
+      {
+        "id": 4,
+        "name": "Firda Ayu",
+        "phone": "085712341234",
+        "address": "Jl. Tebet Barat VIIC, Jakarta Selatan"
+      },
+      {
+        "id": 5,
+        "name": "Faddil S",
+        "phone": "12345454",
+        "address": "Dramaga Raya KM 8 Kab. Bogor"
+      }
+    ]
+  }
+}
