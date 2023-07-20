@@ -1,5 +1,6 @@
 import { NavLink, Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useState } from 'react';
+
 import iconHome from './assets/icon-home.svg';
 import iconAnnounce from './assets/icon-speakerphone.svg';
 import logoSupersewa from './assets/logo-supersewa.png';
@@ -14,6 +15,8 @@ import iconQuestion from './assets/icon-questionmark-outline.svg';
 import iconWhatsApp from './assets/icon-brand-whatsapp.svg';
 import iconDots from './assets/icon-dotsvertical.svg';
 import './App.css';
+import AppModal from './components/AppModal';
+
 
 function App() {
 	const location = useLocation();
@@ -158,7 +161,8 @@ function App() {
 					</button>
 				</div>
 			</nav>
-				<Outlet />
+			<AppModal/>
+			<Outlet />
 		</div>
 	);
 }

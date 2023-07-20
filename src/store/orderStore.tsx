@@ -1,7 +1,15 @@
 import { create } from 'zustand';
 
+export type CustomerType = {
+	id: number;
+	name: string;
+	phone: string;
+	address: string;	
+}
+
 type ProductType = {
 	id: number;
+	priceRange: string;
 	price: number;
 	quantity: number;
 };
@@ -12,7 +20,7 @@ type FeeType = {
 };
 
 interface IOrder {
-	customerId: number;
+	customer: CustomerType;
 	startDate: Date;
 	endDate: Date;
 	products: ProductType[] | null;
@@ -20,7 +28,7 @@ interface IOrder {
 	netPrice: number;
 	notesInternal: string;
 	notesInvoice: string;
-	setCustomerId: (newId: number) => void;
+	setCustomer: (newCustomer: CustomerType) => void;
 	setStartDate: (newDate: Date) => void;
 	setEndDate: (newDate: Date) => void;
 	setProducts: (newProducts: ProductType[] | null) => void;
@@ -31,8 +39,8 @@ interface IOrder {
 	resetOrderStore: () => void;
 }
 
-export const useOrderStore = create<IOrder>((set) => ({
-	customerId: 0,
+const defaultStoreState = {
+	customer: { id: 0, name: '', phone: '', address: '' },
 	startDate: new Date(0),
 	endDate: new Date(0),
 	products: null,
@@ -40,7 +48,11 @@ export const useOrderStore = create<IOrder>((set) => ({
 	netPrice: 0,
 	notesInternal: '',
 	notesInvoice: '',
-	setCustomerId: (newId: number) => set({ customerId: newId }),
+};
+
+export const useOrderStore = create<IOrder>((set) => ({
+	...defaultStoreState,
+	setCustomer: (newCustomer: CustomerType) => set({ customer: newCustomer }),
 	setStartDate: (newDate: Date) => set({ startDate: newDate }),
 	setEndDate: (newDate: Date) => set({ endDate: newDate }),
 	setProducts: (newProducts: ProductType[] | null) => set({ products: newProducts }),
@@ -50,14 +62,8 @@ export const useOrderStore = create<IOrder>((set) => ({
 	setNotesInvoice: (newNotes: string) => set({ notesInvoice: newNotes }),
 	resetOrderStore: () => {
 		set({
-			customerId: 0,
-			startDate: new Date(0),
-			endDate: new Date(0),
-			products: null,
-			addFees: null,
-			netPrice: 0,
-			notesInternal: '',
-			notesInvoice: '',
+			...defaultStoreState
 		});
 	},
 }));
+
