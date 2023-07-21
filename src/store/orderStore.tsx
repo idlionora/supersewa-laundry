@@ -1,10 +1,12 @@
+import { createTrackedSelector } from 'react-tracked';
 import { create } from 'zustand';
 
 export type CustomerType = {
 	id: number;
 	name: string;
 	phone: string;
-	address: string;	
+	address: string;
+	img: string;	
 }
 
 type ProductType = {
@@ -40,7 +42,7 @@ interface IOrder {
 }
 
 const defaultStoreState = {
-	customer: { id: 0, name: '', phone: '', address: '' },
+	customer: { id: 0, name: '', phone: '', address: '', img:'' },
 	startDate: new Date(0),
 	endDate: new Date(0),
 	products: null,
@@ -50,7 +52,7 @@ const defaultStoreState = {
 	notesInvoice: '',
 };
 
-export const useOrderStore = create<IOrder>((set) => ({
+const useOrderStore = create<IOrder>((set) => ({
 	...defaultStoreState,
 	setCustomer: (newCustomer: CustomerType) => set({ customer: newCustomer }),
 	setStartDate: (newDate: Date) => set({ startDate: newDate }),
@@ -66,4 +68,6 @@ export const useOrderStore = create<IOrder>((set) => ({
 		});
 	},
 }));
+
+export const useTrackedOrderStore = createTrackedSelector(useOrderStore);
 

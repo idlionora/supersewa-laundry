@@ -1,6 +1,6 @@
 import { createTrackedSelector } from 'react-tracked';
 import { create } from 'zustand';
-import SearchCustomer from '../components/SearchCustomer';
+import DefaultModalContent from '../components/DefaultModalContent';
 
 interface IModal {
 	modalContent: JSX.Element | string;
@@ -14,12 +14,12 @@ interface IModal {
 }
 
 const useModalStore = create<IModal>((set) => ({
-	modalContent: <SearchCustomer/>,
+	modalContent: <DefaultModalContent />,
 	modalWidth: 'fit',
-	screenDisplay: true,
-	screenOpacity: true,
-	modalDisplay: true,
-	modalInPosition: true,
+	screenDisplay: false,
+	screenOpacity: false,
+	modalDisplay: false,
+	modalInPosition: false,
 	openModal: (newContent: JSX.Element, newWidth?: 'fit' | 'full') => {
 		if (newWidth) set({ modalWidth: newWidth });
 		set({ modalContent: newContent });
@@ -41,4 +41,4 @@ const useModalStore = create<IModal>((set) => ({
 
 const useTrackedModalStore = createTrackedSelector(useModalStore);
 
-export default useTrackedModalStore
+export default useTrackedModalStore;
