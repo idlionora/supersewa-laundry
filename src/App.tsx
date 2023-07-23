@@ -52,7 +52,7 @@ function App() {
 	console.log(pathNameKey);
 
 	return (
-		<div className="w-full min-h-screen bg-[#e5e7eb] flex justify-center pt-[3.75rem] min-[1200px]:pt-8 xl:pt-[4.75rem] relative">
+		<div className="w-full min-h-screen bg-[#e5e7eb] flex flex-col items-center pt-[3.75rem] min-[1200px]:pt-8 xl:pt-[4.75rem] relative">
 			<header className="fixed z-[5] top-0 left-0 w-full shadow bg-white">
 				<div className="w-full h-[3.75rem] px-[16px] py-[10px] min-[1200px]:h-8 min-[1200px]:py-0 xl:hidden">
 					<div className="w-full h-full px-4 flex justify-between items-center">

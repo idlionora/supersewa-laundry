@@ -9,11 +9,14 @@ export type CustomerType = {
 	img: string;	
 }
 
-type ProductType = {
+export type ServiceType = {
 	id: number;
+	name: string;
 	priceRange: string;
-	price: number;
+	img: string;
 	quantity: number;
+	price: number;
+	desc: string;
 };
 
 type FeeType = {
@@ -25,7 +28,7 @@ interface IOrder {
 	customer: CustomerType;
 	startDate: Date;
 	endDate: Date;
-	products: ProductType[] | null;
+	services: ServiceType[] | null;
 	addFees: FeeType[] | null;
 	netPrice: number;
 	notesInternal: string;
@@ -33,7 +36,7 @@ interface IOrder {
 	setCustomer: (newCustomer: CustomerType) => void;
 	setStartDate: (newDate: Date) => void;
 	setEndDate: (newDate: Date) => void;
-	setProducts: (newProducts: ProductType[] | null) => void;
+	setServices: (newServices: ServiceType[] | null) => void;
 	setAddFees: (newFees: FeeType[] | null) => void;
 	setNetPrice: (newPrice: number) => void;
 	setNotesInternal: (newNotes: string) => void;
@@ -42,10 +45,10 @@ interface IOrder {
 }
 
 const defaultStoreState = {
-	customer: { id: 0, name: '', phone: '', address: '', img:'' },
+	customer: { id: 0, name: '', phone: '', address: '', img: '' },
 	startDate: new Date(0),
 	endDate: new Date(0),
-	products: null,
+	services: [{ id: 0, name: '', priceRange: '', img: '', quantity: 1, price: 0, desc: '' }],
 	addFees: null,
 	netPrice: 0,
 	notesInternal: '',
@@ -57,14 +60,14 @@ const useOrderStore = create<IOrder>((set) => ({
 	setCustomer: (newCustomer: CustomerType) => set({ customer: newCustomer }),
 	setStartDate: (newDate: Date) => set({ startDate: newDate }),
 	setEndDate: (newDate: Date) => set({ endDate: newDate }),
-	setProducts: (newProducts: ProductType[] | null) => set({ products: newProducts }),
+	setServices: (newServices: ServiceType[] | null) => set({ services: newServices }),
 	setAddFees: (newFees: FeeType[] | null) => set({ addFees: newFees }),
 	setNetPrice: (newPrice: number) => set({ netPrice: newPrice }),
 	setNotesInternal: (newNotes: string) => set({ notesInternal: newNotes }),
 	setNotesInvoice: (newNotes: string) => set({ notesInvoice: newNotes }),
 	resetOrderStore: () => {
 		set({
-			...defaultStoreState
+			...defaultStoreState,
 		});
 	},
 }));
