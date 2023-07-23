@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { ServiceType, FeeType, useTrackedOrderStore } from '../stores/orderStore';
 import CustomerSearch from '../components/CustomerSearch';
-import { ServiceType, useTrackedOrderStore } from '../stores/orderStore';
 import useTrackedModalStore from '../stores/modalStore';
 import imgDefault from '../assets/image-default.png';
-import imgHighChair from '../assets/high-chair.jpeg'
-import imgStrollerMd from '../assets/stroller-medium.jpeg'
+import imgHighChair from '../assets/high-chair.jpeg';
+import imgStrollerMd from '../assets/stroller-medium.jpeg';
 import ServiceCardComp from '../components/ServiceCardComp';
 
 const serviceTest = [
@@ -37,10 +37,31 @@ const serviceTest = [
 	},
 ];
 
+const addFeesTest: FeeType[] = [
+	{
+		type: 'discount',
+		label: 'diskon pelanggan baru mulai hr',
+		price: 30000,
+	},
+	{
+		type: 'additional',
+		label: 'jemput barang',
+		price: 15000,
+	},
+	{
+		type: 'additional',
+		label: 'antar barang (almt 2)',
+		price: 42000,
+	},
+];
+
 function NewOrder() {
 	const store = useTrackedOrderStore();
 	const modalState = useTrackedModalStore();
 	const [serviceCards, setServiceCards] = useState<ServiceType[] | null>(serviceTest);
+	const [addFees, setAddFees] = useState<FeeType[] | null>(addFeesTest);
+	const [laundryCost, setLaundryCost] = useState(0);
+	const [netPrice, setNetPrice] = useState(0);
 
 	function updateServiceCards(
 		id: number,
@@ -87,11 +108,11 @@ function NewOrder() {
 		setServiceCards(servicesCopy);
 	}
 
-	function deleteServiceCard (id: number) {
+	function deleteServiceCard(id: number) {
 		let servicesCopy = [
 			{ id: 0, name: '', priceRange: '', img: '', quantity: 1, price: 0, desc: '' },
 		];
-		let targetIndex = 0
+		let targetIndex = 0;
 
 		if (serviceCards) {
 			servicesCopy = [...serviceCards];
@@ -103,9 +124,72 @@ function NewOrder() {
 			}
 		});
 
-		servicesCopy.splice(targetIndex, 1)
-		setServiceCards(servicesCopy)
+		servicesCopy.splice(targetIndex, 1);
+		setServiceCards(servicesCopy);
 	}
+
+	useEffect(() => {
+		let total = 0;
+
+		serviceCards?.forEach((card) => {
+			total += card.price * card.quantity;
+		});
+
+		setLaundryCost(total);
+	}, [serviceCards]);
+
+	useEffect(() => {
+		let total = laundryCost;
+
+		addFees?.forEach(({type, price}) => {
+			if (type === 'discount') {
+				total -= price
+			} else {
+				total += price
+			}
+		})
+
+		setNetPrice(total)
+	}, [laundryCost, addFees])
+
+	/*function putAddFee (type: 'discount' | 'additional', label: string, price: number) {
+		let addFeesCopy: FeeType[] = [{ type: 'discount', label: '', price: 0 }];
+
+		if (addFees) {
+			addFeesCopy = [...addFees];
+			addFeesCopy.push({type, label, price});
+		} else {
+			addFeesCopy.push({ type, label, price });
+			addFeesCopy.splice(0,1)
+		}
+
+		setAddFees(addFeesCopy)
+	}
+
+	function editAddFees (index: number, type: 'discount' | 'additional', label: string, price: number) {
+		let addFeesCopy: FeeType[] = [{ type: 'discount', label: '', price: 0 }];
+
+		if (addFees) {
+			addFeesCopy = [...addFees];
+		}
+
+		if (addFeesCopy[index]) {
+			addFeesCopy.splice(index, 1, {type, label, price})
+		}
+
+		setAddFees(addFeesCopy)
+	} */
+
+	function deleteAddFee (index: number) {
+		let addFeesCopy: FeeType[] = [{type: 'discount', label:'', price: 0}]
+
+		if (addFees) {
+			addFeesCopy = [...addFees]
+		}
+
+		addFeesCopy.splice(index, 1)
+		setAddFees(addFeesCopy)
+	} 
 
 	return (
 		<main className="page-container pt-4">
@@ -185,7 +269,6 @@ function NewOrder() {
 					</div>
 				</div>
 			</section>
-
 			<section className="page-section my-4">
 				<h3>
 					<span className="hashtag-bullet">#</span> Rincian Cuci
@@ -209,7 +292,11 @@ function NewOrder() {
 						>
 							<div
 								id="service-frame"
-								className="relative overflow-x-auto overflow-y-hidden sm:h-[22.5rem] w-full"
+								className={`relative overflow-x-auto overflow-y-hidden sm:h-[22.5rem] w-full ${
+									serviceCards?.length === 1
+										? 'flex justify-center items-center'
+										: ''
+								}`}
 							>
 								<div
 									id="service-slide"
@@ -234,9 +321,70 @@ function NewOrder() {
 								</div>
 							</div>
 						</div>
-
 						<h4>Tagihan</h4>
-						<div className="w-full h-60"></div>
+						<div className="w-full flex flex-col items-center mt-2 mb-4">
+							<div className="w-fit grid grid-cols-2 text-sm gap-y-8">
+								<div className="max-w-[16rem] col-span-1 flex justify-between font-bold">
+									<p>Harga Cuci</p>
+									<p className="ml-4">:</p>
+								</div>
+								<div className="max-w-[16rem] col-span-1 font-bold">
+									<div className="flex justify-between ml-3 mr-6 border-b border-gray-600">
+										<p className="pl-1 pr-2">Rp</p>
+										<p className="pr-1">{laundryCost}</p>
+									</div>
+								</div>
+								{addFees?.map(({ type, label, price }, index) => (
+									<>
+										<div
+											key={`additional-${index}`}
+											className={`max-w-[16rem] col-span-1 w-full flex justify-between font-medium ${
+												type === 'discount' ? 'text-theme-blue' : ''
+											}`}
+										>
+											<p>{label}</p>
+											<p className="ml-4">:</p>
+										</div>
+										<div className="max-w-[16rem] col-span-1 font-medium flex justify-center items-center relative">
+											<div
+												className={`flex w-full justify-between ml-3 border-b border-gray-600 mr-6 ${
+													type === 'discount' ? 'text-theme-blue' : ''
+												}`}
+											>
+												<p
+													className={`absolute translate-x-[-100%] ${
+														type === 'discount' ? '' : 'hidden'
+													}`}
+												>
+													–
+												</p>
+												<p className="pl-1 pr-2">Rp</p>
+												<p className="pr-1">{price}</p>
+											</div>
+											<button className='button-gray absolute right-0' style={{padding: "1px 4px"}} onClick={() => deleteAddFee(index)}>x</button>
+										</div>
+									</>
+								))}
+								<div className="max-w-[16rem] col-span-1 max w-full flex flex-col text-[13px] font-semibold text-green-600 relative">
+									<div className=" w-full h-10" />
+									<button className="button-gray absolute top-[-20%] z-[4]">
+										+harga lain
+									</button>
+									<div className="bg-gray-600 h-[2px] absolute w-[210%] bottom-0 translate-x-1/2 right-0" />
+								</div>
+								<div className="max-w-[16rem] col-span-1" />
+								<div className="max-w-[16rem] col-span-1 flex justify-between font-bold">
+									<p>Total Harga</p>
+									<p className="ml-4">:</p>
+								</div>
+								<div className="max-w-[16rem] col-span-1 font-bold">
+									<div className="flex justify-between ml-3 mr-6 border-b border-gray-600">
+										<p className="pl-1 pr-2">Rp</p>
+										<p className="pr-1">{netPrice}</p>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</section>

@@ -59,7 +59,7 @@ const CustomerSearch = () => {
 					return (
 						<div
 							key={`list-${customer.id}`}
-							className={`w-full p-4 flex gap-4 hover:bg-white ease-in-out border border-transparent ${
+							className={`w-full p-4 flex gap-4 hover:bg-white ease-in-out border border-transparent cursor-pointer ${
 								colActive?.id === customer.id ? 'col-active' : ''
 							}`}
 							onClick={() => selectCustomer(customer)}
