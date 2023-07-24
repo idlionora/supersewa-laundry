@@ -11,7 +11,11 @@ type ServiceCardType = {
 	deleteServiceCard: (id: number) => void;
 };
 
-const ServiceCardComp = ({ serviceData, updateServiceCards, deleteServiceCard }: ServiceCardType) => {
+const ServiceCardComp = ({
+	serviceData,
+	updateServiceCards,
+	deleteServiceCard,
+}: ServiceCardType) => {
 	const { id, name, priceRange, img, quantity, price, desc } = serviceData;
 	// const [compQuantity, setCompQuantity] = useState(quantity);
 	const [compPrice, setCompPrice] = useState(price.toString());
@@ -39,8 +43,11 @@ const ServiceCardComp = ({ serviceData, updateServiceCards, deleteServiceCard }:
 					value={compPrice}
 					onChange={(e) => {
 						setCompPrice(e.target.value);
-						if (e.target.value.length > 0)
+						if (e.target.value.length > 0) {
 							updateServiceCards(id, 'price', parseInt(e.target.value));
+						} else if (e.target.value === '') {
+							updateServiceCards(id, 'price', 0);
+						}
 					}}
 				/>
 				<div className="absolute mb-4 top-0 right-0 h-[2.75rem] flex items-center">
@@ -57,12 +64,17 @@ const ServiceCardComp = ({ serviceData, updateServiceCards, deleteServiceCard }:
 			/>
 			<div className="flex items-center justify-evenly mt-4 mb-1">
 				{quantity === 1 ? (
-					<button className="text-theme-orange font-semibold" onClick={() => deleteServiceCard(id)}>Hapus Paket</button>
+					<button
+						className="text-theme-orange font-semibold"
+						onClick={() => deleteServiceCard(id)}
+					>
+						Hapus Paket
+					</button>
 				) : (
 					<button
 						className="text-theme-orange"
 						onClick={() => {
-							updateServiceCards(id, 'quantity', quantity - 1)
+							updateServiceCards(id, 'quantity', quantity - 1);
 						}}
 					>
 						Kurangi Paket
@@ -70,8 +82,7 @@ const ServiceCardComp = ({ serviceData, updateServiceCards, deleteServiceCard }:
 				)}
 				<button
 					className="text-green-600"
-					onClick={() =>
-						updateServiceCards(id, 'quantity', quantity + 1)}
+					onClick={() => updateServiceCards(id, 'quantity', quantity + 1)}
 				>
 					Tambah Paket
 				</button>
