@@ -1,7 +1,10 @@
 :root {
     --color-theme-blue: #00aff8;
+    --color-theme-orange: #ff473a;
+    --color-theme-green: #16a34a; /*green-600*/
 }
 
+/* NAVIGATION BARS */
 .navlink-top {
     padding: 12px;
     border-left: 1px solid #e5e7eb;
@@ -82,3 +85,159 @@
 .navlink-bottom.active .navicon-bottom {
     filter: invert(53%) sepia(75%) saturate(2827%) hue-rotate(164deg) brightness(99%) contrast(102%);
 }
+
+/* COMMON ELEMENTS*/
+
+.page-container {
+    width: 100%;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.page-section {
+    width: 100%;
+}
+
+.card-white {
+    background-color: white;
+    box-shadow: 0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a;
+    border: 1px solid rgb(228, 228, 231);
+}
+
+.hashtag-bullet {
+    margin-right: .5rem;
+    margin-left: 1rem;
+    color: var(--color-theme-blue);
+}
+
+@media (min-width: 575px) {
+    .page-container {
+        padding: 0 18px;
+    }
+    .page-section {
+        max-width: 33.75rem;
+    }
+    .hashtag-bullet {
+        margin-left: 0;
+    }
+    .card-white {
+        border-radius: .25rem
+    }
+}
+
+@media (min-width: 768px) {
+    .page-container {
+        max-width: 48rem;
+    }
+    .page-section {
+        max-width: 100%;
+    }
+}
+
+.button-color {
+    padding: 8px 12px;
+    background-color: var(--color-theme-blue);
+    color: white;
+    font-size: .8125rem;
+    font-weight: 500;
+    line-height: 1.5;
+    border-radius: .25rem;
+    border: 1px solid var(--color-theme-blue);
+}
+
+.button-color:hover {
+    filter: brightness(110%);
+}
+
+.button-color:active, .button-color:focus {
+    outline: 2px solid var(--color-theme-blue);
+    outline-offset: 2px;
+}
+
+.button-color img {
+    filter: invert(100%);  
+}
+
+.button-gray {
+    padding: 8px 12px;
+    background-color: rgb(249, 250, 251);
+    font-weight: 500;
+    line-height: 1.5;
+    border-radius: .25rem;
+    border: 1px solid rgb(209, 213, 219);
+    box-shadow: 0 1px 2px 0 #0000000d;;
+}
+
+.button-gray:active, .button-grey:focus {
+    outline: 2px solid rgb(209, 213, 219);
+    outline-offset: 2px;
+}
+
+.button-gray:hover {
+    background-color: rgb(243, 244, 246);
+}
+
+.text-clickable {
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.25rem; 
+    color: var(--color-theme-green);   
+}
+
+.form-label {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.5;
+    margin-bottom: 8px;
+}
+
+.form-input {
+    background-color: white;
+    border: 1px solid rgb(209, 213, 219); /*gray-300*/
+    font-size: 0.875rem;
+    font-stretch: 100%;
+    font-weight: 400;
+    line-height: 1.25rem;
+    height: 2.75rem;
+    padding: 8px 12px;
+    border-radius: .25rem;
+    margin-bottom: 1rem;
+}
+
+.form-input:focus {
+    border-color: var(--color-theme-green);
+    outline: 1px solid var(--color-theme-green);
+    /* outline-offset: 2px; */
+}
+
+.col-active {
+    background-color: white;
+    border: 1px solid var(--color-theme-blue)!important;
+    border-radius: .25rem;
+}
+
+/* PROFILE BACKGROUND */
+.bg-orange-400 {
+    background-color: #fb923c;
+}
+
+.bg-emerald-500 {
+    background-color: #10b981;
+}
+
+.bg-blue-500 {
+    background-color: #3b82f6;
+}
+
+.bg-purple-500 {
+    background-color: #a855f7;
+}
+
+.bg-fuchsia-500 {
+    background-color: #d946ef;
+}
+
+

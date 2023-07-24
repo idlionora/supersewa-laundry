@@ -1,0 +1,102 @@
+{
+  "status": "success",
+  "results": 16,
+  "data": [
+    {
+      "id": 1,
+      "name": "Stroller Kecil",
+      "priceRange": "99-129k",
+      "img": "imgDefault",
+    },
+    {
+      "id": 2,
+      "name": "Stroller Medium",
+      "priceRange": "129-159k",
+      "img": "imgStrollerMd",
+    },
+    {
+      "id": 3,
+      "name": "Stroller Besar",
+      "priceRange": "149-179k",
+      "img": "imgDefault",
+    },
+    {
+      "id": 4,
+      "name": "Stroller Tandem",
+      "priceRange": "179-209k",
+      "img": "imgDefault",
+    },
+    {
+      "id": 5,
+      "name": "Insert Tambahan",
+      "priceRange": "19-39k",
+      "img": "imgDefault",
+    },
+    {
+      "id": 6,
+      "name": "Bantal Menyusui",
+      "priceRange": "59-79k",
+      "img": "imgDefault",
+    },
+    {
+      "id": 7,
+      "name": "Sofa Bayi",
+      "priceRange": "99-129k",
+      "img": "imgDefault.png",
+    },
+    {
+      "id": 8,
+      "name": "Set Bumber+Sprei",
+      "priceRange": "59-79k",
+      "img": "imgDefault",
+    },
+    {
+      "id": 9,
+      "name": "Carseat Kecil",
+      "priceRange": "99-129k",
+      "img": "imgDefault",
+    },
+    {
+      "id": 10,
+      "name": "Carseat Besar",
+      "priceRange": "149-179k",
+      "img": "imgDefault",
+    },
+    {
+      "id": 11,
+      "name": "Bouncer",
+      "priceRange": "59-79k",
+      "img": "imgDefault",
+    },
+    {
+      "id": 12,
+      "name": "Gendongan",
+      "priceRange": "79-119k",
+      "img": "imgDefault",
+    },
+    {
+      "id": 13,
+      "name": "Activity Center",
+      "priceRange": "99-129k",
+      "img": "imgDefault",
+    },
+    {
+      "id": 14,
+      "name": "Baby Walker",
+      "priceRange": "79-119k",
+      "img": "imgDefault",
+    },
+    {
+      "id": 15,
+      "name": "High Chair",
+      "priceRange": "79-119k",
+      "img": "imgHighChair",
+    },
+    {
+      "id": 16,
+      "name": "Big Toy",
+      "priceRange": "mulai 149k",
+      "img": "imgDefault",
+    }
+  ]
+}
