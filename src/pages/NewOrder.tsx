@@ -1,11 +1,23 @@
+import React from 'react';
 import { useEffect, useState } from 'react';
 import { ServiceType, FeeType, useTrackedOrderStore } from '../stores/orderStore';
 import CustomerSearch from '../components/CustomerSearch';
 import useTrackedModalStore from '../stores/modalStore';
+import iconClose from '../assets/icon-x.svg';
 import imgDefault from '../assets/image-default.png';
 import imgHighChair from '../assets/high-chair.jpeg';
 import imgStrollerMd from '../assets/stroller-medium.jpeg';
 import ServiceCardComp from '../components/ServiceCardComp';
+import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
+import { Label } from '../components/ui/label';
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '../components/ui/select.tsx';
+
 
 const serviceTest = [
 	{
@@ -40,7 +52,7 @@ const serviceTest = [
 const addFeesTest: FeeType[] = [
 	{
 		type: 'discount',
-		label: 'diskon pelanggan baru mulai hr',
+		label: 'diskon pelanggan baru hari ini',
 		price: 30000,
 	},
 	{
@@ -109,7 +121,7 @@ function NewOrder() {
 	}
 
 	function deleteServiceCard(id: number) {
-		let servicesCopy = [
+		let servicesCopy: ServiceType[] | null = [
 			{ id: 0, name: '', priceRange: '', img: '', quantity: 1, price: 0, desc: '' },
 		];
 		let targetIndex = 0;
@@ -124,7 +136,12 @@ function NewOrder() {
 			}
 		});
 
-		servicesCopy.splice(targetIndex, 1);
+		if (servicesCopy.length !== 1) {
+			servicesCopy.splice(targetIndex, 1);
+		} else {
+			servicesCopy = null;
+		}
+
 		setServiceCards(servicesCopy);
 	}
 
@@ -141,16 +158,16 @@ function NewOrder() {
 	useEffect(() => {
 		let total = laundryCost;
 
-		addFees?.forEach(({type, price}) => {
+		addFees?.forEach(({ type, price }) => {
 			if (type === 'discount') {
-				total -= price
+				total -= price;
 			} else {
-				total += price
+				total += price;
 			}
-		})
+		});
 
-		setNetPrice(total)
-	}, [laundryCost, addFees])
+		setNetPrice(total);
+	}, [laundryCost, addFees]);
 
 	/*function putAddFee (type: 'discount' | 'additional', label: string, price: number) {
 		let addFeesCopy: FeeType[] = [{ type: 'discount', label: '', price: 0 }];
@@ -180,16 +197,16 @@ function NewOrder() {
 		setAddFees(addFeesCopy)
 	} */
 
-	function deleteAddFee (index: number) {
-		let addFeesCopy: FeeType[] = [{type: 'discount', label:'', price: 0}]
+	function deleteAddFee(index: number) {
+		let addFeesCopy: FeeType[] = [{ type: 'discount', label: '', price: 0 }];
 
 		if (addFees) {
-			addFeesCopy = [...addFees]
+			addFeesCopy = [...addFees];
 		}
 
-		addFeesCopy.splice(index, 1)
-		setAddFees(addFeesCopy)
-	} 
+		addFeesCopy.splice(index, 1);
+		setAddFees(addFeesCopy);
+	}
 
 	return (
 		<main className="page-container pt-4">
@@ -202,7 +219,7 @@ function NewOrder() {
 						<div className="w-full flex justify-between items-center">
 							<h4 className="">Pelanggan</h4>
 							<button
-								className="pt-2 font-semibold text-green-600"
+								className="mt-2 font-semibold text-green-600"
 								onClick={() => modalState.openModal(<CustomerSearch />, 'full')}
 							>
 								{store.customer.id === 0 ? 'Pilih Kontak' : 'Ganti Kontak'}
@@ -241,28 +258,28 @@ function NewOrder() {
 						</div>
 						<h4>Durasi Layanan</h4>
 						<div className="w-full grid grid-cols-12 gap-x-4">
-							<div className="col-span-12 min-[355px]:col-span-8">
+							<div className="col-span-12 min-[360px]:col-span-8">
 								<p className="form-label">Tanggal Masuk</p>
 								<input type="text" className="form-input w-full" />
 							</div>
-							<div className="col-span-12 min-[355px]:col-span-4">
+							<div className="col-span-12 min-[360px]:col-span-4">
 								<p className="form-label">Waktu Masuk</p>
 								<input
 									type="text"
-									className="form-input w-full max-w-[7.5rem] min-[355px]:max-w-full"
+									className="form-input w-full max-w-[7.5rem] min-[360px]:max-w-full"
 								/>
 							</div>
 						</div>
 						<div className="w-full grid grid-cols-12 gap-x-4">
-							<div className="col-span-12 min-[355px]:col-span-8">
+							<div className="col-span-12 min-[360px]:col-span-8">
 								<p className="form-label">Tanggal Keluar</p>
 								<input type="text" className="form-input w-full" />
 							</div>
-							<div className="col-span-12 min-[355px]:col-span-4">
+							<div className="col-span-12 min-[360px]:col-span-4">
 								<p className="form-label">Waktu Keluar</p>
 								<input
 									type="text"
-									className="form-input w-full max-w-[7.5rem] min-[355px]:max-w-full"
+									className="form-input w-full max-w-[7.5rem] min-[360px]:max-w-full"
 								/>
 							</div>
 						</div>
@@ -278,7 +295,7 @@ function NewOrder() {
 						<div className="w-full flex justify-between items-center">
 							<h4>Layanan</h4>
 							<button
-								className="pt-2 font-semibold text-green-600"
+								className="mt-2 font-semibold text-green-600"
 								onClick={() => modalState.openModal(<CustomerSearch />, 'full')}
 							>
 								Tambah Layanan
@@ -292,7 +309,9 @@ function NewOrder() {
 						>
 							<div
 								id="service-frame"
-								className={`relative overflow-x-auto overflow-y-hidden sm:h-[22.5rem] w-full ${
+								className={`relative overflow-x-auto overflow-y-hidden w-full ${
+									serviceCards ? 'sm:h-[22.5rem]' : ''
+								} ${
 									serviceCards?.length === 1
 										? 'flex justify-center items-center'
 										: ''
@@ -300,8 +319,8 @@ function NewOrder() {
 							>
 								<div
 									id="service-slide"
-									className={`flex flex-col sm:flex-row flex-nowrap gap-1 items-center sm:absolute ${
-										serviceCards ? 'p-1' : 'p-3'
+									className={`flex flex-col sm:flex-row flex-nowrap gap-1 items-center min-w-full ${
+										serviceCards ? 'p-1 sm:absolute' : 'p-3'
 									}`}
 								>
 									{serviceCards ? (
@@ -322,7 +341,7 @@ function NewOrder() {
 							</div>
 						</div>
 						<h4>Tagihan</h4>
-						<div className="w-full flex flex-col items-center mt-2 mb-4">
+						<div className="w-full flex flex-col items-center mt-2 mb-7">
 							<div className="w-fit grid grid-cols-2 text-sm gap-y-8">
 								<div className="max-w-[16rem] col-span-1 flex justify-between font-bold">
 									<p>Harga Cuci</p>
@@ -335,15 +354,14 @@ function NewOrder() {
 									</div>
 								</div>
 								{addFees?.map(({ type, label, price }, index) => (
-									<>
+									<React.Fragment key={`additional-${index}`}>
 										<div
-											key={`additional-${index}`}
 											className={`max-w-[16rem] col-span-1 w-full flex justify-between font-medium ${
 												type === 'discount' ? 'text-theme-blue' : ''
 											}`}
 										>
 											<p>{label}</p>
-											<p className="ml-4">:</p>
+											<p className="ml-4 flex items-center">:</p>
 										</div>
 										<div className="max-w-[16rem] col-span-1 font-medium flex justify-center items-center relative">
 											<div
@@ -361,13 +379,29 @@ function NewOrder() {
 												<p className="pl-1 pr-2">Rp</p>
 												<p className="pr-1">{price}</p>
 											</div>
-											<button className='button-gray absolute right-0' style={{padding: "1px 4px"}} onClick={() => deleteAddFee(index)}>x</button>
+											<button
+												className="button-gray absolute right-0"
+												style={{
+													padding: '6px 2px',
+													outlineColor: 'var(--color-theme-green)',
+												}}
+												onClick={() => deleteAddFee(index)}
+											>
+												<img
+													src={iconClose}
+													alt="Hapus Harga"
+													className="w-3"
+												/>
+											</button>
 										</div>
-									</>
+									</React.Fragment>
 								))}
 								<div className="max-w-[16rem] col-span-1 max w-full flex flex-col text-[13px] font-semibold text-green-600 relative">
 									<div className=" w-full h-10" />
-									<button className="button-gray absolute top-[-20%] z-[4]">
+									<button
+										className="button-gray absolute top-[-20%] z-[4]"
+										style={{ outlineColor: 'var(--color-theme-green)' }}
+									>
 										+harga lain
 									</button>
 									<div className="bg-gray-600 h-[2px] absolute w-[210%] bottom-0 translate-x-1/2 right-0" />
@@ -388,6 +422,77 @@ function NewOrder() {
 					</div>
 				</div>
 			</section>
+			<section className="page-section my-4">
+				<h3>
+					<span className="hashtag-bullet">#</span> Lain-lain
+				</h3>
+				<div className="card-white px-4 pt-4 pb-5 flex flex-col items-center">
+					<div className="w-full max-w-xl">
+						<h4>Catatan Internal</h4>
+						<textarea
+							name="order_notes"
+							id="order-notes"
+							rows={6}
+							className="w-full bg-white form-input"
+							style={{ height: 'auto' }}
+							placeholder="catatan untuk keperluan internal"
+						/>
+						<h4>Catatan Tagihan</h4>
+						<textarea
+							name="order_invoice_notes"
+							id="order-invoice-notes"
+							rows={6}
+							className="w-full bg-white form-input"
+							style={{ height: 'auto' }}
+							placeholder="catatan yang akan muncul di tagihan"
+						/>
+						<h4>Metode Pembayaran</h4>
+						<Select defaultValue="Transfer">
+							<SelectTrigger className="w-full max-w-sm">
+								<SelectValue placeholder="Pilih metode pembayaran" />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value="Transfer">Transfer</SelectItem>
+								<SelectItem value="COD">COD</SelectItem>
+							</SelectContent>
+						</Select>
+						<h4 className="mt-4">Metode Pengiriman</h4>
+						<Select defaultValue="Ambil sendiri">
+							<SelectTrigger className="w-full max-w-sm">
+								<SelectValue placeholder="Pilih metode pengiriman" />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value="Ambil sendiri">Ambil sendiri</SelectItem>
+								<SelectItem value="Kurir rental">Kurir rental</SelectItem>
+								<SelectItem value="Kurir pihak ketiga">
+									Kurir pihak ketiga
+								</SelectItem>
+							</SelectContent>
+						</Select>
+						<h4 className="mt-4">Metode Pengiriman</h4>
+						<RadioGroup defaultValue="order-paid-false">
+							<div className="w-full max-w-xs flex flex-col sm:flex-row justify-between pt-2 gap-y-6 mb-4">
+								<div className="flex gap-2.5">
+									<RadioGroupItem
+										value="order-paid-false"
+										id="order-paid-false"
+									/>
+									<Label htmlFor="order-paid-false">Belum Lunas</Label>
+								</div>
+								<div className="flex gap-2.5">
+									<RadioGroupItem value="order-paid-true" id="order-paid-true" />
+									<Label htmlFor="order-paid-true">Sudah Lunas</Label>
+								</div>
+							</div>
+						</RadioGroup>
+					</div>
+				</div>
+			</section>
+				<button className="button-color w-full max-w-xs text-[15px] mt-6 mb-10">
+					Bikin Pesanan
+				</button>
+
+			<div className="w-full h-20 xl:h-16" />
 		</main>
 	);
 }

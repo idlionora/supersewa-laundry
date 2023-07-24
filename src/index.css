@@ -24,6 +24,10 @@
     margin-bottom: 3px;
     padding-top: .5rem    
   }
+
+  button:focus {
+    outline-color: #f59e0b
+  }
 }
 @tailwind components;
 @tailwind utilities;
