@@ -11,7 +11,7 @@ const CustomerSearch = () => {
 	const state = useTrackedModalStore();
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [list, setList] = useState<CustomerType[] | null>(null);
-	const [colActive, setColActive] = useState<CustomerType | null>(null);
+	const [activeCol, setActiveCol] = useState<CustomerType | null>(null);
 
 	useEffect(() => {
 		inputRef.current?.focus();
@@ -19,16 +19,16 @@ const CustomerSearch = () => {
 	}, [state.modalDisplay]);
 
 	const selectCustomer = (selectedData: CustomerType) => {
-		setColActive(selectedData);
+		setActiveCol(selectedData);
 
 		if (inputRef.current && inputRef.current.clientWidth >= 414) {
 			orderStore.setCustomer(selectedData);
 			state.closeModal();
 		}
 	};
-	const confirmPanel = () => {
-		if (colActive) {
-			orderStore.setCustomer(colActive);
+	const confirmCustomer = () => {
+		if (activeCol) {
+			orderStore.setCustomer(activeCol);
 			state.closeModal();
 		}
 	};
@@ -57,10 +57,10 @@ const CustomerSearch = () => {
 			<div className="w-full h-full pt-[7rem] overflow-y-auto">
 				{list?.map((customer) => {
 					return (
-						<div
-							key={`list-${customer.id}`}
-							className={`w-full p-4 flex gap-4 hover:bg-white ease-in-out border border-transparent cursor-pointer ${
-								colActive?.id === customer.id ? 'col-active' : ''
+						<button
+							key={`list-customer-${customer.id}`}
+							className={`w-full p-4 flex gap-4 hover:bg-white ease-in-out border border-transparent cursor-pointer text-left ${
+								activeCol?.id === customer.id ? 'col-active' : ''
 							}`}
 							onClick={() => selectCustomer(customer)}
 						>
@@ -74,17 +74,17 @@ const CustomerSearch = () => {
 								<p className="mb-0.5">{customer.phone}</p>
 								<p>{customer.address}</p>
 							</div>
-						</div>
+						</button>
 					);
 				})}
 				<div className="min-[448px]:hidden w-full h-[4rem]" />
 			</div>
-			<button className="absolute bg-theme-blue w-16 h-16 min-[448px]:w-14 min-[448px]:h-14 bottom-20 right-2 min-[448px]:bottom-6 min-[448px]:right-4 rounded-full flex justify-center items-center">
+			<button className="absolute bg-theme-blue w-14 h-14 min-[300px]:w-16 min-[300px]:h-16 min-[448px]:w-14 min-[448px]:h-14 bottom-20 right-2 min-[448px]:bottom-6 min-[448px]:right-4 rounded-full flex justify-center items-center">
 				<img src={iconPlus} alt="Tambah Pelanggan" className="invert w-9 min-[448px]:w-7" />
 			</button>
 			<button
 				className="min-[448px]:hidden absolute text-theme-blue p-4 w-full h-16 bottom-0 bg-white text-center font-medium text-sm shadow-[0_-2px_4px_3px_rgba(108,114,124,0.1)]"
-				onClick={() => confirmPanel()}
+				onClick={() => confirmCustomer()}
 			>
 				Pilih Pelanggan
 			</button>

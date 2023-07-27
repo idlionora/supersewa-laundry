@@ -49,7 +49,7 @@ const defaultStoreState = {
 	customer: { id: 0, name: '', phone: '', address: '', img: '' },
 	startDate: new Date(0),
 	endDate: new Date(0),
-	services: [{ id: 0, name: '', priceRange: '', img: '', quantity: 1, price: 0, desc: '' }],
+	services: null,
 	addFees: null,
 	netPrice: 0,
 	notesInternal: '',

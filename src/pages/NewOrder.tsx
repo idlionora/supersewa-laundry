@@ -4,9 +4,6 @@ import { ServiceType, FeeType, useTrackedOrderStore } from '../stores/orderStore
 import CustomerSearch from '../components/CustomerSearch';
 import useTrackedModalStore from '../stores/modalStore';
 import iconClose from '../assets/icon-x.svg';
-import imgDefault from '../assets/image-default.png';
-import imgHighChair from '../assets/high-chair.jpeg';
-import imgStrollerMd from '../assets/stroller-medium.jpeg';
 import ServiceCardComp from '../components/ServiceCardComp';
 import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
 import { Label } from '../components/ui/label';
@@ -17,6 +14,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '../components/ui/select.tsx';
+import ServiceSearch from '../components/ServiceSearch.tsx';
 
 
 const serviceTest = [
@@ -24,7 +22,7 @@ const serviceTest = [
 		id: 2,
 		name: 'Stroller Medium',
 		priceRange: '129 - 159k',
-		img: imgStrollerMd,
+		img: 'imgStrollerMd',
 		quantity: 1,
 		price: 0,
 		desc: '',
@@ -33,7 +31,7 @@ const serviceTest = [
 		id: 12,
 		name: 'Gendongan',
 		priceRange: '79 - 119k',
-		img: imgDefault,
+		img: 'imgDefault',
 		quantity: 1,
 		price: 0,
 		desc: '',
@@ -42,7 +40,7 @@ const serviceTest = [
 		id: 15,
 		name: 'High Chair',
 		priceRange: '79 - 119k',
-		img: imgHighChair,
+		img: 'imgHighChair',
 		quantity: 1,
 		price: 0,
 		desc: '',
@@ -144,6 +142,16 @@ function NewOrder() {
 
 		setServiceCards(servicesCopy);
 	}
+
+	useEffect(() => {
+		if(modalState.modalSwitch === 'fromSearchService'){
+			setServiceCards(store.services)
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	},[store.services])
+	/* NOTES: modalState.modalSwitch update is faster than store.services update 
+	despite how setModalSwitch is called after updateService. 
+	it is not wise to use modalSwitch as useEffect dependency */
 
 	useEffect(() => {
 		let total = 0;
@@ -296,7 +304,11 @@ function NewOrder() {
 							<h4>Layanan</h4>
 							<button
 								className="mt-2 font-semibold text-green-600"
-								onClick={() => modalState.openModal(<CustomerSearch />, 'full')}
+								onClick={() => { 
+									if(serviceCards) store.setServices(serviceCards);
+									modalState.setModalSwitch('toSearchService');
+									modalState.openModal(<ServiceSearch />, 'full');
+								}}
 							>
 								Tambah Layanan
 							</button>
@@ -313,7 +325,7 @@ function NewOrder() {
 									serviceCards ? 'sm:h-[22.5rem]' : ''
 								} ${
 									serviceCards?.length === 1
-										? 'flex justify-center items-center'
+										? 'flex items-center'
 										: ''
 								}`}
 							>
@@ -321,7 +333,7 @@ function NewOrder() {
 									id="service-slide"
 									className={`flex flex-col sm:flex-row flex-nowrap gap-1 items-center min-w-full ${
 										serviceCards ? 'p-1 sm:absolute' : 'p-3'
-									}`}
+									} ${serviceCards?.length === 1 ? 'justify-center' : ''}`}
 								>
 									{serviceCards ? (
 										serviceCards.map((serviceData) => (
@@ -401,6 +413,7 @@ function NewOrder() {
 									<button
 										className="button-gray absolute top-[-20%] z-[4]"
 										style={{ outlineColor: 'var(--color-theme-green)' }}
+
 									>
 										+harga lain
 									</button>
@@ -469,7 +482,7 @@ function NewOrder() {
 								</SelectItem>
 							</SelectContent>
 						</Select>
-						<h4 className="mt-4">Metode Pengiriman</h4>
+						<h4 className="mt-4">Pembayaran</h4>
 						<RadioGroup defaultValue="order-paid-false">
 							<div className="w-full max-w-xs flex flex-col sm:flex-row justify-between pt-2 gap-y-6 mb-4">
 								<div className="flex gap-2.5">

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ServiceType } from '../stores/orderStore';
+import imgList from '../lib/imgList';
 
 type ServiceCardType = {
 	serviceData: ServiceType;
@@ -27,8 +28,12 @@ const ServiceCardComp = ({
 			className="w-full max-w-xs sm:w-[20rem] bg-white border shadow-sm p-3"
 		>
 			<div className="w-full flex items-center gap-4 mb-5">
-				<div className="w-16 min-[355px]:w-20  rounded overflow-hidden">
-					<img src={img} alt={name} />
+				<div className="w-16 h-16 min-[355px]:w-20 min-[355px]:h-20 rounded overflow-hidden flex items-center">
+					<img
+						src={imgList[img as keyof typeof imgList]}
+						alt={name}
+						className="w-full shrink-0"
+					/>
 				</div>
 				<div>
 					<p className="font-semibold mb-0.5">{name}</p>
