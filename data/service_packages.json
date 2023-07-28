@@ -6,7 +6,7 @@
       "id": 1,
       "name": "Stroller Kecil",
       "priceRange": "99-129k",
-      "img": "imgDefault"
+      "img": "imgStrollerSm"
     },
     {
       "id": 2,
@@ -18,13 +18,13 @@
       "id": 3,
       "name": "Stroller Besar",
       "priceRange": "149-179k",
-      "img": "imgDefault"
+      "img": "imgStrollerTw"
     },
     {
       "id": 4,
       "name": "Stroller Tandem",
       "priceRange": "179-209k",
-      "img": "imgDefault"
+      "img": "imgStrollerTw"
     },
     {
       "id": 5,
@@ -46,21 +46,21 @@
     },
     {
       "id": 8,
-      "name": "Set Bumber+Sprei",
+      "name": "Set Bumper+Sprei",
       "priceRange": "59-79k",
-      "img": "imgDefault"
+      "img": "imgBumper"
     },
     {
       "id": 9,
       "name": "Carseat Kecil",
       "priceRange": "99-129k",
-      "img": "imgDefault"
+      "img": "imgCarseatSm"
     },
     {
       "id": 10,
       "name": "Carseat Besar",
       "priceRange": "149-179k",
-      "img": "imgDefault"
+      "img": "imgCarseatConv"
     },
     {
       "id": 11,
@@ -72,7 +72,7 @@
       "id": 12,
       "name": "Gendongan",
       "priceRange": "79-119k",
-      "img": "imgDefault"
+      "img": "imgCarrier"
     },
     {
       "id": 13,

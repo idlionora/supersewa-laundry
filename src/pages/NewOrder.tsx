@@ -16,37 +16,6 @@ import {
 } from '../components/ui/select.tsx';
 import ServiceSearch from '../components/ServiceSearch.tsx';
 
-
-const serviceTest = [
-	{
-		id: 2,
-		name: 'Stroller Medium',
-		priceRange: '129 - 159k',
-		img: 'imgStrollerMd',
-		quantity: 1,
-		price: 0,
-		desc: '',
-	},
-	{
-		id: 12,
-		name: 'Gendongan',
-		priceRange: '79 - 119k',
-		img: 'imgDefault',
-		quantity: 1,
-		price: 0,
-		desc: '',
-	},
-	{
-		id: 15,
-		name: 'High Chair',
-		priceRange: '79 - 119k',
-		img: 'imgHighChair',
-		quantity: 1,
-		price: 0,
-		desc: '',
-	},
-];
-
 const addFeesTest: FeeType[] = [
 	{
 		type: 'discount',
@@ -68,7 +37,7 @@ const addFeesTest: FeeType[] = [
 function NewOrder() {
 	const store = useTrackedOrderStore();
 	const modalState = useTrackedModalStore();
-	const [serviceCards, setServiceCards] = useState<ServiceType[] | null>(serviceTest);
+	const [serviceCards, setServiceCards] = useState<ServiceType[] | null>(null);
 	const [addFees, setAddFees] = useState<FeeType[] | null>(addFeesTest);
 	const [laundryCost, setLaundryCost] = useState(0);
 	const [netPrice, setNetPrice] = useState(0);
@@ -144,14 +113,10 @@ function NewOrder() {
 	}
 
 	useEffect(() => {
-		if(modalState.modalSwitch === 'fromSearchService'){
-			setServiceCards(store.services)
-		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	},[store.services])
-	/* NOTES: modalState.modalSwitch update is faster than store.services update 
-	despite how setModalSwitch is called after updateService. 
-	it is not wise to use modalSwitch as useEffect dependency */
+			setServiceCards(store.services);
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [store.services]);
 
 	useEffect(() => {
 		let total = 0;
@@ -304,9 +269,8 @@ function NewOrder() {
 							<h4>Layanan</h4>
 							<button
 								className="mt-2 font-semibold text-green-600"
-								onClick={() => { 
-									if(serviceCards) store.setServices(serviceCards);
-									modalState.setModalSwitch('toSearchService');
+								onClick={() => {
+									store.setServices(serviceCards);
 									modalState.openModal(<ServiceSearch />, 'full');
 								}}
 							>
@@ -323,11 +287,7 @@ function NewOrder() {
 								id="service-frame"
 								className={`relative overflow-x-auto overflow-y-hidden w-full ${
 									serviceCards ? 'sm:h-[22.5rem]' : ''
-								} ${
-									serviceCards?.length === 1
-										? 'flex items-center'
-										: ''
-								}`}
+								} ${serviceCards?.length === 1 ? 'flex items-center' : ''}`}
 							>
 								<div
 									id="service-slide"
@@ -413,7 +373,6 @@ function NewOrder() {
 									<button
 										className="button-gray absolute top-[-20%] z-[4]"
 										style={{ outlineColor: 'var(--color-theme-green)' }}
-
 									>
 										+harga lain
 									</button>
@@ -501,9 +460,9 @@ function NewOrder() {
 					</div>
 				</div>
 			</section>
-				<button className="button-color w-full max-w-xs text-[15px] mt-6 mb-10">
-					Bikin Pesanan
-				</button>
+			<button className="button-color w-full max-w-xs text-[15px] mt-6 mb-10">
+				Bikin Pesanan
+			</button>
 
 			<div className="w-full h-20 xl:h-16" />
 		</main>

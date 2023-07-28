@@ -22,6 +22,7 @@ const ServiceSearch = () => {
 	const [activeCols, setActiveCols] = useState<number[] | null>(null);
 
 	useEffect(() => {
+		if (!state.modalDisplay) return
 		const idArray: number[] = [0];
 
 		if (orderStore.services) {
@@ -30,6 +31,8 @@ const ServiceSearch = () => {
 			});
 			idArray.splice(0, 1);
 			setActiveCols(idArray);
+		} else {
+			setActiveCols(null)
 		}
 		setList(servicePackages.data);
 		inputRef.current?.focus();
@@ -58,7 +61,11 @@ const ServiceSearch = () => {
 	};
 
 	const updateService = () => {
-		if (!activeCols || !list) return;
+		if (!activeCols) {
+			orderStore.setServices(null);
+			return;
+		}
+		if (!list) return;
 		let processCols: number[] | null = [...activeCols];
 		const newStoreService = [
 			{ id: 0, name: '', priceRange: '', img: '', quantity: 1, price: 0, desc: '' },
@@ -101,7 +108,6 @@ const ServiceSearch = () => {
 			console.error(`data for ${processCols.join(', ')} ${processCols.length === 1? 'is': 'are'} not available!`);
 			return;
 		}
-
         orderStore.setServices(newStoreService);
 	};
 
@@ -158,7 +164,7 @@ const ServiceSearch = () => {
 			</button>
 			<button
 				className="absolute text-theme-blue p-4 w-full h-16 bottom-0 bg-white text-center font-medium text-sm shadow-[0_-2px_4px_3px_rgba(108,114,124,0.1)]"
-				onClick={() => {updateService(); state.setModalSwitch('fromSearchService'); state.closeModal()}}
+				onClick={() => {updateService(); state.closeModal()}}
 			>
 				Pilih Layanan
 			</button>
