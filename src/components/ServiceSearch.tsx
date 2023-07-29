@@ -119,12 +119,14 @@ const ServiceSearch = () => {
 			<div className="bg-white w-full px-4 pt-6 min-[448px]:pt-4 pb-3 shadow-md absolute top-0 left-0 z-10">
 				<div className="relative w-full flex items-center mb-2">
 					<p className="font-semibold text-sm w-full">Cari Paket Layanan</p>
-					<img
-						src={iconClose}
-						alt="Tutup Panel"
-						className="w-5 absolute right-[-.25rem] cursor-pointer"
-						onClick={() => state.closeModal()}
-					/>
+					<button className=" absolute right-[-.25rem]">
+						<img
+							src={iconClose}
+							alt="Tutup Panel"
+							className="w-5"
+							onClick={() => state.closeModal()}
+						/>
+					</button>
 				</div>
 				<div className="relative">
 					<input ref={inputRef} type="text" className="form-input w-full pl-9" />
@@ -133,7 +135,7 @@ const ServiceSearch = () => {
 					</div>
 				</div>
 			</div>
-			<div className="w-full h-full pt-[7.5rem] overflow-y-auto">
+			<div className="w-full h-full pt-[8rem] overflow-y-auto">
 				{list?.map(({ id, name, priceRange, img }) => {
 					return (
 						<button
@@ -164,7 +166,10 @@ const ServiceSearch = () => {
 			</button>
 			<button
 				className="absolute text-theme-blue p-4 w-full h-16 bottom-0 bg-white text-center font-medium text-sm shadow-[0_-2px_4px_3px_rgba(108,114,124,0.1)]"
-				onClick={() => {updateService(); state.closeModal()}}
+				onClick={() => {
+					updateService();
+					state.closeModal();
+				}}
 			>
 				Pilih Layanan
 			</button>

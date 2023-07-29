@@ -2,6 +2,8 @@ import React from 'react';
 import { useEffect, useState } from 'react';
 import { ServiceType, FeeType, useTrackedOrderStore } from '../stores/orderStore';
 import CustomerSearch from '../components/CustomerSearch';
+import ServiceSearch from '../components/ServiceSearch.tsx';
+import AddFeeModal from '../components/AddFeeModal.tsx';
 import useTrackedModalStore from '../stores/modalStore';
 import iconClose from '../assets/icon-x.svg';
 import ServiceCardComp from '../components/ServiceCardComp';
@@ -14,31 +16,12 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '../components/ui/select.tsx';
-import ServiceSearch from '../components/ServiceSearch.tsx';
-
-const addFeesTest: FeeType[] = [
-	{
-		type: 'discount',
-		label: 'diskon pelanggan baru hari ini',
-		price: 30000,
-	},
-	{
-		type: 'additional',
-		label: 'jemput barang',
-		price: 15000,
-	},
-	{
-		type: 'additional',
-		label: 'antar barang (almt 2)',
-		price: 42000,
-	},
-];
 
 function NewOrder() {
 	const store = useTrackedOrderStore();
 	const modalState = useTrackedModalStore();
 	const [serviceCards, setServiceCards] = useState<ServiceType[] | null>(null);
-	const [addFees, setAddFees] = useState<FeeType[] | null>(addFeesTest);
+	const [addFees, setAddFees] = useState<FeeType[] | null>(null);
 	const [laundryCost, setLaundryCost] = useState(0);
 	const [netPrice, setNetPrice] = useState(0);
 
@@ -113,9 +96,7 @@ function NewOrder() {
 	}
 
 	useEffect(() => {
-			setServiceCards(store.services);
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		setServiceCards(store.services);
 	}, [store.services]);
 
 	useEffect(() => {
@@ -131,8 +112,8 @@ function NewOrder() {
 	useEffect(() => {
 		let total = laundryCost;
 
-		addFees?.forEach(({ type, price }) => {
-			if (type === 'discount') {
+		addFees?.forEach(({ category, price }) => {
+			if (category === 'discount') {
 				total -= price;
 			} else {
 				total += price;
@@ -141,6 +122,10 @@ function NewOrder() {
 
 		setNetPrice(total);
 	}, [laundryCost, addFees]);
+
+	useEffect(() => {
+		setAddFees(store.addFees);
+	}, [store.addFees]);
 
 	/*function putAddFee (type: 'discount' | 'additional', label: string, price: number) {
 		let addFeesCopy: FeeType[] = [{ type: 'discount', label: '', price: 0 }];
@@ -171,7 +156,7 @@ function NewOrder() {
 	} */
 
 	function deleteAddFee(index: number) {
-		let addFeesCopy: FeeType[] = [{ type: 'discount', label: '', price: 0 }];
+		let addFeesCopy: FeeType[] = [{ category: 'discount', label: '', price: 0 }];
 
 		if (addFees) {
 			addFeesCopy = [...addFees];
@@ -315,7 +300,7 @@ function NewOrder() {
 						<h4>Tagihan</h4>
 						<div className="w-full flex flex-col items-center mt-2 mb-7">
 							<div className="w-fit grid grid-cols-2 text-sm gap-y-8">
-								<div className="max-w-[16rem] col-span-1 flex justify-between font-bold">
+								<div className="max-w-[16rem] min-w-[7.5rem] col-span-1 flex justify-between font-bold">
 									<p>Harga Cuci</p>
 									<p className="ml-4">:</p>
 								</div>
@@ -325,11 +310,11 @@ function NewOrder() {
 										<p className="pr-1">{laundryCost}</p>
 									</div>
 								</div>
-								{addFees?.map(({ type, label, price }, index) => (
+								{addFees?.map(({ category, label, price }, index) => (
 									<React.Fragment key={`additional-${index}`}>
 										<div
 											className={`max-w-[16rem] col-span-1 w-full flex justify-between font-medium ${
-												type === 'discount' ? 'text-theme-blue' : ''
+												category === 'discount' ? 'text-theme-blue' : ''
 											}`}
 										>
 											<p>{label}</p>
@@ -338,12 +323,12 @@ function NewOrder() {
 										<div className="max-w-[16rem] col-span-1 font-medium flex justify-center items-center relative">
 											<div
 												className={`flex w-full justify-between ml-3 border-b border-gray-600 mr-6 ${
-													type === 'discount' ? 'text-theme-blue' : ''
+													category === 'discount' ? 'text-theme-blue' : ''
 												}`}
 											>
 												<p
 													className={`absolute translate-x-[-100%] ${
-														type === 'discount' ? '' : 'hidden'
+														category === 'discount' ? '' : 'hidden'
 													}`}
 												>
 													–
@@ -371,8 +356,12 @@ function NewOrder() {
 								<div className="max-w-[16rem] col-span-1 max w-full flex flex-col text-[13px] font-semibold text-green-600 relative">
 									<div className=" w-full h-10" />
 									<button
-										className="button-gray absolute top-[-20%] z-[4]"
-										style={{ outlineColor: 'var(--color-theme-green)' }}
+										className="button-gray absolute top-[-20%] z-[4] left-[-1rem]"
+										style={{ outlineColor: 'var(--color-theme-green)'}}
+										onClick={() => {
+											store.setAddFees(addFees);
+											modalState.openModal(<AddFeeModal />, 'fit');
+										}}
 									>
 										+harga lain
 									</button>

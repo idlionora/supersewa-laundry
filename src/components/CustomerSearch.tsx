@@ -40,12 +40,14 @@ const CustomerSearch = () => {
 			<div className="bg-white w-full px-4 pt-6 min-[448px]:pt-4 pb-3 shadow-md absolute top-0 left-0 z-10">
 				<div className="relative w-full flex items-center mb-2">
 					<p className="font-semibold text-sm w-full">Cari Pelanggan</p>
-					<img
-						src={iconClose}
-						alt="Tutup Panel"
-						className="w-5 absolute right-[-.25rem] cursor-pointer"
-						onClick={() => state.closeModal()}
-					/>
+					<button className="absolute right-[-.25rem]">
+						<img
+							src={iconClose}
+							alt="Tutup Panel"
+							className="w-5"
+							onClick={() => state.closeModal()}
+						/>
+					</button>
 				</div>
 				<div className="relative">
 					<input ref={inputRef} type="text" className="form-input w-full pl-9" />
@@ -54,7 +56,7 @@ const CustomerSearch = () => {
 					</div>
 				</div>
 			</div>
-			<div className="w-full h-full pt-[7rem] overflow-y-auto">
+			<div className="w-full h-full pt-[8rem] overflow-y-auto">
 				{list?.map((customer) => {
 					return (
 						<button
