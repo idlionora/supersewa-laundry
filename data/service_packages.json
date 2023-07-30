@@ -6,97 +6,97 @@
       "id": 1,
       "name": "Stroller Kecil",
       "priceRange": "99-129k",
-      "img": "imgDefault",
+      "img": "imgStrollerSm"
     },
     {
       "id": 2,
       "name": "Stroller Medium",
       "priceRange": "129-159k",
-      "img": "imgStrollerMd",
+      "img": "imgStrollerMd"
     },
     {
       "id": 3,
       "name": "Stroller Besar",
       "priceRange": "149-179k",
-      "img": "imgDefault",
+      "img": "imgStrollerTw"
     },
     {
       "id": 4,
       "name": "Stroller Tandem",
       "priceRange": "179-209k",
-      "img": "imgDefault",
+      "img": "imgStrollerTw"
     },
     {
       "id": 5,
       "name": "Insert Tambahan",
       "priceRange": "19-39k",
-      "img": "imgDefault",
+      "img": "imgDefault"
     },
     {
       "id": 6,
       "name": "Bantal Menyusui",
       "priceRange": "59-79k",
-      "img": "imgDefault",
+      "img": "imgDefault"
     },
     {
       "id": 7,
       "name": "Sofa Bayi",
       "priceRange": "99-129k",
-      "img": "imgDefault.png",
+      "img": "imgDefault"
     },
     {
       "id": 8,
-      "name": "Set Bumber+Sprei",
+      "name": "Set Bumper+Sprei",
       "priceRange": "59-79k",
-      "img": "imgDefault",
+      "img": "imgBumper"
     },
     {
       "id": 9,
       "name": "Carseat Kecil",
       "priceRange": "99-129k",
-      "img": "imgDefault",
+      "img": "imgCarseatSm"
     },
     {
       "id": 10,
       "name": "Carseat Besar",
       "priceRange": "149-179k",
-      "img": "imgDefault",
+      "img": "imgCarseatConv"
     },
     {
       "id": 11,
       "name": "Bouncer",
       "priceRange": "59-79k",
-      "img": "imgDefault",
+      "img": "imgDefault"
     },
     {
       "id": 12,
       "name": "Gendongan",
       "priceRange": "79-119k",
-      "img": "imgDefault",
+      "img": "imgCarrier"
     },
     {
       "id": 13,
       "name": "Activity Center",
       "priceRange": "99-129k",
-      "img": "imgDefault",
+      "img": "imgDefault"
     },
     {
       "id": 14,
       "name": "Baby Walker",
       "priceRange": "79-119k",
-      "img": "imgDefault",
+      "img": "imgDefault"
     },
     {
       "id": 15,
       "name": "High Chair",
       "priceRange": "79-119k",
-      "img": "imgHighChair",
+      "img": "imgHighChair"
     },
     {
       "id": 16,
       "name": "Big Toy",
       "priceRange": "mulai 149k",
-      "img": "imgDefault",
+      "img": "imgDefault"
     }
   ]
 }
