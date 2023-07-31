@@ -28,7 +28,6 @@ export type FeeType = {
 interface IOrder {
 	customer: CustomerType;
 	startDate: Date;
-	endDate: Date;
 	services: ServiceType[] | null;
 	addFees: FeeType[] | null;
 	netPrice: number;
@@ -36,7 +35,6 @@ interface IOrder {
 	notesInvoice: string;
 	setCustomer: (newCustomer: CustomerType) => void;
 	setStartDate: (newDate: Date) => void;
-	setEndDate: (newDate: Date) => void;
 	setServices: (newServices: ServiceType[] | null) => void;
 	setAddFees: (newFees: FeeType[] | null) => void;
 	setNetPrice: (newPrice: number) => void;
@@ -48,7 +46,6 @@ interface IOrder {
 const defaultStoreState = {
 	customer: { id: 0, name: '', phone: '', address: '', img: '' },
 	startDate: new Date(0),
-	endDate: new Date(0),
 	services: null,
 	addFees: null,
 	netPrice: 0,
@@ -60,7 +57,6 @@ const useOrderStore = create<IOrder>((set) => ({
 	...defaultStoreState,
 	setCustomer: (newCustomer: CustomerType) => set({ customer: newCustomer }),
 	setStartDate: (newDate: Date) => set({ startDate: newDate }),
-	setEndDate: (newDate: Date) => set({ endDate: newDate }),
 	setServices: (newServices: ServiceType[] | null) => set({ services: newServices }),
 	setAddFees: (newFees: FeeType[] | null) => set({ addFees: newFees }),
 	setNetPrice: (newPrice: number) => set({ netPrice: newPrice }),
