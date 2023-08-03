@@ -10,6 +10,7 @@ interface IModal {
 	modalDisplay: boolean;
 	modalInPosition: boolean;
 	openModal: (newContent: JSX.Element, newWidth?: 'fit' | 'full') => void;
+	switchModal: (newContent: JSX.Element, newWidth?: 'fit' | 'full') => void;
 	closeModal: () => void;
 }
 
@@ -27,6 +28,18 @@ const useModalStore = create<IModal>((set) => ({
 		setTimeout(() => {
 			set({ screenOpacity: true, modalInPosition: true });
 		}, 10);
+	},
+	switchModal: (newContent: JSX.Element, newWidth?: 'fit' | 'full') => {
+		set({modalInPosition: false});
+		setTimeout(() => {
+			set({ modalDisplay: false });
+			if (newWidth) set({ modalWidth: newWidth });
+			set({ modalContent: newContent });
+			set({ modalDisplay: true });
+		}, 310);
+		setTimeout(() => {
+			set({ modalInPosition: true });
+		}, 320);
 	},
 	closeModal: () => {
 		set({ screenOpacity: false, modalInPosition: false });

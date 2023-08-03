@@ -5,6 +5,7 @@ import customers from '../../data/customers.json';
 import iconClose from '../assets/icon-x.svg';
 import iconSearch from '../assets/icon-search.svg';
 import iconPlus from '../assets/icon-plus.svg';
+import NewCustomer from './NewCustomer';
 
 const CustomerSearch = () => {
 	const orderStore = useTrackedOrderStore();
@@ -81,7 +82,7 @@ const CustomerSearch = () => {
 				})}
 				<div className="min-[448px]:hidden w-full h-[4rem]" />
 			</div>
-			<button className="absolute bg-theme-blue w-14 h-14 min-[300px]:w-16 min-[300px]:h-16 min-[448px]:w-14 min-[448px]:h-14 bottom-20 right-2 min-[448px]:bottom-6 min-[448px]:right-4 rounded-full flex justify-center items-center">
+			<button className="absolute bg-theme-blue w-14 h-14 min-[300px]:w-16 min-[300px]:h-16 min-[448px]:w-14 min-[448px]:h-14 bottom-20 right-2 min-[448px]:bottom-6 min-[448px]:right-4 rounded-full flex justify-center items-center" onClick={()=> state.switchModal(<NewCustomer/>, 'full')}>
 				<img src={iconPlus} alt="Tambah Pelanggan" className="invert w-9 min-[448px]:w-7" />
 			</button>
 			<button

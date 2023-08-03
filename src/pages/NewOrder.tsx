@@ -169,59 +169,36 @@ function NewOrder() {
 
 	/* VALIDATION AND ERROR HANDLING */
 
-	useEffect(()=> {
-		if (invalidCols?.includes('customer')) {
+	function spliceInvalidCols(col: string) {
+		if (invalidCols?.includes(col)) {
 			let newInvalidCols: string[] | null = [...invalidCols];
 
 			if (newInvalidCols.length > 1) {
-				newInvalidCols.splice(invalidCols.indexOf('customer'), 1);
+				newInvalidCols.splice(invalidCols.indexOf(col), 1);
 			} else {
 				newInvalidCols = null;
 			}
 			setInvalidCols(newInvalidCols);
 		}
+	}
+
+	useEffect(()=> {
+		spliceInvalidCols('customer')
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[store.customer])
 
 	useEffect(() => {
-		if (invalidCols?.includes('startDate')) {
-			let newInvalidCols: string[] | null = [...invalidCols];
-
-			if (newInvalidCols.length > 1) {
-				newInvalidCols.splice(invalidCols.indexOf('startDate'), 1);
-			} else {
-				newInvalidCols = null;
-			}
-			setInvalidCols(newInvalidCols);
-		}
+		spliceInvalidCols('startDate');
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [startDate]);
 
 	useEffect(() => {
-		if (invalidCols?.includes('serviceCards')) {
-			let newInvalidCols: string[] | null = [...invalidCols];
-
-			if (newInvalidCols.length > 1) {
-				newInvalidCols.splice(invalidCols.indexOf('serviceCards'), 1);
-			} else {
-				newInvalidCols = null;
-			}
-			setInvalidCols(newInvalidCols);
-		}
+		spliceInvalidCols('serviceCards');
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [serviceCards]);
 
 	useEffect(() => {
-		if (invalidCols?.includes('laundryCost')) {
-			let newInvalidCols: string[] | null = [...invalidCols];
-
-			if (newInvalidCols.length > 1) {
-				newInvalidCols.splice(invalidCols.indexOf('laundryCost'), 1);
-			} else {
-				newInvalidCols = null;
-			}
-			setInvalidCols(newInvalidCols);
-		}
+		spliceInvalidCols('laundryCost');
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [laundryCost]);
 
@@ -344,7 +321,6 @@ function NewOrder() {
 									mode="single"
 									selected={startDate}
 									onSelect={setStartDate}
-									fromDate={new Date()}
 									initialFocus
 								/>
 							</PopoverContent>
@@ -586,7 +562,7 @@ function NewOrder() {
 						{invalidCols.length > 1 && invalidCols.includes('customer')
 							? ' data pelanggan'
 							: invalidCols.includes('customer')
-							? 'data pelanggan.'
+							? ' data pelanggan.'
 							: ''}
 						{invalidCols.length > 1 &&
 						invalidCols.includes('startDate') &&
