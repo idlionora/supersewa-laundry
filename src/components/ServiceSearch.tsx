@@ -5,7 +5,6 @@ import servicePackages from '../../data/service_packages.json';
 import iconClose from '../assets/icon-x.svg';
 import iconSearch from '../assets/icon-search.svg';
 import imgList from '../lib/imgList';
-import iconPlus from '../assets/icon-plus.svg';
 
 type ServicePackageType = {
 	id: number;
@@ -161,9 +160,6 @@ const ServiceSearch = () => {
 				})}
 				<div className="w-full h-[4.5rem]" />
 			</div>
-			<button className="absolute bg-theme-blue w-14 h-14 min-[300px]:w-16 min-[300px]:h-16 min-[448px]:w-14 min-[448px]:h-14 bottom-[5.1rem] right-2 min-[448px]:right-4 rounded-full flex justify-center items-center">
-				<img src={iconPlus} alt="Tambah Pelanggan" className="invert w-9 min-[448px]:w-7" />
-			</button>
 			<button
 				className="absolute text-theme-blue p-4 w-full h-16 bottom-0 bg-white text-center font-medium text-sm shadow-[0_-2px_4px_3px_rgba(108,114,124,0.1)]"
 				onClick={() => {

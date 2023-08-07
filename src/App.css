@@ -220,8 +220,14 @@
 }
 
 .form-invalid {
-    outline: 1px solid red!important;
-    border: 1px solid red!important;
+    outline: 1px solid var(--color-theme-orange)!important;
+    border: 1px solid var(--color-theme-orange)!important;
+}
+
+.required-asterisk {
+    color: var(--color-theme-orange);
+    font-weight: 500;
+    margin-left: 0.125rem;
 }
 
 /* PROFILE BACKGROUND */
@@ -245,4 +251,7 @@
     background-color: #d946ef;
 }
 
+.bg-red-500 {
+    background-color: #ef4444;
+}
 

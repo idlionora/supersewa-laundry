@@ -1,14 +1,22 @@
 import React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { ServiceType, FeeType, useTrackedOrderStore } from '../stores/orderStore';
+import useTrackedModalStore from '../stores/modalStore';
+import id from 'date-fns/locale/id';
+import { format } from 'date-fns';
+import { Calendar as CalendarIcon } from 'lucide-react';
+import { cn } from '../lib/utils';
+import { Button } from '../components/ui/button';
+import { Calendar } from '../components/ui/calendar';
 import CustomerSearch from '../components/CustomerSearch';
 import ServiceSearch from '../components/ServiceSearch.tsx';
 import AddFeeModal from '../components/AddFeeModal.tsx';
-import useTrackedModalStore from '../stores/modalStore';
-import iconClose from '../assets/icon-x.svg';
 import ServiceCardComp from '../components/ServiceCardComp';
+import iconClose from '../assets/icon-x.svg';
+import iconExclamation from '../assets/icon-exclamation-circle.svg';
 import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
 import { Label } from '../components/ui/label';
+import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
 import {
 	Select,
 	SelectContent,
@@ -20,10 +28,17 @@ import {
 function NewOrder() {
 	const store = useTrackedOrderStore();
 	const modalState = useTrackedModalStore();
+	const notesInternalRef = useRef<HTMLTextAreaElement>(null);
+	const notesInvoiceRef = useRef<HTMLTextAreaElement>(null);
+	const [startDate, setStartDate] = useState<Date | undefined>(new Date());
 	const [serviceCards, setServiceCards] = useState<ServiceType[] | null>(null);
 	const [addFees, setAddFees] = useState<FeeType[] | null>(null);
 	const [laundryCost, setLaundryCost] = useState(0);
 	const [netPrice, setNetPrice] = useState(0);
+	const [paymentMethod, setPaymentMethod] = useState('Transfer');
+	const [shippingMethod, setShippingMethod] = useState('Antar sendiri');
+	const [orderPaid, setOrderPaid] = useState('order-paid-false');
+	const [invalidCols, setInvalidCols] = useState<string[] | null>(null);
 
 	function updateServiceCards(
 		id: number,
@@ -127,21 +142,7 @@ function NewOrder() {
 		setAddFees(store.addFees);
 	}, [store.addFees]);
 
-	/*function putAddFee (type: 'discount' | 'additional', label: string, price: number) {
-		let addFeesCopy: FeeType[] = [{ type: 'discount', label: '', price: 0 }];
-
-		if (addFees) {
-			addFeesCopy = [...addFees];
-			addFeesCopy.push({type, label, price});
-		} else {
-			addFeesCopy.push({ type, label, price });
-			addFeesCopy.splice(0,1)
-		}
-
-		setAddFees(addFeesCopy)
-	}
-
-	function editAddFees (index: number, type: 'discount' | 'additional', label: string, price: number) {
+	/*function editAddFees (index: number, type: 'discount' | 'additional', label: string, price: number) {
 		let addFeesCopy: FeeType[] = [{ type: 'discount', label: '', price: 0 }];
 
 		if (addFees) {
@@ -166,16 +167,95 @@ function NewOrder() {
 		setAddFees(addFeesCopy);
 	}
 
+	/* VALIDATION AND ERROR HANDLING */
+
+	function spliceInvalidCols(col: string) {
+		if (invalidCols?.includes(col)) {
+			let newInvalidCols: string[] | null = [...invalidCols];
+
+			if (newInvalidCols.length > 1) {
+				newInvalidCols.splice(invalidCols.indexOf(col), 1);
+			} else {
+				newInvalidCols = null;
+			}
+			setInvalidCols(newInvalidCols);
+		}
+	}
+
+	useEffect(()=> {
+		spliceInvalidCols('customer')
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	},[store.customer])
+
+	useEffect(() => {
+		spliceInvalidCols('startDate');
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [startDate]);
+
+	useEffect(() => {
+		spliceInvalidCols('serviceCards');
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [serviceCards]);
+
+	useEffect(() => {
+		spliceInvalidCols('laundryCost');
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [laundryCost]);
+
+	function confirmOrder() {
+		const newInvalidCols = ['throwError'];
+
+		if (store.customer.id === 0) {
+			newInvalidCols.push('customer');
+		}
+		if (startDate === null) {
+			newInvalidCols.push('startDate');
+		}
+		if (serviceCards === null) {
+			newInvalidCols.push('serviceCards');
+		}
+		if (laundryCost === 0) {
+			newInvalidCols.push('laundryCost');
+		}
+		if (newInvalidCols.length > 1) {
+			newInvalidCols.splice(0, 1);
+			setInvalidCols(newInvalidCols);
+			return;
+		}
+		const confirmedServices = [{ id: 0, name: '', quantity: 1, price: 0, desc: '' }];
+		serviceCards?.forEach(({ id, name, quantity, price, desc }) => {
+			confirmedServices.push({ id, name, quantity, price, desc });
+		});
+		confirmedServices.splice(0, 1);
+
+		const orderData = {
+			customer: { id: store.customer.id, name: store.customer.name },
+			start_date: startDate,
+			services: confirmedServices,
+			add_fees: addFees,
+			net_price: netPrice,
+			notes_internal: notesInternalRef.current?.value || '',
+			notes_invoice: notesInvoiceRef.current?.value || '',
+			method_payment: paymentMethod,
+			method_shipping: shippingMethod,
+			order_paid: orderPaid === 'order-paid-true',
+		};
+
+		console.log(orderData);
+	}
+
 	return (
 		<main className="page-container pt-4">
 			<section className="page-section my-4">
 				<h3>
 					<span className="hashtag-bullet">#</span> Data Umum
 				</h3>
-				<div className="card-white px-4 pt-4 pb-5 flex flex-col items-center">
+				<div className="card-white p-4 flex flex-col items-center">
 					<div className="w-full max-w-xl">
 						<div className="w-full flex justify-between items-center">
-							<h4 className="">Pelanggan</h4>
+							<h4 className="">
+								Pelanggan<span className="required-asterisk">*</span>
+							</h4>
 							<button
 								className="mt-2 font-semibold text-green-600"
 								onClick={() => modalState.openModal(<CustomerSearch />, 'full')}
@@ -186,7 +266,7 @@ function NewOrder() {
 						<div
 							className={`w-full border bg-neutral-50 rounded p-3 flex gap-3 sm:items-center mb-4 mt-1 ${
 								store.customer.id === 0 ? 'border-green-600' : ''
-							}`}
+							} ${invalidCols?.includes('customer') ? 'form-invalid' : ''}`}
 						>
 							{store.customer.id !== 0 ? (
 								<>
@@ -214,33 +294,37 @@ function NewOrder() {
 								</p>
 							)}
 						</div>
-						<h4>Durasi Layanan</h4>
-						<div className="w-full grid grid-cols-12 gap-x-4">
-							<div className="col-span-12 min-[360px]:col-span-8">
-								<p className="form-label">Tanggal Masuk</p>
-								<input type="text" className="form-input w-full" />
-							</div>
-							<div className="col-span-12 min-[360px]:col-span-4">
-								<p className="form-label">Waktu Masuk</p>
-								<input
-									type="text"
-									className="form-input w-full max-w-[7.5rem] min-[360px]:max-w-full"
+						<h4>
+							Tanggal Masuk<span className="required-asterisk">*</span>
+						</h4>
+						<Popover>
+							<PopoverTrigger asChild>
+								<Button
+									variant={'outline'}
+									className={cn(
+										'w-full max-w-[280px] justify-start text-left font-normal text-sm mt-1 border-gray-300 rounded mb-5 h-11 focus:border-green-600 focus:outline-green-600',
+										!startDate && 'text-muted-foreground',
+										invalidCols?.includes('startDate') && 'form-invalid'
+									)}
+								>
+									<CalendarIcon className="mr-2 h-4 w-4" />
+									{startDate ? (
+										format(startDate, 'PPP', { locale: id })
+									) : (
+										<span>Pick a date</span>
+									)}
+								</Button>
+							</PopoverTrigger>
+							<PopoverContent className="w-auto p-0">
+								<Calendar
+									locale={id}
+									mode="single"
+									selected={startDate}
+									onSelect={setStartDate}
+									initialFocus
 								/>
-							</div>
-						</div>
-						<div className="w-full grid grid-cols-12 gap-x-4">
-							<div className="col-span-12 min-[360px]:col-span-8">
-								<p className="form-label">Tanggal Keluar</p>
-								<input type="text" className="form-input w-full" />
-							</div>
-							<div className="col-span-12 min-[360px]:col-span-4">
-								<p className="form-label">Waktu Keluar</p>
-								<input
-									type="text"
-									className="form-input w-full max-w-[7.5rem] min-[360px]:max-w-full"
-								/>
-							</div>
-						</div>
+							</PopoverContent>
+						</Popover>
 					</div>
 				</div>
 			</section>
@@ -251,7 +335,9 @@ function NewOrder() {
 				<div className="card-white px-4 pt-4 pb-5 flex flex-col items-center">
 					<div className="w-full max-w-xl">
 						<div className="w-full flex justify-between items-center">
-							<h4>Layanan</h4>
+							<h4>
+								Layanan<span className="required-asterisk">*</span>
+							</h4>
 							<button
 								className="mt-2 font-semibold text-green-600"
 								onClick={() => {
@@ -266,7 +352,7 @@ function NewOrder() {
 							id="service-container"
 							className={`w-full border bg-neutral-50 rounded mb-4 mt-1 sm:overflow-x-hidden ${
 								!serviceCards ? 'border-green-600' : ''
-							}`}
+							} ${invalidCols?.includes('serviceCards') ? 'form-invalid' : ''}`}
 						>
 							<div
 								id="service-frame"
@@ -304,7 +390,13 @@ function NewOrder() {
 									<p>Harga Cuci</p>
 									<p className="ml-4">:</p>
 								</div>
-								<div className="max-w-[16rem] col-span-1 font-bold">
+								<div
+									className={`max-w-[16rem] col-span-1 font-bold ${
+										invalidCols?.includes('laundryCost')
+											? 'form-invalid rounded'
+											: ''
+									}`}
+								>
 									<div className="flex justify-between ml-3 mr-6 border-b border-gray-600">
 										<p className="pl-1 pr-2">Rp</p>
 										<p className="pr-1">{laundryCost}</p>
@@ -357,7 +449,7 @@ function NewOrder() {
 									<div className=" w-full h-10" />
 									<button
 										className="button-gray absolute top-[-20%] z-[4] left-[-1rem]"
-										style={{ outlineColor: 'var(--color-theme-green)'}}
+										style={{ outlineColor: 'var(--color-theme-green)' }}
 										onClick={() => {
 											store.setAddFees(addFees);
 											modalState.openModal(<AddFeeModal />, 'fit');
@@ -391,6 +483,7 @@ function NewOrder() {
 					<div className="w-full max-w-xl">
 						<h4>Catatan Internal</h4>
 						<textarea
+							ref={notesInternalRef}
 							name="order_notes"
 							id="order-notes"
 							rows={6}
@@ -400,6 +493,7 @@ function NewOrder() {
 						/>
 						<h4>Catatan Tagihan</h4>
 						<textarea
+							ref={notesInvoiceRef}
 							name="order_invoice_notes"
 							id="order-invoice-notes"
 							rows={6}
@@ -408,7 +502,7 @@ function NewOrder() {
 							placeholder="catatan yang akan muncul di tagihan"
 						/>
 						<h4>Metode Pembayaran</h4>
-						<Select defaultValue="Transfer">
+						<Select value={paymentMethod} onValueChange={setPaymentMethod}>
 							<SelectTrigger className="w-full max-w-sm">
 								<SelectValue placeholder="Pilih metode pembayaran" />
 							</SelectTrigger>
@@ -418,12 +512,12 @@ function NewOrder() {
 							</SelectContent>
 						</Select>
 						<h4 className="mt-4">Metode Pengiriman</h4>
-						<Select defaultValue="Ambil sendiri">
+						<Select value={shippingMethod} onValueChange={setShippingMethod}>
 							<SelectTrigger className="w-full max-w-sm">
 								<SelectValue placeholder="Pilih metode pengiriman" />
 							</SelectTrigger>
 							<SelectContent>
-								<SelectItem value="Ambil sendiri">Ambil sendiri</SelectItem>
+								<SelectItem value="Antar sendiri">Antar sendiri</SelectItem>
 								<SelectItem value="Kurir rental">Kurir rental</SelectItem>
 								<SelectItem value="Kurir pihak ketiga">
 									Kurir pihak ketiga
@@ -431,7 +525,7 @@ function NewOrder() {
 							</SelectContent>
 						</Select>
 						<h4 className="mt-4">Pembayaran</h4>
-						<RadioGroup defaultValue="order-paid-false">
+						<RadioGroup value={orderPaid} onValueChange={setOrderPaid}>
 							<div className="w-full max-w-xs flex flex-col sm:flex-row justify-between pt-2 gap-y-6 mb-4">
 								<div className="flex gap-2.5">
 									<RadioGroupItem
@@ -448,11 +542,67 @@ function NewOrder() {
 						</RadioGroup>
 					</div>
 				</div>
+				<div className="w-full text-theme-orange text-right font-normal text-sm relative translate-y-1 pr-2 min-[575px]:pr-0">
+					* kolom harus diisi
+				</div>
 			</section>
-			<button className="button-color w-full max-w-xs text-[15px] mt-6 mb-10">
+
+			{invalidCols ? (
+				<div className="w-full flex text-red-900 font-medium p-4 border border-red-300 rounded bg-red-100 mb-2">
+					<img
+						src={iconExclamation}
+						alt="Exclamation"
+						className="w-5 mr-2"
+						style={{
+							filter: 'invert(19%) sepia(68%) saturate(6140%) hue-rotate(353deg) brightness(93%) contrast(85%)',
+						}}
+					/>
+					<p>
+						Pesanan harus cantumkan
+						{invalidCols.length > 1 && invalidCols.includes('customer')
+							? ' data pelanggan'
+							: invalidCols.includes('customer')
+							? ' data pelanggan.'
+							: ''}
+						{invalidCols.length > 1 &&
+						invalidCols.includes('startDate') &&
+						(!invalidCols.includes('serviceCards') ||
+							!invalidCols.includes('laundryCost'))
+							? ', dan tanggal masuk'
+							: invalidCols.length > 2 && invalidCols.includes('startDate')
+							? ', tanggal masuk'
+							: invalidCols.length === 2 && invalidCols.includes('startDate')
+							? ' tanggal masuk'
+							: invalidCols.includes('startDate')
+							? ' tanggal masuk.'
+							: ''}
+						{invalidCols.length > 1 &&
+						invalidCols.includes('serviceCards') &&
+						!invalidCols.includes('laundryCost')
+							? ', dan paket layanan.'
+							: invalidCols.length > 2 && invalidCols.includes('serviceCards')
+							? ', paket layanan'
+							: invalidCols.length === 2 && invalidCols.includes('serviceCards')
+							? ' paket layanan'
+							: invalidCols.includes('serviceCards')
+							? ' paket layanan.'
+							: ''}
+						{invalidCols.length > 1 && invalidCols.includes('laundryCost')
+							? ', dan harga paket yang dipilih.'
+							: invalidCols.includes('laundryCost')
+							? ' harga paket yang dipilih.'
+							: ''}
+					</p>
+				</div>
+			) : (
+				''
+			)}
+			<button
+				className="button-color w-full max-w-xs text-[15px] mt-6 mb-10"
+				onClick={() => confirmOrder()}
+			>
 				Bikin Pesanan
 			</button>
-
 			<div className="w-full h-20 xl:h-16" />
 		</main>
 	);
