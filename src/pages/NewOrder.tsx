@@ -230,7 +230,7 @@ function NewOrder() {
 
 		const orderData = {
 			customer: { id: store.customer.id, name: store.customer.name },
-			start_date: startDate,
+			start_date: startDate?.toJSON(),
 			services: confirmedServices,
 			add_fees: addFees,
 			net_price: netPrice,

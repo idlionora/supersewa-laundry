@@ -1,23 +1,42 @@
-import { useState } from 'react';
+import { OrdersDataType, columns } from "../components/order-table/columns";
+import { DataTable } from "../components/order-table/data-table";
+import orders from "../../data/orders.json"
+import { useMemo } from "react";
+
+function parseOrdersData () {
+	const data: OrdersDataType[] = [
+		{
+			order_id: 0,
+			customer_name: '',
+			img: '',
+			start_date: new Date(),
+			net_price: 0,
+			order_paid: false,
+			order_status: 'mengantri',
+		},
+	];
+	orders.data.forEach(({order_id, customer_name, img, start_date, net_price, order_paid, order_status}) => data.unshift({
+		order_id: order_id,
+		customer_name: customer_name,
+		img: img,
+		start_date: new Date(start_date),
+		net_price: parseInt(net_price),
+		order_paid: order_paid,
+		order_status: order_status
+	}))
+	data.splice(data.length - 1);
+	return data
+}
+
 function Orders() {
-	const [number, setNumber] = useState(0)
+	const ordersData: OrdersDataType[] = useMemo(() => parseOrdersData(), [])
+
 	return (
-		<main>
-			
-			<h1 className="text-3xl">path: orders</h1>
-			<h1>{number}</h1>
-			<button
-				className="button-color"
-				onClick={() => setNumber((prevNumber) => prevNumber + 1)}
-			>
-				Click to add numbers
-			</button>
-			<button
-				className="button-grey ml-5"
-				onClick={() => setNumber((prevNumber) => prevNumber - 1)}
-			>
-				Click to decrease numbers
-			</button>
+		<main className="page-container pt-4">
+			<section className="page-section my-4">
+					<DataTable columns={columns} data={ordersData} />
+			</section>
+			<div className="w-full h-20 xl:h-16" />
 		</main>
 	);
 }

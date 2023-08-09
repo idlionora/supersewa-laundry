@@ -179,6 +179,25 @@
     background-color: rgb(243, 244, 246);
 }
 
+.button-pagination {
+    padding: 8px 12px;
+    background-color: white;
+    font-weight: 600;
+    color: var(--color-theme-blue);
+    border: 1px solid transparent;
+}
+
+.button-pagination:hover {
+    background-color: #e2e8f0;
+    border-color: #cbd5e1;
+}
+
+.button-pagination:disabled {
+    color: #6b7280;
+    background-color: white;
+    border-color: transparent;
+}
+
 .text-clickable {
     cursor: pointer;
     font-size: 0.875rem;
