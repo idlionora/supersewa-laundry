@@ -12,9 +12,9 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select.tsx';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover.tsx';
-import useTrackedOrdersFilterStore from '../../stores/ordersFilterStore.tsx';
-import iconAdjust from '../../assets/icon-adjustment.svg'
-import iconSearch from '../../assets/icon-search.svg'
+import useTrackedOrdersFilterStore from '../../stores/ordersFilterStore2.tsx';
+import iconAdjust from '../../assets/icon-adjustment.svg';
+import iconSearch from '../../assets/icon-search.svg';
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
@@ -22,10 +22,10 @@ interface DataTableProps<TData, TValue> {
 }
 
 export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
-	const filterStore = useTrackedOrdersFilterStore()
+	const filterStore = useTrackedOrdersFilterStore();
 	const [sorting, setSorting] = useState<SortingState>([]);
 	const [contentNum, setContentNum] = useState<string>('15');
-	const [globalFilter, setGlobalFilter] = useState('')
+	const [globalFilter, setGlobalFilter] = useState('');
 	const table = useReactTable({
 		data,
 		columns,
@@ -36,9 +36,9 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 		getFilteredRowModel: getFilteredRowModel(),
 		state: {
 			sorting,
-			globalFilter
+			globalFilter,
 		},
-		onGlobalFilterChange: setGlobalFilter
+		onGlobalFilterChange: setGlobalFilter,
 	});
 
 	useEffect(() => {
@@ -52,7 +52,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 				<label htmlFor="orders-name-filter" className="text-sm block mb-2 font-medium">
 					Filter Pesanan
 				</label>
-				<div className="w-full flex items-center gap-3.5">
+				<div className="w-full flex flex-col min-[575px]:flex-row items-center gap-3.5">
 					<div className="w-full relative">
 						<input
 							type="text"
@@ -63,20 +63,42 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 							onChange={(e) => setGlobalFilter(e.target.value)}
 							placeholder="cari pelanggan, total harga, atau status"
 						/>
-						<div className='absolute top-0 left-0 h-[2.75rem] flex items-center'>
-							<img src={iconSearch} alt="" className='w-5 ml-2 invert contrast-[20%]'/>
+						<div className="absolute top-0 left-0 h-[2.75rem] flex items-center">
+							<img
+								src={iconSearch}
+								alt=""
+								className="w-5 ml-2 invert contrast-[20%]"
+							/>
 						</div>
 					</div>
 					<Popover>
 						<PopoverTrigger asChild>
-							<button className="button-gray flex justify-center text-[13px] px-5 gap-1">
+							<button className="button-gray flex justify-center w-40 min-[575px]:w-fit text-[13px] px-5 gap-1">
 								<img src={iconAdjust} alt="" className="w-5 h-5 opacity-80" />
 								<p className="pr-1.5">Kategori</p>
 							</button>
 						</PopoverTrigger>
 						<PopoverContent className="w-36 py-1.5 px-2 flex flex-col gap-2.5">
-							<button className={`button-gray py-3 w-full ${filterStore.laundryListOnly? 'ring-2 ring-green-500': ''}`} onClick={() => filterStore.setLaundryListOnly(!filterStore.laundryListOnly) }>Masih Proses</button>
-							<button className={`button-gray py-3 w-full ${filterStore.unpaidListOnly? 'ring-2 ring-green-500' : ''}`} onClick={() => filterStore.setUnpaidListOnly(!filterStore.unpaidListOnly)}>Belum Lunas</button>
+							<button
+								className={`button-gray py-3 w-full ${
+									filterStore.laundryListOnly ? 'ring-2 ring-green-500' : ''
+								}`}
+								onClick={() =>
+									filterStore.setLaundryListOnly(!filterStore.laundryListOnly)
+								}
+							>
+								Masih Proses
+							</button>
+							<button
+								className={`button-gray py-3 w-full ${
+									filterStore.unpaidListOnly ? 'ring-2 ring-green-500' : ''
+								}`}
+								onClick={() =>
+									filterStore.setUnpaidListOnly(!filterStore.unpaidListOnly)
+								}
+							>
+								Belum Lunas
+							</button>
 						</PopoverContent>
 					</Popover>
 				</div>
@@ -170,7 +192,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 													: flexRender(
 															header.column.columnDef.header,
 															header.getContext()
-												)}
+													)}
 											</TableHead>
 										);
 									})}

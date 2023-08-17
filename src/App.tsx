@@ -28,6 +28,7 @@ function App() {
 		to_be_sent: 'Daftar Kirim',
 		sent: 'Penjemputan',
 		new_order: 'Bikin Pesanan',
+		orders2: 'Daftar Pesanan',
 	};
 	const signIn = true;
 	// check if signed in, redirect to sign in form if not
@@ -42,13 +43,12 @@ function App() {
 	const pathnames: string[] = location.pathname
 		.split('/')
 		.filter((path) => path !== '')
-		.filter((path) => !path.match(/\d+/));
+		.filter((path) => !path.match(/^\d+/));
 	const pathNameKey: string = pathnames[pathnames.length - 1].replace(/-/g, '_');
 	const nameFromList = pageNameList[pathNameKey as keyof typeof pageNameList];
 	if (nameFromList && pageName !== nameFromList) {
 		setPageName(nameFromList);
 	}
-
 	console.log(pathNameKey);
 
 	return (

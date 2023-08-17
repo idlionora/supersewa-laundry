@@ -19,6 +19,6 @@ const useOrdersFilterStore = create<IOrdersFilter>((set) => ({
     }
 }))
 
-const useTrackedOrdersFilterStore = createTrackedSelector(useOrdersFilterStore);
+const useTrackedOrdersFilterStore2 = createTrackedSelector(useOrdersFilterStore);
 
-export default useTrackedOrdersFilterStore;
+export default useTrackedOrdersFilterStore2;

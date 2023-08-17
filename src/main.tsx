@@ -8,6 +8,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.tsx';
 import Home from './pages/Home.tsx';
+import Orders2 from './pages/Orders2.tsx';
 import Orders from './pages/Orders.tsx';
 import NewOrder from './pages/NewOrder.tsx';
 import DummyPage from './pages/DummyPage.tsx';
@@ -17,8 +18,9 @@ const router = createBrowserRouter(
 	createRoutesFromElements(
 		<Route path="/" element={<App />}>
 			<Route path="orders" element={<Home />}>
-				<Route index element={<Orders />} />
+				<Route index element={<Orders2 />} />
 			</Route>
+			<Route path='orders2' element={<Orders/>}/>
 			<Route path="new-order" element={<NewOrder />} />
 
 			<Route path="items" element={<DummyPage />} />
