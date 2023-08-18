@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import {
 	Select,
 	SelectContent,
@@ -6,149 +6,47 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '../components/ui/select.tsx';
-import orders from '../../data/orders.json';
 import iconSearch from '../assets/icon-search.svg';
+import useTrackedOrdersPageStore from '../stores/ordersPageStore.tsx';
+import { OrdersDataType } from '../stores/ordersPageStore.tsx';
+import { useNavigate } from 'react-router-dom';
 
-type OrdersDataType = {
-	order_id: number;
-	customer_name: string;
-	img: string;
-	start_date: Date;
-	net_price: number;
-	order_paid: boolean;
-	order_status: string;
+type OrderPageType = {
+	cardsCategory: string;
 };
 
-function parseOrdersData() {
-	const data: OrdersDataType[] = [
-		{
-			order_id: 0,
-			customer_name: '',
-			img: '',
-			start_date: new Date(),
-			net_price: 0,
-			order_paid: false,
-			order_status: 'sedang cuci',
-		},
-	];
-	orders.data.forEach(
-		({ order_id, customer_name, img, start_date, net_price, order_paid, order_status }) =>
-			data.unshift({
-				order_id: order_id,
-				customer_name: customer_name,
-				img: img,
-				start_date: new Date(start_date),
-				net_price: parseInt(net_price),
-				order_paid: order_paid,
-				order_status: order_status,
-			})
-	);
-	data.splice(data.length - 1);
-	return data;
-}
+function Orders({ cardsCategory }: OrderPageType) {
+	const store = useTrackedOrdersPageStore();
+	const navigate = useNavigate();
 
-function parseActiveData(ordersData: OrdersDataType[]) {
-	const activeData: OrdersDataType[] = [
-		{
-			order_id: 0,
-			customer_name: '',
-			img: '',
-			start_date: new Date(),
-			net_price: 0,
-			order_paid: false,
-			order_status: 'sedang cuci',
-		},
-	];
-	const inWashIndexes = [99999];
-	const picklistIndexes = [99999];
-	const unpaidIndexes = [99999];
-
-	ordersData.forEach(({ order_paid, order_status }, index) => {
-		if (order_status === 'Sedang cuci') {
-			inWashIndexes.push(index);
-			return;
-		}
-
-		if (order_status === 'Tunggu jemput') {
-			picklistIndexes.push(index);
-			return;
-		}
-
-		if (!order_paid) {
-			unpaidIndexes.push(index);
-		}
-	});
-
-	function addToActiveData(indexArray: number[]) {
-		indexArray.splice(0, 1);
-		indexArray.forEach((index) => {
-			activeData.push(ordersData[index]);
-		});
-	}
-
-	addToActiveData(inWashIndexes);
-	addToActiveData(picklistIndexes);
-	addToActiveData(unpaidIndexes);
-	activeData.splice(0, 1);
-
-	return activeData;
-}
-
-function parseUnpaidOrdersData(ordersData: OrdersDataType[]) {
-	const unpaidData: OrdersDataType[] = [
-		{
-			order_id: 0,
-			customer_name: '',
-			img: '',
-			start_date: new Date(),
-			net_price: 0,
-			order_paid: false,
-			order_status: 'sedang cuci',
-		},
-	];
-	ordersData.forEach((order) => {
-		if (!order.order_paid) {
-			unpaidData.push(order);
-		}
-	});
-	unpaidData.splice(0, 1);
-	return unpaidData;
-}
-
-function Orders() {
-	const allOrdersData: OrdersDataType[] = useMemo(() => parseOrdersData(), []);
-	const activeOrdersData: OrdersDataType[] = useMemo(
-		() => parseActiveData(allOrdersData),
-		[allOrdersData]
-	);
-	const unpaidOrdersData: OrdersDataType[] = useMemo(
-		() => parseUnpaidOrdersData(allOrdersData),
-		[allOrdersData]
-	);
-
-	const [currentActiveData, setCurrentActiveData] = useState<OrdersDataType[]>(activeOrdersData);
+	const [currentActiveData, setCurrentActiveData] = useState<OrdersDataType[]>(store.activeOrdersData);
+	const [currentDataMarker, setCurrentDataMarker] = useState('Masih Proses')
 	const [globalFilter, setGlobalFilter] = useState('');
-	const [dataCategory, setDataCategory] = useState('Masih Proses');
-	const [contentNum, setContentNum] = useState<string>('10');
-	const [maxPageNum, setMaxPageNum] = useState<number>(Math.ceil(activeOrdersData.length / 10));
+	const [maxPageNum, setMaxPageNum] = useState(1);
 	const [pageNum, setPageNum] = useState<number>(1);
 
+	if (currentDataMarker !== cardsCategory && cardsCategory === 'Semua Data') {
+		setCurrentActiveData(store.allOrdersData)
+		setCurrentDataMarker('Semua Data')
+		setMaxPageNum(Math.ceil(store.allOrdersData.length / parseInt(store.contentNum)));
+	}
+	if (currentDataMarker !== cardsCategory && cardsCategory === 'Masih Proses') {
+		setCurrentActiveData(store.activeOrdersData)
+		setCurrentDataMarker('Masih Proses')
+		setMaxPageNum(Math.ceil(store.activeOrdersData.length / parseInt(store.contentNum)));
+	}
+	if (currentDataMarker !== cardsCategory && cardsCategory === 'Belum Bayar') {
+		setCurrentActiveData(store.unpaidOrdersData)
+		setCurrentDataMarker('Belum Bayar')
+		setMaxPageNum(Math.ceil(store.unpaidOrdersData.length / parseInt(store.contentNum)));
+	}
+
 	useEffect(() => {
-		function setDataStates(ordersData: OrdersDataType[]) {
-			setCurrentActiveData(ordersData);
-			setMaxPageNum(Math.ceil(ordersData.length / parseInt(contentNum)));
+		const latestMaxPageNum = Math.ceil(currentActiveData.length/ parseInt(store.contentNum))
+		if (maxPageNum !== latestMaxPageNum) {
+			setMaxPageNum(latestMaxPageNum)
 		}
-
-		if (dataCategory === 'Semua Data') setDataStates(allOrdersData);
-
-		if (dataCategory === 'Masih Proses') setDataStates(activeOrdersData);
-
-		if (dataCategory === 'Belum Bayar') setDataStates(unpaidOrdersData);
-
-        setPageNum(1)
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [dataCategory, contentNum]);
-	console.log(maxPageNum);
+	}, [store.contentNum])
 
 	return (
 		<main className="page-container pt-4">
@@ -177,7 +75,18 @@ function Orders() {
 							</div>
 						</div>
 						<div className="flex items-center">
-							<Select value={dataCategory} onValueChange={setDataCategory}>
+							<Select
+								value={cardsCategory}
+								onValueChange={(category) => {
+									if (category === 'Semua Data') {
+										navigate('/orders/all');
+									} else if (category === 'Masih Proses') {
+										navigate('/orders/ongoing');
+									} else {
+										navigate('/orders/unpaid');
+									}
+								}}
+							>
 								<SelectTrigger className="bg-white whitespace-nowrap gap-2.5 px-2.5 text-[0.875rem] focus:ring-0 focus:outline-offset-[-1px] focus:outline-green-600 hover:bg-slate-50">
 									<SelectValue />
 								</SelectTrigger>
@@ -192,7 +101,10 @@ function Orders() {
 				</div>
 				<div className="w-full mb-4 px-2.5 min-[575px]:px-0 flex flex-col min-[365px]:flex-row gap-y-4 justify-between items-center">
 					<div className="flex items-center min-[365px]:justify-end mt-0">
-						<Select value={contentNum} onValueChange={setContentNum}>
+						<Select
+							value={store.contentNum}
+							onValueChange={store.setContentNum}
+						>
 							<SelectTrigger className="w-16 gap-1.5 px-2.5 bg-white h-[2.344rem] text-[0.8125rem] focus:ring-0 focus:outline-offset-0 focus:outline-amber-500">
 								<SelectValue />
 							</SelectTrigger>
