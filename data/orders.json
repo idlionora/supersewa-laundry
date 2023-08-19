@@ -9,7 +9,8 @@
       "start_date": "2023-07-16T17:00:00.000Z",
       "net_price": "150000",
       "order_paid": true,
-      "order_status": "selesai"
+      "order_status": "Pesanan selesai",
+	  "method_payment": "Transfer"
     },
     {
       "order_id": 2,
@@ -18,7 +19,8 @@
       "start_date": "2023-07-16T17:00:00.000Z",
       "net_price": "160000",
       "order_paid": true,
-      "order_status": "selesai"
+      "order_status": "Pesanan selesai",
+	  "method_payment": "Transfer"
     },
     {
       "order_id": 3,
@@ -27,7 +29,8 @@
       "start_date": "2023-07-16T17:00:00.000Z",
       "net_price": "165000",
       "order_paid": true,
-      "order_status": "selesai"
+      "order_status": "Pesanan selesai",
+	  "method_payment": "Transfer"
     },
     {
       "order_id": 4,
@@ -36,7 +39,8 @@
       "start_date": "2023-07-18T17:00:00.000Z",
       "net_price": "85000",
       "order_paid": true,
-      "order_status": "selesai"
+      "order_status": "Pesanan selesai",
+	  "method_payment": "Transfer"
     },
     {
       "order_id": 5,
@@ -45,7 +49,8 @@
       "start_date": "2023-07-19T17:00:00.000Z",
       "net_price": "170000",
       "order_paid": true,
-      "order_status": "selesai"
+      "order_status": "Pesanan selesai",
+	  "method_payment": "Transfer"
     },
     {
       "order_id": 6,
@@ -54,7 +59,8 @@
       "start_date": "2023-07-20T17:00:00.000Z",
       "net_price": "220000",
       "order_paid": true,
-      "order_status": "selesai"
+      "order_status": "Pesanan selesai",
+	  "method_payment": "Transfer"
     },
     {
       "order_id": 7,
@@ -63,7 +69,8 @@
       "start_date": "2023-07-21T17:00:00.000Z",
       "net_price": "80000",
       "order_paid": true,
-      "order_status": "selesai"
+      "order_status": "Pesanan selesai",
+	  "method_payment": "Transfer"
     },
     {
       "order_id": 8,
@@ -72,7 +79,8 @@
       "start_date": "2023-07-21T17:00:00.000Z",
       "net_price": "250000",
       "order_paid": true,
-      "order_status": "selesai"
+      "order_status": "Pesanan selesai",
+	  "method_payment": "Tunai"
     },
     {
       "order_id": 9,
@@ -81,7 +89,8 @@
       "start_date": "2023-07-21T17:00:00.000Z",
       "net_price": "200000",
       "order_paid": true,
-      "order_status": "selesai"
+      "order_status": "Pesanan selesai",
+	  "method_payment": "Transfer"
     },
     {
       "order_id": 10,
@@ -90,7 +99,8 @@
       "start_date": "2023-07-21T17:00:00.000Z",
       "net_price": "160000",
       "order_paid": true,
-      "order_status": "selesai"
+      "order_status": "Pesanan selesai",
+	  "method_payment": "Tunai"
     },
     {
       "order_id": 11,
@@ -99,7 +109,8 @@
       "start_date": "2023-07-22T17:00:00.000Z",
       "net_price": "165000",
       "order_paid": true,
-      "order_status": "selesai"
+      "order_status": "Pesanan selesai",
+	  "method_payment": "Transfer"
     },
     {
       "order_id": 12,
@@ -108,7 +119,8 @@
       "start_date": "2023-07-22T17:00:00.000Z",
       "net_price": "100000",
       "order_paid": true,
-      "order_status": "selesai"
+      "order_status": "Pesanan selesai",
+	  "method_payment": "Transfer"
     },
     {
       "order_id": 13,
@@ -117,7 +129,8 @@
       "start_date": "2023-07-22T17:00:00.000Z",
       "net_price": "100000",
       "order_paid": true,
-      "order_status": "selesai"
+      "order_status": "Pesanan selesai",
+	  "method_payment": "Transfer"
     },
     {
       "order_id": 14,
@@ -126,7 +139,8 @@
       "start_date": "2023-07-23T17:00:00.000Z",
       "net_price": "170000",
       "order_paid": true,
-      "order_status": "selesai"
+      "order_status": "Pesanan selesai",
+	  "method_payment": "Tunai"
     },
     {
       "order_id": 15,
@@ -135,7 +149,8 @@
       "start_date": "2023-07-24T17:00:00.000Z",
       "net_price": "130000",
       "order_paid": true,
-      "order_status": "selesai"
+      "order_status": "Pesanan selesai",
+	  "method_payment": "Transfer"
     },
     {
       "order_id": 16,
@@ -144,7 +159,8 @@
       "start_date": "2023-07-25T17:00:00.000Z",
       "net_price": "85000",
       "order_paid": true,
-      "order_status": "selesai"
+      "order_status": "Pesanan selesai",
+	  "method_payment": "Transfer"
     },
     {
       "order_id": 17,
@@ -153,7 +169,8 @@
       "start_date": "2023-07-26T17:00:00.000Z",
       "net_price": "210000",
       "order_paid": true,
-      "order_status": "selesai"
+      "order_status": "Pesanan selesai",
+	  "method_payment": "Transfer"
     },
     {
       "order_id": 18,
@@ -162,7 +179,8 @@
       "start_date": "2023-07-27T17:00:00.000Z",
       "net_price": "110000",
       "order_paid": true,
-      "order_status": "selesai"
+      "order_status": "Pesanan selesai",
+	  "method_payment": "Tunai"
     },
     {
       "order_id": 19,
@@ -171,7 +189,8 @@
       "start_date": "2023-07-28T17:00:00.000Z",
       "net_price": "105000",
       "order_paid": true,
-      "order_status": "selesai"
+      "order_status": "Pesanan selesai",
+	  "method_payment": "Transfer"
     },
     {
       "order_id": 20,
@@ -180,7 +199,8 @@
       "start_date": "2023-07-28T17:00:00.000Z",
       "net_price": "160000",
       "order_paid": true,
-      "order_status": "selesai"
+      "order_status": "Pesanan selesai",
+	  "method_payment": "Transfer"
     },
     {
       "order_id": 21,
@@ -189,7 +209,8 @@
       "start_date": "2023-07-28T17:00:00.000Z",
       "net_price": "110000",
       "order_paid": true,
-      "order_status": "selesai"
+      "order_status": "Pesanan selesai",
+	  "method_payment": "Tunai"
     },
     {
       "order_id": 22,
@@ -198,7 +219,8 @@
       "start_date": "2023-07-28T17:00:00.000Z",
       "net_price": "80000",
       "order_paid": true,
-      "order_status": "selesai"
+      "order_status": "Pesanan selesai",
+	  "method_payment": "Transfer"
     },
     {
       "order_id": 23,
@@ -207,7 +229,8 @@
       "start_date": "2023-07-29T17:00:00.000Z",
       "net_price": "150000",
       "order_paid": true,
-      "order_status": "selesai"
+      "order_status": "Pesanan selesai",
+	  "method_payment": "Transfer"
     },
     {
       "order_id": 24,
@@ -216,7 +239,8 @@
       "start_date": "2023-07-29T17:00:00.000Z",
       "net_price": "200000",
       "order_paid": true,
-      "order_status": "selesai"
+      "order_status": "Pesanan selesai",
+	  "method_payment": "Transfer"
     },
     {
       "order_id": 25,
@@ -225,7 +249,8 @@
       "start_date": "2023-07-30T17:00:00.000Z",
       "net_price": "60000",
       "order_paid": true,
-      "order_status": "selesai"
+      "order_status": "Pesanan selesai",
+	  "method_payment": "Transfer"
     },
     {
       "order_id": 26,
@@ -234,7 +259,8 @@
       "start_date": "2023-07-31T17:00:00.000Z",
       "net_price": "210000",
       "order_paid": true,
-      "order_status": "selesai"
+      "order_status": "Pesanan selesai",
+	  "method_payment": "Transfer"
     },
     {
       "order_id": 27,
@@ -243,7 +269,8 @@
       "start_date": "2023-08-03T17:00:00.000Z",
       "net_price": "100000",
       "order_paid": true,
-      "order_status": "tunggu jemput"
+      "order_status": "Tunggu jemput",
+	  "method_payment": "Transfer"
     },
     {
       "order_id": 28,
@@ -252,7 +279,8 @@
       "start_date": "2023-08-03T17:00:00.000Z",
       "net_price": "180000",
       "order_paid": true,
-      "order_status": "tunggu jemput"
+      "order_status": "Tunggu jemput",
+	  "method_payment": "Tunai"
     },
     {
       "order_id": 29,
@@ -261,7 +289,8 @@
       "start_date": "2023-08-04T17:00:00.000Z",
       "net_price": "70000",
       "order_paid": true,
-      "order_status": "tunggu jemput"
+      "order_status": "Tunggu jemput",
+	  "method_payment": "Transfer"
     },
     {
       "order_id": 30,
@@ -270,7 +299,8 @@
       "start_date": "2023-08-05T17:00:00.000Z",
       "net_price": "160000",
       "order_paid": false,
-      "order_status": "sedang cuci"
+      "order_status": "Sedang cuci",
+	  "method_payment": "Transfer"
     },
     {
       "order_id": 31,
@@ -279,7 +309,8 @@
       "start_date": "2023-08-05T17:00:00.000Z",
       "net_price": "85000",
       "order_paid": false,
-      "order_status": "sedang cuci"
+      "order_status": "Sedang cuci",
+	  "method_payment": "Transfer"
     },
     {
       "order_id": 32,
@@ -288,7 +319,8 @@
       "start_date": "2023-08-04T17:00:00.000Z",
       "net_price": "85000",
       "order_paid": false,
-      "order_status": "selesai"
+      "order_status": "Pesanan selesai",
+	  "method_payment": "Transfer"
     },
     {
       "order_id": 33,
@@ -297,7 +329,8 @@
       "start_date": "2023-08-03T17:00:00.000Z",
       "net_price": "85000",
       "order_paid": true,
-      "order_status": "selesai"
+      "order_status": "Pesanan selesai",
+	  "method_payment": "Tunai"
     },
     {
       "order_id": 34,
@@ -306,7 +339,8 @@
       "start_date": "2023-08-05T17:00:00.000Z",
       "net_price": "60000",
       "order_paid": false,
-      "order_status": "sedang cuci"
+      "order_status": "Sedang cuci",
+	  "method_payment": "Transfer"
     },
     {
       "order_id": 35,
@@ -315,7 +349,8 @@
       "start_date": "2023-08-06T17:00:00.000Z",
       "net_price": "85000",
       "order_paid": false,
-      "order_status": "sedang cuci"
+      "order_status": "Sedang cuci",
+	  "method_payment": "Tunai"
     }
   ]
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
 	Select,
 	SelectContent,
@@ -7,46 +7,72 @@ import {
 	SelectValue,
 } from '../components/ui/select.tsx';
 import iconSearch from '../assets/icon-search.svg';
-import useTrackedOrdersPageStore from '../stores/ordersPageStore.tsx';
-import { OrdersDataType } from '../stores/ordersPageStore.tsx';
-import { useNavigate } from 'react-router-dom';
+import useTrackedOrdersPageStore, { OrderDataType } from '../stores/ordersPageStore.tsx';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import OrdersCardComp from '../components/OrdersCardComp.tsx';
 
 type OrderPageType = {
 	cardsCategory: string;
 };
 
 function Orders({ cardsCategory }: OrderPageType) {
+	const [searchParams, setSearchParams] = useSearchParams();
 	const store = useTrackedOrdersPageStore();
 	const navigate = useNavigate();
 
-	const [currentActiveData, setCurrentActiveData] = useState<OrdersDataType[]>(store.activeOrdersData);
-	const [currentDataMarker, setCurrentDataMarker] = useState('Masih Proses')
+	const [currentActiveDatas, setCurrentActiveDatas] = useState<OrderDataType[]>(
+		store.activeOrderDatas
+	);
+	const [currentDataMarker, setCurrentDataMarker] = useState('Masih Proses');
+	const [filteredActiveDatas, setFilteredActiveDatas] = useState<OrderDataType[] | null>(null);
 	const [globalFilter, setGlobalFilter] = useState('');
-	const [maxPageNum, setMaxPageNum] = useState(1);
-	const [pageNum, setPageNum] = useState<number>(1);
+	const [maxPageNum, setMaxPageNum] = useState(10);
+	const currentPage =
+		parseInt(searchParams.get('page') ?? '1') > 0
+			? parseInt(searchParams.get('page') ?? '1')
+			: 1;
 
 	if (currentDataMarker !== cardsCategory && cardsCategory === 'Semua Data') {
-		setCurrentActiveData(store.allOrdersData)
-		setCurrentDataMarker('Semua Data')
-		setMaxPageNum(Math.ceil(store.allOrdersData.length / parseInt(store.contentNum)));
+		setCurrentActiveDatas(store.allOrderDatas);
+		setCurrentDataMarker('Semua Data');
+		setMaxPageNum(Math.ceil(store.allOrderDatas.length / parseInt(store.contentNum)));
 	}
 	if (currentDataMarker !== cardsCategory && cardsCategory === 'Masih Proses') {
-		setCurrentActiveData(store.activeOrdersData)
-		setCurrentDataMarker('Masih Proses')
-		setMaxPageNum(Math.ceil(store.activeOrdersData.length / parseInt(store.contentNum)));
+		setCurrentActiveDatas(store.activeOrderDatas);
+		setCurrentDataMarker('Masih Proses');
+		setMaxPageNum(Math.ceil(store.activeOrderDatas.length / parseInt(store.contentNum)));
 	}
 	if (currentDataMarker !== cardsCategory && cardsCategory === 'Belum Bayar') {
-		setCurrentActiveData(store.unpaidOrdersData)
-		setCurrentDataMarker('Belum Bayar')
-		setMaxPageNum(Math.ceil(store.unpaidOrdersData.length / parseInt(store.contentNum)));
+		setCurrentActiveDatas(store.unpaidOrderDatas);
+		setCurrentDataMarker('Belum Bayar');
+		setMaxPageNum(Math.ceil(store.unpaidOrderDatas.length / parseInt(store.contentNum)));
 	}
 
 	useEffect(() => {
-		const latestMaxPageNum = Math.ceil(currentActiveData.length/ parseInt(store.contentNum))
+		const latestMaxPageNum = Math.ceil(currentActiveDatas.length / parseInt(store.contentNum));
 		if (maxPageNum !== latestMaxPageNum) {
-			setMaxPageNum(latestMaxPageNum)
+			setMaxPageNum(latestMaxPageNum);
 		}
-	}, [store.contentNum])
+		if (currentPage !== 1) {
+			setSearchParams({ page: '1' });
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [store.contentNum]);
+
+	const splicePageDatas = (datas: OrderDataType[]) => {
+		const contentPerPage: number = parseInt(store.contentNum);
+		const splicedCurrentDatas: OrderDataType[] = [...datas];
+
+		if (currentPage > 1) {
+			splicedCurrentDatas.splice(0, contentPerPage * (currentPage - 1));
+		}
+
+		if (splicedCurrentDatas.length > contentPerPage) {
+			splicedCurrentDatas.splice(contentPerPage);
+		}
+
+		return splicedCurrentDatas;
+	};
 
 	return (
 		<main className="page-container pt-4">
@@ -101,10 +127,7 @@ function Orders({ cardsCategory }: OrderPageType) {
 				</div>
 				<div className="w-full mb-4 px-2.5 min-[575px]:px-0 flex flex-col min-[365px]:flex-row gap-y-4 justify-between items-center">
 					<div className="flex items-center min-[365px]:justify-end mt-0">
-						<Select
-							value={store.contentNum}
-							onValueChange={store.setContentNum}
-						>
+						<Select value={store.contentNum} onValueChange={store.setContentNum}>
 							<SelectTrigger className="w-16 gap-1.5 px-2.5 bg-white h-[2.344rem] text-[0.8125rem] focus:ring-0 focus:outline-offset-0 focus:outline-amber-500">
 								<SelectValue />
 							</SelectTrigger>
@@ -119,24 +142,26 @@ function Orders({ cardsCategory }: OrderPageType) {
 					<div className="shrink-0 flex items-center border border-slate-200 rounded overflow-hidden bg-slate-200 gap-px">
 						<button
 							className="button-pagination rounded-l"
-							onClick={() => setPageNum((prevNum) => prevNum - 1)}
-							disabled={pageNum === 1}
+							onClick={() => {
+								setSearchParams({
+									page: (currentPage - 1).toString(),
+								});
+							}}
+							disabled={currentPage === 1}
 						>
 							←
 						</button>
-						{pageNum > 1 ? (
+						{currentPage > 1 ? (
 							<button
 								className="button-pagination"
-								onClick={() => {
-									setPageNum(1);
-								}}
+								onClick={() => setSearchParams({ page: '1' })}
 							>
 								1
 							</button>
 						) : (
 							''
 						)}
-						{pageNum > 2 ? (
+						{currentPage > 2 ? (
 							<div className="px-3 py-2 bg-white border border-transparent font-semibold">
 								...
 							</div>
@@ -144,19 +169,19 @@ function Orders({ cardsCategory }: OrderPageType) {
 							''
 						)}
 						<div className="px-3 py-2 bg-theme-blue text-white border border-transparent font-semibold">
-							{pageNum}
+							{currentPage}
 						</div>
-						{pageNum < maxPageNum - 1 && maxPageNum > 2 ? (
+						{currentPage < maxPageNum - 1 && maxPageNum > 2 ? (
 							<div className="px-3 py-2 bg-white border border-transparent font-semibold">
 								...
 							</div>
 						) : (
 							''
 						)}
-						{pageNum < maxPageNum ? (
+						{currentPage < maxPageNum ? (
 							<button
 								className="button-pagination"
-								onClick={() => setPageNum(maxPageNum)}
+								onClick={() => setSearchParams({ page: maxPageNum.toString() })}
 							>
 								{maxPageNum}
 							</button>
@@ -165,12 +190,49 @@ function Orders({ cardsCategory }: OrderPageType) {
 						)}
 						<button
 							className="button-pagination rounded-r"
-							onClick={() => setPageNum((prevNum) => prevNum + 1)}
-							disabled={pageNum == maxPageNum}
+							onClick={() => setSearchParams({ page: (currentPage + 1).toString() })}
+							disabled={currentPage >= maxPageNum}
 						>
 							→
 						</button>
 					</div>
+				</div>
+				<div className="card-white w-full bg-gray-300 flex flex-col gap-y-0.5">
+					{filteredActiveDatas ? (
+						splicePageDatas(filteredActiveDatas).map((data, index) => (
+							<React.Fragment key={`ordercard-${index}`}>
+								<OrdersCardComp
+									data={data}
+									childNum={
+										index === 0
+											? 'first'
+											: index ===
+											splicePageDatas(filteredActiveDatas).length - 1
+											? 'last'
+											: index.toString()
+									}
+								/>
+							</React.Fragment>
+						))
+					) : currentActiveDatas[0].order_id === 0 ? (
+						<p className="w-full text-center p-4">Data tidak ditemukan</p>
+					) : (
+						splicePageDatas(currentActiveDatas).map((data, index) => (
+							<React.Fragment key={`ordercard-${index}`}>
+								<OrdersCardComp
+									data={data}
+									childNum={
+										index === 0
+											? 'first'
+											: index ===
+											splicePageDatas(currentActiveDatas).length - 1
+											? 'last'
+											: index.toString()
+									}
+								/>
+							</React.Fragment>
+						))
+					)}
 				</div>
 			</section>
 			<div className="w-full h-20 xl-h-16" />

@@ -20,10 +20,13 @@ const router = createBrowserRouter(
 			<Route path="orders2" element={<Home />}>
 				<Route index element={<Orders2 />} />
 			</Route>
-			<Route path="orders" element={<Orders cardsCategory="Masih Proses" />} />
-			<Route path="orders/all" element={<Orders cardsCategory="Semua Data" />} />
-			<Route path="orders/ongoing" element={<Orders cardsCategory="Masih Proses" />} />
-			<Route path="orders/unpaid" element={<Orders cardsCategory="Belum Bayar" />} />
+			<Route path="orders">
+				<Route index element={<Orders cardsCategory="Masih Proses" />} />
+				<Route path="all" element={<Orders cardsCategory="Semua Data" />} />
+				<Route path="ongoing" element={<Orders cardsCategory="Masih Proses" />} />
+				<Route path="unpaid" element={<Orders cardsCategory="Belum Bayar" />} />
+			</Route>
+
 			<Route path="new-order" element={<NewOrder />} />
 
 			<Route path="items" element={<DummyPage />} />

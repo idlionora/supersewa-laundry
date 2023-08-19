@@ -1,8 +1,9 @@
 import { createTrackedSelector } from 'react-tracked';
 import { create } from 'zustand';
 import orders from '../../data/orders.json';
+import orderDataDummy from '../lib/orderDataDummy';
 
-export type OrdersDataType = {
+export type OrderDataType = {
 	order_id: number;
 	customer_name: string;
 	img: string;
@@ -10,22 +11,22 @@ export type OrdersDataType = {
 	net_price: number;
 	order_paid: boolean;
 	order_status: string;
+	method_payment: string;
 };
 
 function parseOrdersData() {
-	const data: OrdersDataType[] = [
-		{
-			order_id: 0,
-			customer_name: '',
-			img: '',
-			start_date: new Date(),
-			net_price: 0,
-			order_paid: false,
-			order_status: 'sedang cuci',
-		},
-	];
+	const data: OrderDataType[] = [...orderDataDummy];
 	orders.data.forEach(
-		({ order_id, customer_name, img, start_date, net_price, order_paid, order_status }) =>
+		({
+			order_id,
+			customer_name,
+			img,
+			start_date,
+			net_price,
+			order_paid,
+			order_status,
+			method_payment,
+		}) =>
 			data.unshift({
 				order_id: order_id,
 				customer_name: customer_name,
@@ -34,6 +35,7 @@ function parseOrdersData() {
 				net_price: parseInt(net_price),
 				order_paid: order_paid,
 				order_status: order_status,
+				method_payment: method_payment,
 			})
 	);
 	data.splice(data.length - 1);
@@ -42,17 +44,7 @@ function parseOrdersData() {
 
 function parseActiveData() {
 	const ordersData = parseOrdersData();
-	const activeData: OrdersDataType[] = [
-		{
-			order_id: 0,
-			customer_name: '',
-			img: '',
-			start_date: new Date(),
-			net_price: 0,
-			order_paid: false,
-			order_status: 'sedang cuci',
-		},
-	];
+	const activeData: OrderDataType[] = [...orderDataDummy];
 	const inWashIndexes = [99999];
 	const picklistIndexes = [99999];
 	const unpaidIndexes = [99999];
@@ -80,49 +72,39 @@ function parseActiveData() {
 		});
 	}
 
+	addToActiveData(unpaidIndexes);
 	addToActiveData(inWashIndexes);
 	addToActiveData(picklistIndexes);
-	addToActiveData(unpaidIndexes);
 	activeData.splice(0, 1);
 
 	return activeData;
 }
 
 function parseUnpaidOrdersData() {
-	const ordersData = parseOrdersData()
-	const unpaidData: OrdersDataType[] = [
-		{
-			order_id: 0,
-			customer_name: '',
-			img: '',
-			start_date: new Date(),
-			net_price: 0,
-			order_paid: false,
-			order_status: 'sedang cuci',
-		},
-	];
+	const ordersData = parseOrdersData();
+	const unpaidData: OrderDataType[] = [...orderDataDummy];
 	ordersData.forEach((order) => {
 		if (!order.order_paid) {
 			unpaidData.push(order);
 		}
 	});
-	
+
 	unpaidData.splice(0, 1);
 	return unpaidData;
 }
 
 interface IOrdersPage {
-	allOrdersData: OrdersDataType[];
-	activeOrdersData: OrdersDataType[];
-	unpaidOrdersData: OrdersDataType[];
+	allOrderDatas: OrderDataType[];
+	activeOrderDatas: OrderDataType[];
+	unpaidOrderDatas: OrderDataType[];
 	contentNum: string;
 	setContentNum: (pages: string) => void;
 }
 
 const useOrdersPageStore = create<IOrdersPage>((set) => ({
-	allOrdersData: parseOrdersData(),
-	activeOrdersData: parseActiveData(),
-	unpaidOrdersData: parseUnpaidOrdersData(),
+	allOrderDatas: parseOrdersData(),
+	activeOrderDatas: parseActiveData(),
+	unpaidOrderDatas: parseUnpaidOrdersData(),
 	contentNum: '10',
 	setContentNum: (pages: string) => {
 		set({ contentNum: pages });

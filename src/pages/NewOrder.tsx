@@ -508,7 +508,7 @@ function NewOrder() {
 							</SelectTrigger>
 							<SelectContent>
 								<SelectItem value="Transfer">Transfer</SelectItem>
-								<SelectItem value="COD">COD</SelectItem>
+								<SelectItem value="Tunai">Tunai</SelectItem>
 							</SelectContent>
 						</Select>
 						<h4 className="mt-4">Metode Pengiriman</h4>
