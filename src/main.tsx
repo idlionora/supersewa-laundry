@@ -13,6 +13,7 @@ import Orders from './pages/Orders.tsx';
 import NewOrder from './pages/NewOrder.tsx';
 import DummyPage from './pages/DummyPage.tsx';
 import './index.css';
+import OrderDetail from './pages/OrderDetail.tsx';
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -25,6 +26,7 @@ const router = createBrowserRouter(
 				<Route path="all" element={<Orders cardsCategory="Semua Data" />} />
 				<Route path="ongoing" element={<Orders cardsCategory="Masih Proses" />} />
 				<Route path="unpaid" element={<Orders cardsCategory="Belum Bayar" />} />
+				<Route path=':id' element={<OrderDetail/>}/>
 			</Route>
 
 			<Route path="new-order" element={<NewOrder />} />

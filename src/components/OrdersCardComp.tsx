@@ -6,7 +6,7 @@ import iconPaid from '../assets/icon-badgecheck.svg'
 
 type OrdersCardType = {
     data: OrderDataType
-    childNum: string
+    childNum: 'first'| 'last' | number
 }
 
 const OrdersCardComp = ({data, childNum}:OrdersCardType) => {

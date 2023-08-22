@@ -1,5 +1,4 @@
-import React from 'react';
-import { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { ServiceType, FeeType, useTrackedOrderStore } from '../stores/orderStore';
 import useTrackedModalStore from '../stores/modalStore';
 import id from 'date-fns/locale/id';

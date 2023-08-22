@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
 	Select,
 	SelectContent,
@@ -6,10 +6,11 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '../components/ui/select.tsx';
-import iconSearch from '../assets/icon-search.svg';
 import useTrackedOrdersPageStore, { OrderDataType } from '../stores/ordersPageStore.tsx';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import orderDataDummy from '../lib/orderDataDummy.tsx';
 import OrdersCardComp from '../components/OrdersCardComp.tsx';
+import iconSearch from '../assets/icon-search.svg';
 
 type OrderPageType = {
 	cardsCategory: string;
@@ -19,6 +20,7 @@ function Orders({ cardsCategory }: OrderPageType) {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const store = useTrackedOrdersPageStore();
 	const navigate = useNavigate();
+	const timeoutId = useRef<NodeJS.Timeout | undefined>(undefined);
 
 	const [currentActiveDatas, setCurrentActiveDatas] = useState<OrderDataType[]>(
 		store.activeOrderDatas
@@ -31,6 +33,16 @@ function Orders({ cardsCategory }: OrderPageType) {
 		parseInt(searchParams.get('page') ?? '1') > 0
 			? parseInt(searchParams.get('page') ?? '1')
 			: 1;
+
+	function updatePageCount(activeDatas: OrderDataType[]) {
+		const latestMaxPageNum = Math.ceil(activeDatas.length / parseInt(store.contentNum));
+		if (maxPageNum !== latestMaxPageNum) {
+			setMaxPageNum(latestMaxPageNum);
+		}
+		if (currentPage !== 1) {
+			setSearchParams({ page: '1' });
+		}
+	}
 
 	if (currentDataMarker !== cardsCategory && cardsCategory === 'Semua Data') {
 		setCurrentActiveDatas(store.allOrderDatas);
@@ -49,17 +61,13 @@ function Orders({ cardsCategory }: OrderPageType) {
 	}
 
 	useEffect(() => {
-		const latestMaxPageNum = Math.ceil(currentActiveDatas.length / parseInt(store.contentNum));
-		if (maxPageNum !== latestMaxPageNum) {
-			setMaxPageNum(latestMaxPageNum);
-		}
-		if (currentPage !== 1) {
-			setSearchParams({ page: '1' });
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		const activeDatas: OrderDataType[] = filteredActiveDatas ?? currentActiveDatas
+
+		updatePageCount(activeDatas)
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [store.contentNum]);
 
-	const splicePageDatas = (datas: OrderDataType[]) => {
+	function spliceActiveDatas(datas: OrderDataType[]) {
 		const contentPerPage: number = parseInt(store.contentNum);
 		const splicedCurrentDatas: OrderDataType[] = [...datas];
 
@@ -72,7 +80,49 @@ function Orders({ cardsCategory }: OrderPageType) {
 		}
 
 		return splicedCurrentDatas;
-	};
+	}
+
+	function filterActiveDatas(filter: string) {
+		const filteredDatas:OrderDataType[] = [...orderDataDummy]
+		
+		if (filter.length < 1) {
+			setFilteredActiveDatas(null)
+			updatePageCount(currentActiveDatas)
+			return
+		}
+
+		currentActiveDatas.forEach((data) => {
+			if (data.customer_name.toLowerCase().includes(filter.toLowerCase())) {
+				filteredDatas.push(data)
+				return
+			}
+
+			if (data.net_price.toString().includes(filter)) {
+				filteredDatas.push(data)
+				return
+			}
+
+			if (data.order_status.toLowerCase().includes(filter.toLowerCase())) {
+				filteredDatas.push(data)
+				return
+			}
+		})
+
+		if (filteredDatas.length > 1) {
+			filteredDatas.splice(0,1)
+			setFilteredActiveDatas(filteredDatas)
+
+			updatePageCount(filteredDatas)
+		}
+	}
+
+	useEffect(()=> {
+		clearInterval(timeoutId.current)
+		timeoutId.current = setTimeout(()=> {
+			filterActiveDatas(globalFilter)
+		}, 300)
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [globalFilter])
 
 	return (
 		<main className="page-container pt-4">
@@ -199,7 +249,7 @@ function Orders({ cardsCategory }: OrderPageType) {
 				</div>
 				<div className="card-white w-full bg-gray-300 flex flex-col gap-y-0.5">
 					{filteredActiveDatas ? (
-						splicePageDatas(filteredActiveDatas).map((data, index) => (
+						spliceActiveDatas(filteredActiveDatas).map((data, index) => (
 							<React.Fragment key={`ordercard-${index}`}>
 								<OrdersCardComp
 									data={data}
@@ -207,9 +257,9 @@ function Orders({ cardsCategory }: OrderPageType) {
 										index === 0
 											? 'first'
 											: index ===
-											splicePageDatas(filteredActiveDatas).length - 1
+											spliceActiveDatas(filteredActiveDatas).length - 1
 											? 'last'
-											: index.toString()
+											: index
 									}
 								/>
 							</React.Fragment>
@@ -217,7 +267,7 @@ function Orders({ cardsCategory }: OrderPageType) {
 					) : currentActiveDatas[0].order_id === 0 ? (
 						<p className="w-full text-center p-4">Data tidak ditemukan</p>
 					) : (
-						splicePageDatas(currentActiveDatas).map((data, index) => (
+						spliceActiveDatas(currentActiveDatas).map((data, index) => (
 							<React.Fragment key={`ordercard-${index}`}>
 								<OrdersCardComp
 									data={data}
@@ -225,9 +275,9 @@ function Orders({ cardsCategory }: OrderPageType) {
 										index === 0
 											? 'first'
 											: index ===
-											splicePageDatas(currentActiveDatas).length - 1
+											spliceActiveDatas(currentActiveDatas).length - 1
 											? 'last'
-											: index.toString()
+											: index
 									}
 								/>
 							</React.Fragment>
