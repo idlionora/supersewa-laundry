@@ -120,7 +120,7 @@ function Orders({ cardsCategory }: OrderPageType) {
 		clearInterval(timeoutId.current)
 		timeoutId.current = setTimeout(()=> {
 			filterActiveDatas(globalFilter)
-		}, 300)
+		}, 500)
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [globalFilter])
 
@@ -128,7 +128,7 @@ function Orders({ cardsCategory }: OrderPageType) {
 		<main className="page-container pt-4">
 			<section className="page-section my-4">
 				<div className="card-white px-4 pt-2 pb-3 w-full mb-4">
-					<label htmlFor="orders-name-filter" className="text-sm block mb-2 font-medium">
+					<label htmlFor="orders-filter" className="text-sm block mb-2 font-medium">
 						Filter Pesanan
 					</label>
 					<div className="w-full flex flex-col min-[500px]:flex-row items-center gap-3.5">

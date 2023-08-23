@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import iconArrowLeft from '../assets/icon-arrowleft.svg';
 import { ServiceType, FeeType, CustomerType } from '../stores/orderStore';
@@ -11,6 +11,7 @@ import iconPaid from '../assets/icon-badgecheck.svg';
 import iconUnpaid from '../assets/icon-xcircle.svg'
 import iconStorefront from '../assets/icon-storefront.svg'
 import iconTruck from '../assets/icon-truck.svg'
+import OrderServiceCard from '../components/OrderServiceCard';
 
 type DetailDataType = {
 	order_id: number;
@@ -91,7 +92,7 @@ function OrderDetail() {
 	return (
 		<main className="page-container pt-4">
 			<section className="page-section my-4">
-				<div className="w-full flex items-center gap-x-4 mb-6">
+				<div className="w-full flex items-center gap-x-4 mb-6 px-2 min-[575px]:px-0">
 					<button className="button-gray p-[0.375rem]" onClick={() => navigate(-1)}>
 						<img src={iconArrowLeft} alt="Tombol Kembali" className="w-5 h-5" />
 					</button>
@@ -127,7 +128,7 @@ function OrderDetail() {
 						</li>
 						<li className="detail-col-grid">
 							<div className="detail-left-grid">Catatan</div>
-							<div className="w-full sm:w-3/4">
+							<div className="w-full sm:w-3/4 flex items-center">
 								{orderInfo.notes.length > 1 ? orderInfo.notes : '–'}
 							</div>
 						</li>
@@ -229,9 +230,29 @@ function OrderDetail() {
 				<h3>
 					<span className="hashtag-bullet">#</span> Paket Layanan
 				</h3>
-				<div className="w-full mb-6">
-					
+				<div className="card-white w-full bg-gray-300 flex flex-col gap-y-0.5">
+					{services?.map((service, index) => (
+						<React.Fragment key={`service-${index}`}>
+							<OrderServiceCard
+								data={service}
+								childNum={
+									index === 0
+										? 'first'
+										: index === services.length - 1
+										? 'last'
+										: index
+								}
+							/>
+						</React.Fragment>
+					))}
 				</div>
+				<button className="button-gray text-sm mt-4">+ Tambah Layanan</button>
+			</section>
+			<section className="page-section my-4">
+				<h3>
+					<span className="hashtag-bullet">#</span> Pembayaran
+				</h3>
+				<div className="card-white w-full bg-gray-300 flex flex-col gap-y-0.5"></div>
 			</section>
 			<div className="w-full h-20 xl:h-16" />
 		</main>
