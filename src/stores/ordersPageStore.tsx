@@ -97,18 +97,12 @@ interface IOrdersPage {
 	allOrderDatas: OrderDataType[];
 	activeOrderDatas: OrderDataType[];
 	unpaidOrderDatas: OrderDataType[];
-	contentNum: string;
-	setContentNum: (pages: string) => void;
 }
 
-const useOrdersPageStore = create<IOrdersPage>((set) => ({
+const useOrdersPageStore = create<IOrdersPage>(() => ({
 	allOrderDatas: parseOrdersData(),
 	activeOrderDatas: parseActiveData(),
 	unpaidOrderDatas: parseUnpaidOrdersData(),
-	contentNum: '10',
-	setContentNum: (pages: string) => {
-		set({ contentNum: pages });
-	},
 }));
 
 const useTrackedOrdersPageStore = createTrackedSelector(useOrdersPageStore);

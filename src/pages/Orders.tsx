@@ -29,13 +29,14 @@ function Orders({ cardsCategory }: OrderPageType) {
 	const [filteredActiveDatas, setFilteredActiveDatas] = useState<OrderDataType[] | null>(null);
 	const [globalFilter, setGlobalFilter] = useState('');
 	const [maxPageNum, setMaxPageNum] = useState(10);
+	const contentPerPage = 25;
 	const currentPage =
 		parseInt(searchParams.get('page') ?? '1') > 0
 			? parseInt(searchParams.get('page') ?? '1')
 			: 1;
 
 	function updatePageCount(activeDatas: OrderDataType[]) {
-		const latestMaxPageNum = Math.ceil(activeDatas.length / parseInt(store.contentNum));
+		const latestMaxPageNum = Math.ceil(activeDatas.length / contentPerPage);
 		if (maxPageNum !== latestMaxPageNum) {
 			setMaxPageNum(latestMaxPageNum);
 		}
@@ -47,28 +48,20 @@ function Orders({ cardsCategory }: OrderPageType) {
 	if (currentDataMarker !== cardsCategory && cardsCategory === 'Semua Data') {
 		setCurrentActiveDatas(store.allOrderDatas);
 		setCurrentDataMarker('Semua Data');
-		setMaxPageNum(Math.ceil(store.allOrderDatas.length / parseInt(store.contentNum)));
+		setMaxPageNum(Math.ceil(store.allOrderDatas.length / contentPerPage));
 	}
 	if (currentDataMarker !== cardsCategory && cardsCategory === 'Masih Proses') {
 		setCurrentActiveDatas(store.activeOrderDatas);
 		setCurrentDataMarker('Masih Proses');
-		setMaxPageNum(Math.ceil(store.activeOrderDatas.length / parseInt(store.contentNum)));
+		setMaxPageNum(Math.ceil(store.activeOrderDatas.length / contentPerPage));
 	}
 	if (currentDataMarker !== cardsCategory && cardsCategory === 'Belum Bayar') {
 		setCurrentActiveDatas(store.unpaidOrderDatas);
 		setCurrentDataMarker('Belum Bayar');
-		setMaxPageNum(Math.ceil(store.unpaidOrderDatas.length / parseInt(store.contentNum)));
+		setMaxPageNum(Math.ceil(store.unpaidOrderDatas.length / contentPerPage));
 	}
 
-	useEffect(() => {
-		const activeDatas: OrderDataType[] = filteredActiveDatas ?? currentActiveDatas
-
-		updatePageCount(activeDatas)
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [store.contentNum]);
-
 	function spliceActiveDatas(datas: OrderDataType[]) {
-		const contentPerPage: number = parseInt(store.contentNum);
 		const splicedCurrentDatas: OrderDataType[] = [...datas];
 
 		if (currentPage > 1) {
@@ -175,20 +168,7 @@ function Orders({ cardsCategory }: OrderPageType) {
 						</div>
 					</div>
 				</div>
-				<div className="w-full mb-4 px-2.5 min-[575px]:px-0 flex flex-col min-[365px]:flex-row gap-y-4 justify-between items-center">
-					<div className="flex items-center min-[365px]:justify-end mt-0">
-						<Select value={store.contentNum} onValueChange={store.setContentNum}>
-							<SelectTrigger className="w-16 gap-1.5 px-2.5 bg-white h-[2.344rem] text-[0.8125rem] focus:ring-0 focus:outline-offset-0 focus:outline-amber-500">
-								<SelectValue />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value="10">10</SelectItem>
-								<SelectItem value="20">20</SelectItem>
-								<SelectItem value="30">30</SelectItem>
-							</SelectContent>
-						</Select>
-						<p className="ml-1 text-left min-[575px]:max-w-none">pesanan per halaman</p>
-					</div>
+				<div className="w-full mb-4 px-2.5 min-[575px]:px-0 flex justify-center sm:justify-start items-center">
 					<div className="shrink-0 flex items-center border border-slate-200 rounded overflow-hidden bg-slate-200 gap-px">
 						<button
 							className="button-pagination rounded-l"
@@ -285,6 +265,65 @@ function Orders({ cardsCategory }: OrderPageType) {
 					)}
 				</div>
 			</section>
+			<div className="w-full mb-4 px-2.5 min-[575px]:px-0 flex justify-center sm:justify-start items-center">
+				<div className="shrink-0 flex items-center border border-slate-200 rounded overflow-hidden bg-slate-200 gap-px">
+					<button
+						className="button-pagination rounded-l"
+						onClick={() => {
+							setSearchParams({
+								page: (currentPage - 1).toString(),
+							});
+						}}
+						disabled={currentPage === 1}
+					>
+						←
+					</button>
+					{currentPage > 1 ? (
+						<button
+							className="button-pagination"
+							onClick={() => setSearchParams({ page: '1' })}
+						>
+							1
+						</button>
+					) : (
+						''
+					)}
+					{currentPage > 2 ? (
+						<div className="px-3 py-2 bg-white border border-transparent font-semibold">
+							...
+						</div>
+					) : (
+						''
+					)}
+					<div className="px-3 py-2 bg-theme-blue text-white border border-transparent font-semibold">
+						{currentPage}
+					</div>
+					{currentPage < maxPageNum - 1 && maxPageNum > 2 ? (
+						<div className="px-3 py-2 bg-white border border-transparent font-semibold">
+							...
+						</div>
+					) : (
+						''
+					)}
+					{currentPage < maxPageNum ? (
+						<button
+							className="button-pagination"
+							onClick={() => setSearchParams({ page: maxPageNum.toString() })}
+						>
+							{maxPageNum}
+						</button>
+					) : (
+						''
+					)}
+					<button
+						className="button-pagination rounded-r"
+						onClick={() => setSearchParams({ page: (currentPage + 1).toString() })}
+						disabled={currentPage >= maxPageNum}
+					>
+						→
+					</button>
+				</div>
+			</div>
 			<div className="w-full h-20 xl-h-16" />
 		</main>
 	);
