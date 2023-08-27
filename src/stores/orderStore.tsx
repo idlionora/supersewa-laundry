@@ -27,41 +27,25 @@ export type FeeType = {
 
 interface IOrder {
 	customer: CustomerType;
-	startDate: Date;
 	services: ServiceType[] | null;
 	addFees: FeeType[] | null;
-	netPrice: number;
-	notesInternal: string;
-	notesInvoice: string;
 	setCustomer: (newCustomer: CustomerType) => void;
-	setStartDate: (newDate: Date) => void;
 	setServices: (newServices: ServiceType[] | null) => void;
 	setAddFees: (newFees: FeeType[] | null) => void;
-	setNetPrice: (newPrice: number) => void;
-	setNotesInternal: (newNotes: string) => void;
-	setNotesInvoice: (newNotes: string) => void;
 	resetOrderStore: () => void;
 }
 
 const defaultStoreState = {
 	customer: { id: 0, name: '', phone: '', address: '', img: '' },
-	startDate: new Date(0),
 	services: null,
 	addFees: null,
-	netPrice: 0,
-	notesInternal: '',
-	notesInvoice: '',
 };
 
 const useOrderStore = create<IOrder>((set) => ({
 	...defaultStoreState,
 	setCustomer: (newCustomer: CustomerType) => set({ customer: newCustomer }),
-	setStartDate: (newDate: Date) => set({ startDate: newDate }),
 	setServices: (newServices: ServiceType[] | null) => set({ services: newServices }),
 	setAddFees: (newFees: FeeType[] | null) => set({ addFees: newFees }),
-	setNetPrice: (newPrice: number) => set({ netPrice: newPrice }),
-	setNotesInternal: (newNotes: string) => set({ notesInternal: newNotes }),
-	setNotesInvoice: (newNotes: string) => set({ notesInvoice: newNotes }),
 	resetOrderStore: () => {
 		set({
 			...defaultStoreState,

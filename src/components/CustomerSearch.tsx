@@ -51,7 +51,7 @@ const CustomerSearch = () => {
 					</button>
 				</div>
 				<div className="relative">
-					<input ref={inputRef} type="text" className="form-input w-full pl-9" />
+					<input id='input-customersearch' name='input-customersearch' ref={inputRef} type="text" className="form-input w-full pl-9" />
 					<div className="absolute top-0 left-0 h-[2.75rem] flex items-center">
 						<img src={iconSearch} alt="" className="w-5 ml-2 invert contrast-[20%]" />
 					</div>

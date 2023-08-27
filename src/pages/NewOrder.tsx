@@ -109,6 +109,11 @@ function NewOrder() {
 		setServiceCards(servicesCopy);
 	}
 
+	// useEffect(() => {
+	// 	store.resetOrderStore();
+	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
+	// }, []);
+
 	useEffect(() => {
 		setServiceCards(store.services);
 	}, [store.services]);
@@ -140,20 +145,6 @@ function NewOrder() {
 	useEffect(() => {
 		setAddFees(store.addFees);
 	}, [store.addFees]);
-
-	/*function editAddFees (index: number, type: 'discount' | 'additional', label: string, price: number) {
-		let addFeesCopy: FeeType[] = [{ type: 'discount', label: '', price: 0 }];
-
-		if (addFees) {
-			addFeesCopy = [...addFees];
-		}
-
-		if (addFeesCopy[index]) {
-			addFeesCopy.splice(index, 1, {type, label, price})
-		}
-
-		setAddFees(addFeesCopy)
-	} */
 
 	function deleteAddFee(index: number) {
 		let addFeesCopy: FeeType[] = [{ category: 'discount', label: '', price: 0 }];
@@ -227,11 +218,21 @@ function NewOrder() {
 		});
 		confirmedServices.splice(0, 1);
 
+		let confirmedAddFees: FeeType[] | null = [{category: 'discount', label:'', price: 0}]
+		if (addFees) {
+			addFees.forEach(({category, label, price}) => {
+				confirmedAddFees?.push({category, label, price})
+			})
+			confirmedAddFees.splice(0, 1);
+		} else {
+			confirmedAddFees = null
+		}
+
 		const orderData = {
 			customer: { id: store.customer.id, name: store.customer.name },
 			start_date: startDate?.toJSON(),
 			services: confirmedServices,
-			add_fees: addFees,
+			add_fees: confirmedAddFees,
 			net_price: netPrice,
 			notes_internal: notesInternalRef.current?.value || '',
 			notes_invoice: notesInvoiceRef.current?.value || '',

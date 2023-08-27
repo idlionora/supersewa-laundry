@@ -1,7 +1,5 @@
-import { createTrackedSelector } from 'react-tracked';
-import { create } from 'zustand';
-import orders from '../../data/orders.json';
-import orderDataDummy from '../lib/orderDataDummy';
+import orders from '../../data/orders.json'
+import orderDataDummy from './orderDataDummy'
 
 export type OrderDataType = {
 	order_id: number;
@@ -14,7 +12,7 @@ export type OrderDataType = {
 	method_payment: string;
 };
 
-function parseOrdersData() {
+export function parseOrdersData() {
 	const data: OrderDataType[] = [...orderDataDummy];
 	orders.data.forEach(
 		({
@@ -42,7 +40,7 @@ function parseOrdersData() {
 	return data;
 }
 
-function parseActiveData() {
+export function parseActiveData() {
 	const ordersData = parseOrdersData();
 	const activeData: OrderDataType[] = [...orderDataDummy];
 	const inWashIndexes = [99999];
@@ -80,7 +78,7 @@ function parseActiveData() {
 	return activeData;
 }
 
-function parseUnpaidOrdersData() {
+export function parseUnpaidOrdersData() {
 	const ordersData = parseOrdersData();
 	const unpaidData: OrderDataType[] = [...orderDataDummy];
 	ordersData.forEach((order) => {
@@ -93,17 +91,11 @@ function parseUnpaidOrdersData() {
 	return unpaidData;
 }
 
-interface IOrdersPage {
-	allOrderDatas: OrderDataType[];
-	activeOrderDatas: OrderDataType[];
-	unpaidOrderDatas: OrderDataType[];
-}
+// const orderListDatas = {
+//     allOrderDatas: parseOrdersData(),
+//     activeOrderDatas: parseActiveData(),
+//     unpaidOrderDatas: parseUnpaidOrdersData()
+// }
 
-const useOrdersPageStore = create<IOrdersPage>(() => ({
-	allOrderDatas: parseOrdersData(),
-	activeOrderDatas: parseActiveData(),
-	unpaidOrderDatas: parseUnpaidOrdersData(),
-}));
+// export default orderListDatas
 
-const useTrackedOrdersPageStore = createTrackedSelector(useOrdersPageStore);
-export default useTrackedOrdersPageStore;

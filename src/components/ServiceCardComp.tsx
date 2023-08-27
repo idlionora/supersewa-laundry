@@ -43,6 +43,8 @@ const ServiceCardComp = ({
 			<p className="form-label">Harga</p>
 			<div className="w-full relative">
 				<input
+				id={`price-service-${id}`}
+				name={`price-service-${id}`}
 					type="number"
 					className="form-input w-full"
 					value={compPrice}
@@ -61,6 +63,8 @@ const ServiceCardComp = ({
 			</div>
 			<p className="form-label">Keterangan</p>
 			<input
+			id={`desc-service-${id}`}
+			name={`desc-service-${id}`}
 				type="text"
 				className="form-input w-full"
 				value={desc}

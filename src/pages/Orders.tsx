@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
 	Select,
 	SelectContent,
@@ -6,7 +6,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '../components/ui/select.tsx';
-import useTrackedOrdersPageStore, { OrderDataType } from '../stores/ordersPageStore.tsx';
+import { OrderDataType, parseOrdersData, parseActiveData, parseUnpaidOrdersData } from '../lib/ordersPageFuncs';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import orderDataDummy from '../lib/orderDataDummy.tsx';
 import OrdersCardComp from '../components/OrdersCardComp.tsx';
@@ -17,13 +17,16 @@ type OrderPageType = {
 };
 
 function Orders({ cardsCategory }: OrderPageType) {
+	const allOrderDatas = useMemo(() => parseOrdersData(),[])
+	const activeOrderDatas = useMemo(() => parseActiveData(),[])
+	const unpaidOrderDatas = useMemo(() => parseUnpaidOrdersData(),[])
+
 	const [searchParams, setSearchParams] = useSearchParams();
-	const store = useTrackedOrdersPageStore();
 	const navigate = useNavigate();
 	const timeoutId = useRef<NodeJS.Timeout | undefined>(undefined);
 
 	const [currentActiveDatas, setCurrentActiveDatas] = useState<OrderDataType[]>(
-		store.activeOrderDatas
+		activeOrderDatas
 	);
 	const [currentDataMarker, setCurrentDataMarker] = useState('Masih Proses');
 	const [filteredActiveDatas, setFilteredActiveDatas] = useState<OrderDataType[] | null>(null);
@@ -46,19 +49,19 @@ function Orders({ cardsCategory }: OrderPageType) {
 	}
 
 	if (currentDataMarker !== cardsCategory && cardsCategory === 'Semua Data') {
-		setCurrentActiveDatas(store.allOrderDatas);
+		setCurrentActiveDatas(allOrderDatas);
 		setCurrentDataMarker('Semua Data');
-		setMaxPageNum(Math.ceil(store.allOrderDatas.length / contentPerPage));
+		setMaxPageNum(Math.ceil(allOrderDatas.length / contentPerPage));
 	}
 	if (currentDataMarker !== cardsCategory && cardsCategory === 'Masih Proses') {
-		setCurrentActiveDatas(store.activeOrderDatas);
+		setCurrentActiveDatas(activeOrderDatas);
 		setCurrentDataMarker('Masih Proses');
-		setMaxPageNum(Math.ceil(store.activeOrderDatas.length / contentPerPage));
+		setMaxPageNum(Math.ceil(activeOrderDatas.length / contentPerPage));
 	}
 	if (currentDataMarker !== cardsCategory && cardsCategory === 'Belum Bayar') {
-		setCurrentActiveDatas(store.unpaidOrderDatas);
+		setCurrentActiveDatas(unpaidOrderDatas);
 		setCurrentDataMarker('Belum Bayar');
-		setMaxPageNum(Math.ceil(store.unpaidOrderDatas.length / contentPerPage));
+		setMaxPageNum(Math.ceil(unpaidOrderDatas.length / contentPerPage));
 	}
 
 	function spliceActiveDatas(datas: OrderDataType[]) {

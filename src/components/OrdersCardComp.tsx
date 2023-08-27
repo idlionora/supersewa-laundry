@@ -1,4 +1,4 @@
-import { OrderDataType } from "../stores/ordersPageStore";
+import { OrderDataType } from "../lib/ordersPageFuncs";
 import { Link } from 'react-router-dom';
 import id from 'date-fns/locale/id';
 import { format } from 'date-fns';
