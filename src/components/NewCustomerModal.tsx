@@ -4,7 +4,7 @@ import { useTrackedOrderStore } from '../stores/orderStore';
 import iconExclamation from '../assets/icon-exclamation-circle.svg';
 import iconClose from '../assets/icon-x.svg';
 
-const NewCustomer = () => {
+const NewCustomerModal = () => {
 	const orderStore = useTrackedOrderStore();
 	const state = useTrackedModalStore();
 	const zipcodeRef = useRef<HTMLInputElement>(null);
@@ -157,4 +157,4 @@ const NewCustomer = () => {
 	);
 };
 
-export default NewCustomer;
+export default NewCustomerModal;

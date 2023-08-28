@@ -15,7 +15,7 @@ import {
 const AddFeeModal = () => {
 	const orderStore = useTrackedOrderStore();
 	const state = useTrackedModalStore();
-	const selectRef = useRef<HTMLButtonElement>(null)
+	const selectRef = useRef<HTMLButtonElement>(null);
 	const [category, setCategory] = useState('discount');
 	const [label, setLabel] = useState('');
 	const [price, setPrice] = useState('0');
@@ -25,7 +25,7 @@ const AddFeeModal = () => {
 		if (!state.modalDisplay) return;
 		setLabel('');
 		setPrice('0');
-		selectRef.current?.focus()
+		selectRef.current?.focus();
 	}, [state.modalDisplay]);
 
 	useEffect(() => {
@@ -99,10 +99,7 @@ const AddFeeModal = () => {
 		>
 			<div className="relative w-full flex items-center mb-2">
 				<p className="font-semibold text-sm w-full">Kategori </p>
-				<button
-					className="absolute right-[-.25rem]"
-					onClick={() => state.closeModal()}
-				>
+				<button className="absolute right-[-.25rem]" onClick={() => state.closeModal()}>
 					<img src={iconClose} alt="Tutup Panel" className="w-5" />
 				</button>
 			</div>

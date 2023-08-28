@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { ServiceType, FeeType, useTrackedOrderStore } from '../stores/orderStore';
+import { ServiceType, FeeType, useTrackedOrderStore } from '../stores/orderStore.tsx';
 import useTrackedModalStore from '../stores/modalStore';
 import id from 'date-fns/locale/id';
 import { format } from 'date-fns';
@@ -7,10 +7,10 @@ import { Calendar as CalendarIcon } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { Button } from '../components/ui/button';
 import { Calendar } from '../components/ui/calendar';
-import CustomerSearch from '../components/CustomerSearch';
-import ServiceSearch from '../components/ServiceSearch.tsx';
+import CustomerSearchModal from '../components/CustomerSearchModal.tsx';
+import ServiceSearchModal from '../components/ServiceSearchModal.tsx';
 import AddFeeModal from '../components/AddFeeModal.tsx';
-import ServiceCardComp from '../components/ServiceCardComp';
+import NewOrderServiceCard from '../components/NewOrderServiceCard.tsx';
 import iconClose from '../assets/icon-x.svg';
 import iconExclamation from '../assets/icon-exclamation-circle.svg';
 import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
@@ -109,10 +109,10 @@ function NewOrder() {
 		setServiceCards(servicesCopy);
 	}
 
-	// useEffect(() => {
-	// 	store.resetOrderStore();
-	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	// }, []);
+	useEffect(() => {
+		store.resetOrderStore();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	useEffect(() => {
 		setServiceCards(store.services);
@@ -172,10 +172,10 @@ function NewOrder() {
 		}
 	}
 
-	useEffect(()=> {
-		spliceInvalidCols('customer')
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	},[store.customer])
+	useEffect(() => {
+		spliceInvalidCols('customer');
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [store.customer]);
 
 	useEffect(() => {
 		spliceInvalidCols('startDate');
@@ -218,14 +218,14 @@ function NewOrder() {
 		});
 		confirmedServices.splice(0, 1);
 
-		let confirmedAddFees: FeeType[] | null = [{category: 'discount', label:'', price: 0}]
+		let confirmedAddFees: FeeType[] | null = [{ category: 'discount', label: '', price: 0 }];
 		if (addFees) {
-			addFees.forEach(({category, label, price}) => {
-				confirmedAddFees?.push({category, label, price})
-			})
+			addFees.forEach(({ category, label, price }) => {
+				confirmedAddFees?.push({ category, label, price });
+			});
 			confirmedAddFees.splice(0, 1);
 		} else {
-			confirmedAddFees = null
+			confirmedAddFees = null;
 		}
 
 		const orderData = {
@@ -258,7 +258,9 @@ function NewOrder() {
 							</h4>
 							<button
 								className="mt-2 font-semibold text-green-600"
-								onClick={() => modalState.openModal(<CustomerSearch />, 'full')}
+								onClick={() =>
+									modalState.openModal(<CustomerSearchModal />, 'full')
+								}
 							>
 								{store.customer.id === 0 ? 'Pilih Kontak' : 'Ganti Kontak'}
 							</button>
@@ -342,7 +344,7 @@ function NewOrder() {
 								className="mt-2 font-semibold text-green-600"
 								onClick={() => {
 									store.setServices(serviceCards);
-									modalState.openModal(<ServiceSearch />, 'full');
+									modalState.openModal(<ServiceSearchModal />, 'full');
 								}}
 							>
 								Tambah Layanan
@@ -368,7 +370,7 @@ function NewOrder() {
 								>
 									{serviceCards ? (
 										serviceCards.map((serviceData) => (
-											<ServiceCardComp
+											<NewOrderServiceCard
 												key={`service-${serviceData.id}`}
 												serviceData={serviceData}
 												updateServiceCards={updateServiceCards}

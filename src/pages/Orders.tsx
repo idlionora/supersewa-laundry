@@ -6,10 +6,15 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '../components/ui/select.tsx';
-import { OrderDataType, parseOrdersData, parseActiveData, parseUnpaidOrdersData } from '../lib/ordersPageFuncs';
+import {
+	OrderDataType,
+	parseOrdersData,
+	parseActiveData,
+	parseUnpaidOrdersData,
+} from '../lib/ordersDataParse.tsx';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import orderDataDummy from '../lib/orderDataDummy.tsx';
-import OrdersCardComp from '../components/OrdersCardComp.tsx';
+import OrdersDataCard from '../components/OrdersDataCard.tsx';
 import iconSearch from '../assets/icon-search.svg';
 
 type OrderPageType = {
@@ -17,17 +22,15 @@ type OrderPageType = {
 };
 
 function Orders({ cardsCategory }: OrderPageType) {
-	const allOrderDatas = useMemo(() => parseOrdersData(),[])
-	const activeOrderDatas = useMemo(() => parseActiveData(),[])
-	const unpaidOrderDatas = useMemo(() => parseUnpaidOrdersData(),[])
+	const allOrderDatas = useMemo(() => parseOrdersData(), []);
+	const activeOrderDatas = useMemo(() => parseActiveData(), []);
+	const unpaidOrderDatas = useMemo(() => parseUnpaidOrdersData(), []);
 
 	const [searchParams, setSearchParams] = useSearchParams();
 	const navigate = useNavigate();
 	const timeoutId = useRef<NodeJS.Timeout | undefined>(undefined);
 
-	const [currentActiveDatas, setCurrentActiveDatas] = useState<OrderDataType[]>(
-		activeOrderDatas
-	);
+	const [currentActiveDatas, setCurrentActiveDatas] = useState<OrderDataType[]>(activeOrderDatas);
 	const [currentDataMarker, setCurrentDataMarker] = useState('Masih Proses');
 	const [filteredActiveDatas, setFilteredActiveDatas] = useState<OrderDataType[] | null>(null);
 	const [globalFilter, setGlobalFilter] = useState('');
@@ -79,46 +82,46 @@ function Orders({ cardsCategory }: OrderPageType) {
 	}
 
 	function filterActiveDatas(filter: string) {
-		const filteredDatas:OrderDataType[] = [...orderDataDummy]
-		
+		const filteredDatas: OrderDataType[] = [...orderDataDummy];
+
 		if (filter.length < 1) {
-			setFilteredActiveDatas(null)
-			updatePageCount(currentActiveDatas)
-			return
+			setFilteredActiveDatas(null);
+			updatePageCount(currentActiveDatas);
+			return;
 		}
 
 		currentActiveDatas.forEach((data) => {
 			if (data.customer_name.toLowerCase().includes(filter.toLowerCase())) {
-				filteredDatas.push(data)
-				return
+				filteredDatas.push(data);
+				return;
 			}
 
 			if (data.net_price.toString().includes(filter)) {
-				filteredDatas.push(data)
-				return
+				filteredDatas.push(data);
+				return;
 			}
 
 			if (data.order_status.toLowerCase().includes(filter.toLowerCase())) {
-				filteredDatas.push(data)
-				return
+				filteredDatas.push(data);
+				return;
 			}
-		})
+		});
 
 		if (filteredDatas.length > 1) {
-			filteredDatas.splice(0,1)
-			setFilteredActiveDatas(filteredDatas)
+			filteredDatas.splice(0, 1);
+			setFilteredActiveDatas(filteredDatas);
 
-			updatePageCount(filteredDatas)
+			updatePageCount(filteredDatas);
 		}
 	}
 
-	useEffect(()=> {
-		clearInterval(timeoutId.current)
-		timeoutId.current = setTimeout(()=> {
-			filterActiveDatas(globalFilter)
-		}, 500)
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [globalFilter])
+	useEffect(() => {
+		clearInterval(timeoutId.current);
+		timeoutId.current = setTimeout(() => {
+			filterActiveDatas(globalFilter);
+		}, 500);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [globalFilter]);
 
 	return (
 		<main className="page-container pt-4">
@@ -234,7 +237,7 @@ function Orders({ cardsCategory }: OrderPageType) {
 					{filteredActiveDatas ? (
 						spliceActiveDatas(filteredActiveDatas).map((data, index) => (
 							<React.Fragment key={`ordercard-${index}`}>
-								<OrdersCardComp
+								<OrdersDataCard
 									data={data}
 									childNum={
 										index === 0
@@ -252,7 +255,7 @@ function Orders({ cardsCategory }: OrderPageType) {
 					) : (
 						spliceActiveDatas(currentActiveDatas).map((data, index) => (
 							<React.Fragment key={`ordercard-${index}`}>
-								<OrdersCardComp
+								<OrdersDataCard
 									data={data}
 									childNum={
 										index === 0

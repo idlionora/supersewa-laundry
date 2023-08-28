@@ -1,12 +1,12 @@
 import { ServiceType } from '../stores/orderStore';
 import imgList from '../lib/imgList';
 
-type OrderServiceCardType = {
+type OrderDetailServiceCardType = {
 	data: ServiceType;
 	childNum: 'first' | 'last' | number;
 };
 
-const OrderServiceCard = ({ data, childNum }: OrderServiceCardType) => {
+const OrderDetailServiceCard = ({ data, childNum }: OrderDetailServiceCardType) => {
 	const { id, name, img, quantity, price, desc } = data;
 	const formattedPrice = new Intl.NumberFormat('id-ID', {
 		style: 'currency',
@@ -22,7 +22,7 @@ const OrderServiceCard = ({ data, childNum }: OrderServiceCardType) => {
 					: ''
 			}`}
 		>
-			<div className='w-full flex items-center gap-3.5'>
+			<div className="w-full flex items-center gap-3.5">
 				<div className="w-20 h-20 min-[355px]:w-24 min-[355px]:h-24 rounded overflow-hidden flex items-center shrink-0">
 					<img src={imgList[img as keyof typeof imgList]} alt={name} className="w-full" />
 				</div>
@@ -36,11 +36,16 @@ const OrderServiceCard = ({ data, childNum }: OrderServiceCardType) => {
 					</div>
 				</div>
 			</div>
-			<div className='flex justify-center w-full min-[355px]:w-fit'>
-				<button className='button-gray py-1.5 min-[448px]:py-2' onClick={() => console.log(id)}>Ubah</button>
+			<div className="flex justify-center w-full min-[355px]:w-fit">
+				<button
+					className="button-gray py-1.5 min-[448px]:py-2"
+					onClick={() => console.log(id)}
+				>
+					Ubah
+				</button>
 			</div>
 		</div>
 	);
 };
 
-export default OrderServiceCard;
+export default OrderDetailServiceCard;

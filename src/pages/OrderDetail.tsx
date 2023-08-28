@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ServiceType, FeeType, CustomerType, useTrackedOrderStore } from '../stores/orderStore';
+import {
+	ServiceType,
+	FeeType,
+	CustomerType,
+	PaymentType,
+	useTrackedOrderStore,
+} from '../stores/orderStore';
 import { id as localeId } from 'date-fns/locale';
 import { format } from 'date-fns';
+import formatPrice from '../lib/formatPrice';
 import iconArrowLeft from '../assets/icon-arrowleft.svg';
 import iconPencil from '../assets/icon-pencil.svg';
 import iconCreditCard from '../assets/icon-creditcard.svg';
@@ -12,9 +19,12 @@ import iconUnpaid from '../assets/icon-xcircle.svg';
 import iconStorefront from '../assets/icon-storefront.svg';
 import iconTruck from '../assets/icon-truck.svg';
 import iconClose from '../assets/icon-x.svg';
-import iconPlus from '../assets/icon-plus.svg'
-import OrderServiceCard from '../components/OrderServiceCard';
+import iconPlus from '../assets/icon-plus.svg';
+import OrderDetailServiceCard from '../components/OrderDetailServiceCard';
 import useTrackedModalStore from '../stores/modalStore';
+import AddFeeModal from '../components/AddFeeModal';
+import PaymentModal from '../components/PaymentModal';
+import OrderDetailPaidModal from '../components/OrderDetailPaidModal';
 
 type DetailDataType = {
 	order_id: number;
@@ -24,7 +34,7 @@ type DetailDataType = {
 	services: ServiceType[] | null;
 	add_fees: FeeType[] | null;
 	net_price: number;
-	add_payments: { paydate: Date, label: string, price: number }[] | null;
+	payments: PaymentType[] | null;
 	current_bill: number;
 	notes_internal: string;
 	method_payment: string;
@@ -70,7 +80,7 @@ const detailData: DetailDataType = {
 		{ category: 'discount', label: 'Diskon awal bulan', price: 15000 },
 	],
 	net_price: 160000,
-	add_payments: null,
+	payments: null,
 	current_bill: 160000,
 	notes_internal: '',
 	method_payment: 'Transfer',
@@ -79,9 +89,9 @@ const detailData: DetailDataType = {
 	order_status: 'Sedang cuci',
 };
 
-const addPayTest = [
-	{ payDate: new Date('2023-08-05T17:00:00.000Z'), label: 'DP', price: 60000 },
-	{ paydate: new Date('2023-08-06T17:00:00.000Z'), label: 'Tambah transfer', price: 40000 },
+const paymentTest = [
+	{ paydate: new Date('2023-08-05T17:00:00.000Z'), desc: 'DP', price: 60000 },
+	{ paydate: new Date('2023-08-06T17:00:00.000Z'), desc: 'Tambah transfer', price: 40000 },
 ];
 
 function OrderDetail() {
@@ -101,10 +111,10 @@ function OrderDetail() {
 		order_status: orderStatus,
 	} = detailData;
 	const [services, setServices] = useState(detailData.services);
-	const [servicesPrice, setServicesPrice] = useState(0)
-	const [addFees, setAddFees] = useState(detailData.add_fees);
+	const [servicesPrice, setServicesPrice] = useState(0);
+	const [addFees, setAddFees] = useState<FeeType[] | null>(detailData.add_fees);
 	const [netPrice, setNetPrice] = useState(detailData.net_price);
-	const [addPayments, setAddPayments] = useState(addPayTest);
+	const [payments, setPayments] = useState<PaymentType[] | null>(paymentTest);
 	const [currentBill, setCurrentBill] = useState(detailData.current_bill);
 	const [orderInfo, setOrderInfo] = useState({
 		notes,
@@ -114,19 +124,43 @@ function OrderDetail() {
 		orderStatus,
 	});
 
-	function formatPrice(price: number) {
-		const priceInRupiah = new Intl.NumberFormat('id-ID', {
-			style: 'currency',
-			currency: 'IDR',
-		}).format(price).replace(',00' , '');
+	function deleteAddFees(index: number) {
+		let newAddFees : FeeType[] | null = [...addFees!];
 
-		return priceInRupiah;
+		if (newAddFees.length > 1 && newAddFees[index]) {
+			newAddFees.splice(index, 1);
+		} else {
+			newAddFees = null
+		}
+		setAddFees(newAddFees);
+	}
+
+	function deletePayments(index: number) {
+		let newPayments : PaymentType[] | null = [...payments!];
+
+		if (newPayments.length > 1 && newPayments[index]) {
+			newPayments.splice(index, 1);
+		} else {
+			newPayments = null
+		}
+		setPayments(newPayments);
 	}
 
 	useEffect(() => {
-		store.resetOrderStore()
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+		store.resetOrderStore();
+		store.setServices(detailData.services)
+		store.setAddFees(detailData.add_fees);
+		store.setPayments(paymentTest)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	useEffect(() => {
+		setAddFees(store.addFees)
+	}, [store.addFees])
+
+	useEffect(() => {
+		setPayments(store.payments);
+	}, [store.payments]);
 
 	useEffect(() => {
 		let newServicesPrice = 0;
@@ -138,29 +172,30 @@ function OrderDetail() {
 		setServicesPrice(newServicesPrice);
 	}, [services]);
 
-	useEffect(()=> {
+	useEffect(() => {
 		let newNetPrice = servicesPrice;
 
 		addFees?.forEach((addFee) => {
 			if (addFee.category === 'discount') {
-				newNetPrice -= addFee.price
+				newNetPrice -= addFee.price;
 			} else {
-				newNetPrice += addFee.price
+				newNetPrice += addFee.price;
 			}
-		})
+		});
 
-		setNetPrice(newNetPrice)
-	}, [servicesPrice, addFees])
+		setNetPrice(newNetPrice);
+	}, [servicesPrice, addFees]);
 
-	useEffect(()=> {
+	useEffect(() => {
 		let newBill = netPrice;
 
-		addPayments?.forEach((addPayment) => {
-			newBill -= addPayment.price
-		})
+		payments?.forEach((payment) => {
+			newBill -= payment.price;
+		});
 
-		setCurrentBill(newBill)
-	}, [addPayments, netPrice])
+		setCurrentBill(newBill);
+	}, [payments, netPrice]);
+
 	return (
 		<main className="page-container pt-4">
 			<section className="page-section my-4">
@@ -312,7 +347,7 @@ function OrderDetail() {
 				<div className="card-white w-full bg-gray-300 flex flex-col gap-y-0.5">
 					{services?.map((service, index) => (
 						<React.Fragment key={`service-${index}`}>
-							<OrderServiceCard
+							<OrderDetailServiceCard
 								data={service}
 								childNum={
 									index === 0
@@ -365,7 +400,10 @@ function OrderDetail() {
 										<p className="w-fit whitespace-nowrap">{`${
 											addFee.category === 'discount' ? '–' : ''
 										} ${formatPrice(addFee.price)}`}</p>
-										<button className="button-gray px-0.5 py-1.5 ml-2" disabled>
+										<button
+											className="button-gray px-0.5 py-1.5 ml-2"
+											onClick={() => deleteAddFees(index)}
+										>
 											<img src={iconClose} alt="" className="w-3" />
 										</button>
 									</div>
@@ -373,7 +411,7 @@ function OrderDetail() {
 							);
 						})}
 						<div className="w-full bg-white flex items-center py-3 font-semibold">
-							<p className="w-full">Layanan cuci</p>
+							<p className="w-full">Total</p>
 							<div className="flex shrink-0 items-center">
 								<p className="w-fit whitespace-nowrap">{formatPrice(netPrice)}</p>
 								<button
@@ -385,13 +423,86 @@ function OrderDetail() {
 							</div>
 						</div>
 					</div>
-					<button className="button-gray mb-4 text-sm flex items-center gap-2">
+					<button
+						className="button-gray mb-4 text-sm flex items-center gap-2"
+						onClick={() => {
+							store.setAddFees(addFees);
+							modalState.openModal(<AddFeeModal />, 'fit');
+						}}
+					>
 						<img src={iconPlus} alt="" className="h-4 w-4" /> Biaya Tambahan Baru
 					</button>
 					<h5 className="font-semibold w-full pt-4 pb-3">Pembayaran</h5>
 					<div className="w-full bg-gray-300 pt-[1px] flex flex-col gap-[1px]">
-						{addPayments? '' : <div className='w-full bg-white py-3'>Belum ada pembayaran</div>}
+						{payments ? (
+							payments.map((payment, index) => {
+								return (
+									<div
+										className="w-full bg-white flex items-center py-3"
+										key={`payment-${index}`}
+									>
+										<p className="w-full">
+											{format(payment.paydate, 'd LLL', {
+												locale: localeId,
+											})}
+										</p>
+										<div className="flex shrink-0 items-center">
+											<p className="w-fit whitespace-nowrap text-theme-blue font-semibold cursor-pointer" onClick={() => {store.setPayments(payments); modalState.openModal(<OrderDetailPaidModal index={index}/>, 'fit')} }>
+												{formatPrice(payment.price)}
+											</p>
+											<button
+												className="button-gray px-0.5 py-1.5 ml-2"
+												onClick={() => deletePayments(index)}
+											>
+												<img src={iconClose} alt="" className="w-3" />
+											</button>
+										</div>
+									</div>
+								);
+							})
+						) : (
+							<div className="w-full bg-white py-3">Belum ada pembayaran</div>
+						)}
+						<div className="w-full bg-white flex items-center py-3 font-semibold">
+							<p className="w-full">Sisa Tagihan</p>
+							<div className="flex shrink-0 items-center">
+								<p className="w-fit whitespace-nowrap">
+									{formatPrice(currentBill)}
+								</p>
+								<button
+									className="button-gray px-0.5 py-1.5 ml-2 opacity-0"
+									disabled
+								>
+									<img src={iconClose} alt="" className="w-3" />
+								</button>
+							</div>
+						</div>
 					</div>
+					<div className="flex gap-4">
+						<button
+							className="button-color text-sm flex items-center gap-2"
+							onClick={() => {
+								store.setPayments(payments);
+								modalState.openModal(<PaymentModal />, 'fit');
+							}}
+						>
+							<img src={iconPlus} alt="" className="h-4 w-4" /> Pembayaran Baru
+						</button>
+						<button className="button-gray text-sm">Nota Tagihan</button>
+					</div>
+				</div>
+			</section>
+			<section className="page-section my-4">
+				<h3>
+					<span className="hashtag-bullet">#</span> Hapus Pesanan
+				</h3>
+				<div className="card-white w-full p-4">
+					<button
+						className="button-color bg-theme-orange border-red-500"
+						onClick={() => console.log(typeof setAddFees)}
+					>
+						Hapus Pesanan
+					</button>
 				</div>
 			</section>
 			<div className="w-full h-20 xl:h-16" />

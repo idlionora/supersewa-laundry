@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ServiceType } from '../stores/orderStore';
 import imgList from '../lib/imgList';
 
-type ServiceCardType = {
+type NewOrderServiceCardType = {
 	serviceData: ServiceType;
 	updateServiceCards: (
 		id: number,
@@ -12,11 +12,11 @@ type ServiceCardType = {
 	deleteServiceCard: (id: number) => void;
 };
 
-const ServiceCardComp = ({
+const NewOrderServiceCard = ({
 	serviceData,
 	updateServiceCards,
 	deleteServiceCard,
-}: ServiceCardType) => {
+}: NewOrderServiceCardType) => {
 	const { id, name, priceRange, img, quantity, price, desc } = serviceData;
 	// const [compQuantity, setCompQuantity] = useState(quantity);
 	const [compPrice, setCompPrice] = useState(price.toString());
@@ -43,8 +43,8 @@ const ServiceCardComp = ({
 			<p className="form-label">Harga</p>
 			<div className="w-full relative">
 				<input
-				id={`price-service-${id}`}
-				name={`price-service-${id}`}
+					id={`price-service-${id}`}
+					name={`price-service-${id}`}
 					type="number"
 					className="form-input w-full"
 					value={compPrice}
@@ -63,8 +63,8 @@ const ServiceCardComp = ({
 			</div>
 			<p className="form-label">Keterangan</p>
 			<input
-			id={`desc-service-${id}`}
-			name={`desc-service-${id}`}
+				id={`desc-service-${id}`}
+				name={`desc-service-${id}`}
 				type="text"
 				className="form-input w-full"
 				value={desc}
@@ -100,4 +100,4 @@ const ServiceCardComp = ({
 	);
 };
 
-export default ServiceCardComp;
+export default NewOrderServiceCard;

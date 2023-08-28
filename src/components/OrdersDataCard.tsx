@@ -1,24 +1,35 @@
-import { OrderDataType } from "../lib/ordersPageFuncs";
+import { OrderDataType } from '../lib/ordersDataParse';
 import { Link } from 'react-router-dom';
 import id from 'date-fns/locale/id';
 import { format } from 'date-fns';
-import iconPaid from '../assets/icon-badgecheck.svg'
+import iconPaid from '../assets/icon-badgecheck.svg';
 
-type OrdersCardType = {
-    data: OrderDataType
-    childNum: 'first'| 'last' | number
-}
+type OrdersDataCardType = {
+	data: OrderDataType;
+	childNum: 'first' | 'last' | number;
+};
 
-const OrdersCardComp = ({data, childNum}:OrdersCardType) => {
-    const {order_id, customer_name, img, start_date, net_price, order_paid, order_status, method_payment} = data;
-    const formattedPrice = new Intl.NumberFormat('id-ID', {
-        style: 'currency',
-        currency: 'IDR'
-    }).format(net_price)
-    return (
+const OrdersDataCard = ({ data, childNum }: OrdersDataCardType) => {
+	const {
+		order_id,
+		customer_name,
+		img,
+		start_date,
+		net_price,
+		order_paid,
+		order_status,
+		method_payment,
+	} = data;
+	const formattedPrice = new Intl.NumberFormat('id-ID', {
+		style: 'currency',
+		currency: 'IDR',
+	}).format(net_price);
+	return (
 		<Link
 			to={`/orders/${order_id}`}
-			className={`bg-white w-full p-4 flex items-center gap-4 focus:outline-yellow-500 focus:bg-slate-50 hover:bg-slate-50 ${childNum === 'first' ? 'rounded-t' : childNum === 'last' ? 'rounded-b' : ''}`}
+			className={`bg-white w-full p-4 flex items-center gap-4 focus:outline-yellow-500 focus:bg-slate-50 hover:bg-slate-50 ${
+				childNum === 'first' ? 'rounded-t' : childNum === 'last' ? 'rounded-b' : ''
+			}`}
 		>
 			<div
 				className={`flex items-center justify-center shrink-0 rounded-full w-9 h-9 ${img} text-white font-medium text-sm`}
@@ -62,6 +73,6 @@ const OrdersCardComp = ({data, childNum}:OrdersCardType) => {
 			</div>
 		</Link>
 	);
-}
+};
 
-export default OrdersCardComp;
+export default OrdersDataCard;

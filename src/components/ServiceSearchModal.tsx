@@ -13,7 +13,7 @@ type ServicePackageType = {
 	img: string;
 };
 
-const ServiceSearch = () => {
+const ServiceSearchModal = () => {
 	const orderStore = useTrackedOrderStore();
 	const state = useTrackedModalStore();
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -21,7 +21,7 @@ const ServiceSearch = () => {
 	const [activeCols, setActiveCols] = useState<number[] | null>(null);
 
 	useEffect(() => {
-		if (!state.modalDisplay) return
+		if (!state.modalDisplay) return;
 		const idArray: number[] = [0];
 
 		if (orderStore.services) {
@@ -31,7 +31,7 @@ const ServiceSearch = () => {
 			idArray.splice(0, 1);
 			setActiveCols(idArray);
 		} else {
-			setActiveCols(null)
+			setActiveCols(null);
 		}
 		setList(servicePackages.data);
 		inputRef.current?.focus();
@@ -73,41 +73,53 @@ const ServiceSearch = () => {
 		orderStore.services?.forEach((service) => {
 			if (processCols?.includes(service.id)) {
 				newStoreService.push(service);
-                if (processCols.length > 1) {
-                    processCols.splice(processCols.indexOf(service.id), 1)
-                } else {
-                    newStoreService.splice(0,1)
-                    processCols = null
-                }
-			}         
-		});        
+				if (processCols.length > 1) {
+					processCols.splice(processCols.indexOf(service.id), 1);
+				} else {
+					newStoreService.splice(0, 1);
+					processCols = null;
+				}
+			}
+		});
 
-        if (!processCols) {
-            orderStore.setServices(newStoreService)
-            return
-        }
-
-        for (let i = 0; i < list.length; i++) {
-            if (processCols.includes(list[i].id)) {
-                const newService:ServiceType = { id: list[i].id, name: list[i].name, priceRange: list[i].priceRange, img: list[i].img, quantity: 1, price: 0, desc: ''}
-                
-                newStoreService.push(newService);
-                if (processCols.length > 1) {
-                    processCols.splice(processCols.indexOf(list[i].id), 1)
-                } else {
-                    newStoreService.splice(0,1)
-                    processCols = null
-                    break
-                }
-            }
-        } 
-
-        if (processCols) {
-			/* Please fetch individual data if list does not contain selected service */
-			console.error(`data for ${processCols.join(', ')} ${processCols.length === 1? 'is': 'are'} not available!`);
+		if (!processCols) {
+			orderStore.setServices(newStoreService);
 			return;
 		}
-        orderStore.setServices(newStoreService);
+
+		for (let i = 0; i < list.length; i++) {
+			if (processCols.includes(list[i].id)) {
+				const newService: ServiceType = {
+					id: list[i].id,
+					name: list[i].name,
+					priceRange: list[i].priceRange,
+					img: list[i].img,
+					quantity: 1,
+					price: 0,
+					desc: '',
+				};
+
+				newStoreService.push(newService);
+				if (processCols.length > 1) {
+					processCols.splice(processCols.indexOf(list[i].id), 1);
+				} else {
+					newStoreService.splice(0, 1);
+					processCols = null;
+					break;
+				}
+			}
+		}
+
+		if (processCols) {
+			/* Please fetch individual data if list does not contain selected service */
+			console.error(
+				`data for ${processCols.join(', ')} ${
+					processCols.length === 1 ? 'is' : 'are'
+				} not available!`
+			);
+			return;
+		}
+		orderStore.setServices(newStoreService);
 	};
 
 	return (
@@ -128,7 +140,13 @@ const ServiceSearch = () => {
 					</button>
 				</div>
 				<div className="relative">
-					<input id='input-servicesearch' name='input-servicesearch' ref={inputRef} type="text" className="form-input w-full pl-9" />
+					<input
+						id="input-servicesearch"
+						name="input-servicesearch"
+						ref={inputRef}
+						type="text"
+						className="form-input w-full pl-9"
+					/>
 					<div className="absolute top-0 left-0 h-[2.75rem] flex items-center">
 						<img src={iconSearch} alt="" className="w-5 ml-2 invert contrast-[20%]" />
 					</div>
@@ -174,4 +192,4 @@ const ServiceSearch = () => {
 	('');
 };
 
-export default ServiceSearch;
+export default ServiceSearchModal;

@@ -5,9 +5,9 @@ import customers from '../../data/customers.json';
 import iconClose from '../assets/icon-x.svg';
 import iconSearch from '../assets/icon-search.svg';
 import iconPlus from '../assets/icon-plus.svg';
-import NewCustomer from './NewCustomer';
+import NewCustomerModal from './NewCustomerModal';
 
-const CustomerSearch = () => {
+const CustomerSearchModal = () => {
 	const orderStore = useTrackedOrderStore();
 	const state = useTrackedModalStore();
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -51,7 +51,13 @@ const CustomerSearch = () => {
 					</button>
 				</div>
 				<div className="relative">
-					<input id='input-customersearch' name='input-customersearch' ref={inputRef} type="text" className="form-input w-full pl-9" />
+					<input
+						id="input-customersearch"
+						name="input-customersearch"
+						ref={inputRef}
+						type="text"
+						className="form-input w-full pl-9"
+					/>
 					<div className="absolute top-0 left-0 h-[2.75rem] flex items-center">
 						<img src={iconSearch} alt="" className="w-5 ml-2 invert contrast-[20%]" />
 					</div>
@@ -82,7 +88,10 @@ const CustomerSearch = () => {
 				})}
 				<div className="min-[448px]:hidden w-full h-[4rem]" />
 			</div>
-			<button className="absolute bg-theme-blue w-14 h-14 min-[300px]:w-16 min-[300px]:h-16 min-[448px]:w-14 min-[448px]:h-14 bottom-20 right-2 min-[448px]:bottom-6 min-[448px]:right-4 rounded-full flex justify-center items-center" onClick={()=> state.switchModal(<NewCustomer/>, 'full')}>
+			<button
+				className="absolute bg-theme-blue w-14 h-14 min-[300px]:w-16 min-[300px]:h-16 min-[448px]:w-14 min-[448px]:h-14 bottom-20 right-2 min-[448px]:bottom-6 min-[448px]:right-4 rounded-full flex justify-center items-center"
+				onClick={() => state.switchModal(<NewCustomerModal />, 'full')}
+			>
 				<img src={iconPlus} alt="Tambah Pelanggan" className="invert w-9 min-[448px]:w-7" />
 			</button>
 			<button
@@ -95,4 +104,4 @@ const CustomerSearch = () => {
 	);
 };
 
-export default CustomerSearch;
+export default CustomerSearchModal;

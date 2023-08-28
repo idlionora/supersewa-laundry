@@ -15,7 +15,7 @@ import iconQuestion from './assets/icon-questionmark-outline.svg';
 import iconWhatsApp from './assets/icon-brand-whatsapp.svg';
 import iconDots from './assets/icon-dotsvertical.svg';
 import './App.css';
-import AppModal from './components/AppModal';
+import ModalWindow from './components/ModalWindow';
 
 
 function App() {
@@ -163,7 +163,7 @@ function App() {
 					</button>
 				</div>
 			</nav>
-			<AppModal />
+			<ModalWindow />
 			<Outlet />
 		</div>
 	);
