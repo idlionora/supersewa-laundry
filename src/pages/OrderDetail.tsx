@@ -23,8 +23,8 @@ import iconPlus from '../assets/icon-plus.svg';
 import OrderDetailServiceCard from '../components/OrderDetailServiceCard';
 import useTrackedModalStore from '../stores/modalStore';
 import AddFeeModal from '../components/AddFeeModal';
-import PaymentModal from '../components/PaymentModal';
-import OrderDetailPaidModal from '../components/OrderDetailPaidModal';
+import NewPaymentModal from '../components/NewPaymentModal';
+import PaidDescModal from '../components/PaidDescModal';
 
 type OrderDetailSpec = {
 	order_id: number;
@@ -124,32 +124,36 @@ function OrderDetail() {
 		orderStatus,
 	});
 
-	function deleteItemInArray<T>(array: T[] | null, index: number, setter:React.Dispatch<React.SetStateAction<T[]|null>>) {
-		let newArray : T[] | null = [...array!];
+	function deleteItemInArray<T>(
+		array: T[] | null,
+		index: number,
+		setter: React.Dispatch<React.SetStateAction<T[] | null>>
+	) {
+		let newArray: T[] | null = [...array!];
 
 		if (newArray.length > 1 && newArray[index]) {
 			newArray.splice(index, 1);
 		} else {
-			newArray = null
+			newArray = null;
 		}
-		setter(newArray)
+		setter(newArray);
 	}
 
 	useEffect(() => {
 		store.resetOrderStore();
-		store.setServices(orderDetailDummy.services)
+		store.setServices(orderDetailDummy.services);
 		store.setAddFees(orderDetailDummy.add_fees);
-		store.setPayments(paymentsDummy)
+		store.setPayments(paymentsDummy);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
-		setServices(store.services)
-	}, [store.services])
+		setServices(store.services);
+	}, [store.services]);
 
 	useEffect(() => {
-		setAddFees(store.addFees)
-	}, [store.addFees])
+		setAddFees(store.addFees);
+	}, [store.addFees]);
 
 	useEffect(() => {
 		setPayments(store.payments);
@@ -353,7 +357,7 @@ function OrderDetail() {
 						</React.Fragment>
 					))}
 				</div>
-				<button className="button-gray text-sm mt-4 flex items-center gap-2">
+				<button className="button-gray text-sm mt-4 flex items-center gap-2 ml-2 min-[575px]:ml-0">
 					<img src={iconPlus} alt="" className="h-4 w-4" /> Tambah Layanan
 				</button>
 			</section>
@@ -395,7 +399,13 @@ function OrderDetail() {
 										} ${formatPrice(addFee.price)}`}</p>
 										<button
 											className="button-gray px-0.5 py-1.5 ml-2"
-											onClick={() => deleteItemInArray<FeeType>(addFees, index, setAddFees)}
+											onClick={() =>
+												deleteItemInArray<FeeType>(
+													addFees,
+													index,
+													setAddFees
+												)
+											}
 										>
 											<img src={iconClose} alt="" className="w-3" />
 										</button>
@@ -440,12 +450,27 @@ function OrderDetail() {
 											})}
 										</p>
 										<div className="flex shrink-0 items-center">
-											<p className="w-fit whitespace-nowrap text-theme-blue font-semibold cursor-pointer" onClick={() => {store.setPayments(payments); modalState.openModal(<OrderDetailPaidModal index={index}/>, 'fit')} }>
+											<p
+												className="w-fit whitespace-nowrap text-theme-blue font-semibold cursor-pointer"
+												onClick={() => {
+													store.setPayments(payments);
+													modalState.openModal(
+														<PaidDescModal index={index} />,
+														'fit'
+													);
+												}}
+											>
 												{formatPrice(payment.price)}
 											</p>
 											<button
 												className="button-gray px-0.5 py-1.5 ml-2"
-												onClick={() => deleteItemInArray<PaymentType>(payments, index, setPayments)}
+												onClick={() =>
+													deleteItemInArray<PaymentType>(
+														payments,
+														index,
+														setPayments
+													)
+												}
 											>
 												<img src={iconClose} alt="" className="w-3" />
 											</button>
@@ -476,7 +501,7 @@ function OrderDetail() {
 							className="button-color text-sm flex items-center gap-2"
 							onClick={() => {
 								store.setPayments(payments);
-								modalState.openModal(<PaymentModal />, 'fit');
+								modalState.openModal(<NewPaymentModal />, 'fit');
 							}}
 						>
 							<img src={iconPlus} alt="" className="h-4 w-4" /> Pembayaran Baru

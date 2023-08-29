@@ -31,7 +31,7 @@ const ServiceEditModal = ({ data, childNum }: DataInsertAndMarkPosition<ServiceT
 				newServices.splice(index, 1);
 			}
 			orderStore.setServices(newServices);
-			state.closeModal;
+			state.closeModal();
 			return;
 		}
 
@@ -51,8 +51,9 @@ const ServiceEditModal = ({ data, childNum }: DataInsertAndMarkPosition<ServiceT
 		};
 
 		newServices.splice(index, 1, editedService);
-        state.closeModal;
-        return
+		orderStore.setServices(newServices);
+		state.closeModal();
+		return;
 	}
 
 	useEffect(() => {
@@ -104,6 +105,7 @@ const ServiceEditModal = ({ data, childNum }: DataInsertAndMarkPosition<ServiceT
 				type="text"
 				className="form-input w-full"
 				value={formInput.desc}
+				placeholder="tulis keterangan barang"
 				onChange={(e) => setFormInput({ ...formInput, desc: e.target.value })}
 			/>
 			<div className="flex items-center justify-around pt-1 pb-2">
@@ -116,10 +118,8 @@ const ServiceEditModal = ({ data, childNum }: DataInsertAndMarkPosition<ServiceT
 				</button>
 				<button
 					className="text-green-600"
-					onClick={() => {
-						console.log('hi');
-						setFormInput({ ...formInput, quantity: formInput.quantity + 1 });
-					}}
+					onClick={() => 
+						setFormInput({ ...formInput, quantity: formInput.quantity + 1 })}
 				>
 					Tambah Paket
 				</button>

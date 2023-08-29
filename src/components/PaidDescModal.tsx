@@ -6,7 +6,7 @@ import formatPrice from '../lib/formatPrice';
 import iconClose from '../assets/icon-x.svg';
 import { IndexToIdentify } from '../lib/typesForComponents';
 
-const OrderDetailPaidModal = ({ index }: IndexToIdentify) => {
+const PaidDescModal = ({ index }: IndexToIdentify) => {
 	const orderStore = useTrackedOrderStore();
 	const state = useTrackedModalStore();
 	const payment: PaymentType = orderStore.payments![index];
@@ -38,4 +38,4 @@ const OrderDetailPaidModal = ({ index }: IndexToIdentify) => {
 	);
 };
 
-export default OrderDetailPaidModal;
+export default PaidDescModal;

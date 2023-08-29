@@ -4,54 +4,54 @@ import { useTrackedOrderStore, PaymentType } from '../stores/orderStore';
 import { id as localeId } from 'date-fns/locale';
 import { format } from 'date-fns';
 import { cn } from '../lib/utils';
-import { Button } from '../components/ui/button';
+import { Button } from './ui/button';
 import { Calendar as CalendarIcon } from 'lucide-react';
-import { Calendar } from '../components/ui/calendar';
+import { Calendar } from './ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import iconClose from '../assets/icon-x.svg';
 import iconDownArrow from '../assets/icon-downarrow.svg';
 import iconExclamation from '../assets/icon-exclamation-circle.svg';
 
-const PaymentModal = () => {
+const NewPaymentModal = () => {
 	const orderStore = useTrackedOrderStore();
 	const state = useTrackedModalStore();
 	const [paydate, setPaydate] = useState<Date | undefined>(new Date());
 	const [desc, setDesc] = useState('');
 	const [price, setPrice] = useState('0');
-	const [invalidCols, setinvalidCols] = useState<string[]|null>(null);
+	const [invalidCols, setinvalidCols] = useState<string[] | null>(null);
 
-    function confirmPayment(event: React.FormEvent) {
-        event.preventDefault();
-        const newInvalidCols = ['throwError'];
-        let newPayments: PaymentType[] = [{paydate: new Date(), desc: 'dummy', price: 0}];
-        let paymentToAdd: PaymentType | null = null  
+	function confirmPayment(event: React.FormEvent) {
+		event.preventDefault();
+		const newInvalidCols = ['throwError'];
+		let newPayments: PaymentType[] = [{ paydate: new Date(), desc: 'dummy', price: 0 }];
+		let paymentToAdd: PaymentType | null = null;
 
-        if (!paydate) {
-            newInvalidCols.push('paydate')                        
-        }
-        if (price.length < 1 || price === '0') {
-            newInvalidCols.push('price')
-        }
-        if (newInvalidCols.includes('paydate') || newInvalidCols.includes('price')) {
-            newInvalidCols.splice(0,1);
-            setinvalidCols(newInvalidCols);
-            console.log('newInvalidCols is set!!')
-            return
-        }
+		if (!paydate) {
+			newInvalidCols.push('paydate');
+		}
+		if (price.length < 1 || price === '0') {
+			newInvalidCols.push('price');
+		}
+		if (newInvalidCols.includes('paydate') || newInvalidCols.includes('price')) {
+			newInvalidCols.splice(0, 1);
+			setinvalidCols(newInvalidCols);
+			console.log('newInvalidCols is set!!');
+			return;
+		}
 
-        if (orderStore.payments) {
-            newPayments = [...orderStore.payments]
-        }
+		if (orderStore.payments) {
+			newPayments = [...orderStore.payments];
+		}
 
-        paymentToAdd = {paydate: paydate!, desc, price: parseInt(price)}
+		paymentToAdd = { paydate: paydate!, desc, price: parseInt(price) };
 
-        newPayments.push(paymentToAdd)
-        if (newPayments[0].desc === 'dummy') {
-            newPayments.splice(0, 1);
-        }
-        orderStore.setPayments(newPayments)
-        state.closeModal();
-    }
+		newPayments.push(paymentToAdd);
+		if (newPayments[0].desc === 'dummy') {
+			newPayments.splice(0, 1);
+		}
+		orderStore.setPayments(newPayments);
+		state.closeModal();
+	}
 
 	return (
 		<div
@@ -150,4 +150,4 @@ const PaymentModal = () => {
 	);
 };
 
-export default PaymentModal;
+export default NewPaymentModal;
