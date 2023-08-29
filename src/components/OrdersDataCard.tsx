@@ -1,15 +1,11 @@
-import { OrderDataType } from '../lib/ordersDataParse';
+import { DataInsertAndMarkPosition } from '../lib/typesForComponents';
+import { OrderBasicSpec } from '../lib/ordersDataParse';
 import { Link } from 'react-router-dom';
 import id from 'date-fns/locale/id';
 import { format } from 'date-fns';
 import iconPaid from '../assets/icon-badgecheck.svg';
 
-type OrdersDataCardType = {
-	data: OrderDataType;
-	childNum: 'first' | 'last' | number;
-};
-
-const OrdersDataCard = ({ data, childNum }: OrdersDataCardType) => {
+const OrdersDataCard = ({ data, childNum }: DataInsertAndMarkPosition<OrderBasicSpec>) => {
 	const {
 		order_id,
 		customer_name,

@@ -7,7 +7,7 @@ import {
 	SelectValue,
 } from '../components/ui/select.tsx';
 import {
-	OrderDataType,
+	OrderBasicSpec,
 	parseOrdersData,
 	parseActiveData,
 	parseUnpaidOrdersData,
@@ -30,9 +30,10 @@ function Orders({ cardsCategory }: OrderPageType) {
 	const navigate = useNavigate();
 	const timeoutId = useRef<NodeJS.Timeout | undefined>(undefined);
 
-	const [currentActiveDatas, setCurrentActiveDatas] = useState<OrderDataType[]>(activeOrderDatas);
+	const [currentActiveDatas, setCurrentActiveDatas] =
+		useState<OrderBasicSpec[]>(activeOrderDatas);
 	const [currentDataMarker, setCurrentDataMarker] = useState('Masih Proses');
-	const [filteredActiveDatas, setFilteredActiveDatas] = useState<OrderDataType[] | null>(null);
+	const [filteredActiveDatas, setFilteredActiveDatas] = useState<OrderBasicSpec[] | null>(null);
 	const [globalFilter, setGlobalFilter] = useState('');
 	const [maxPageNum, setMaxPageNum] = useState(10);
 	const contentPerPage = 25;
@@ -41,7 +42,7 @@ function Orders({ cardsCategory }: OrderPageType) {
 			? parseInt(searchParams.get('page') ?? '1')
 			: 1;
 
-	function updatePageCount(activeDatas: OrderDataType[]) {
+	function updatePageCount(activeDatas: OrderBasicSpec[]) {
 		const latestMaxPageNum = Math.ceil(activeDatas.length / contentPerPage);
 		if (maxPageNum !== latestMaxPageNum) {
 			setMaxPageNum(latestMaxPageNum);
@@ -67,8 +68,8 @@ function Orders({ cardsCategory }: OrderPageType) {
 		setMaxPageNum(Math.ceil(unpaidOrderDatas.length / contentPerPage));
 	}
 
-	function spliceActiveDatas(datas: OrderDataType[]) {
-		const splicedCurrentDatas: OrderDataType[] = [...datas];
+	function spliceActiveDatas(datas: OrderBasicSpec[]) {
+		const splicedCurrentDatas: OrderBasicSpec[] = [...datas];
 
 		if (currentPage > 1) {
 			splicedCurrentDatas.splice(0, contentPerPage * (currentPage - 1));
@@ -82,7 +83,7 @@ function Orders({ cardsCategory }: OrderPageType) {
 	}
 
 	function filterActiveDatas(filter: string) {
-		const filteredDatas: OrderDataType[] = [...orderDataDummy];
+		const filteredDatas: OrderBasicSpec[] = [...orderDataDummy];
 
 		if (filter.length < 1) {
 			setFilteredActiveDatas(null);

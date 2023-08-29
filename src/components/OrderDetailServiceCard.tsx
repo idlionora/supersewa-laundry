@@ -1,13 +1,12 @@
+import { DataInsertAndMarkPosition } from '../lib/typesForComponents';
 import { ServiceType } from '../stores/orderStore';
 import imgList from '../lib/imgList';
+import ServiceEditModal from './ServiceEditModal';
+import useTrackedModalStore from '../stores/modalStore';
 
-type OrderDetailServiceCardType = {
-	data: ServiceType;
-	childNum: 'first' | 'last' | number;
-};
-
-const OrderDetailServiceCard = ({ data, childNum }: OrderDetailServiceCardType) => {
-	const { id, name, img, quantity, price, desc } = data;
+const OrderDetailServiceCard = ({ data, childNum }: DataInsertAndMarkPosition<ServiceType>) => {
+	const modalState = useTrackedModalStore()
+	const { name, img, quantity, price, desc } = data;
 	const formattedPrice = new Intl.NumberFormat('id-ID', {
 		style: 'currency',
 		currency: 'IDR',
@@ -39,7 +38,7 @@ const OrderDetailServiceCard = ({ data, childNum }: OrderDetailServiceCardType) 
 			<div className="flex justify-center w-full min-[355px]:w-fit">
 				<button
 					className="button-gray py-1.5 min-[448px]:py-2"
-					onClick={() => console.log(id)}
+					onClick={() => modalState.openModal(<ServiceEditModal data={data} childNum={childNum}/>, 'full')}
 				>
 					Ubah
 				</button>

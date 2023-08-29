@@ -1,7 +1,7 @@
 import orders from '../../data/orders.json'
 import orderDataDummy from './orderDataDummy'
 
-export type OrderDataType = {
+export type OrderBasicSpec = {
 	order_id: number;
 	customer_name: string;
 	img: string;
@@ -13,7 +13,7 @@ export type OrderDataType = {
 };
 
 export function parseOrdersData() {
-	const data: OrderDataType[] = [...orderDataDummy];
+	const data: OrderBasicSpec[] = [...orderDataDummy];
 	orders.data.forEach(
 		({
 			order_id,
@@ -42,7 +42,7 @@ export function parseOrdersData() {
 
 export function parseActiveData() {
 	const ordersData = parseOrdersData();
-	const activeData: OrderDataType[] = [...orderDataDummy];
+	const activeData: OrderBasicSpec[] = [...orderDataDummy];
 	const inWashIndexes = [99999];
 	const picklistIndexes = [99999];
 	const unpaidIndexes = [99999];
@@ -80,7 +80,7 @@ export function parseActiveData() {
 
 export function parseUnpaidOrdersData() {
 	const ordersData = parseOrdersData();
-	const unpaidData: OrderDataType[] = [...orderDataDummy];
+	const unpaidData: OrderBasicSpec[] = [...orderDataDummy];
 	ordersData.forEach((order) => {
 		if (!order.order_paid) {
 			unpaidData.push(order);

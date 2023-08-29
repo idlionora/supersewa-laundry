@@ -6,7 +6,7 @@ import iconClose from '../assets/icon-x.svg';
 import iconSearch from '../assets/icon-search.svg';
 import imgList from '../lib/imgList';
 
-type ServicePackageType = {
+type ServicePackageSpec = {
 	id: number;
 	name: string;
 	priceRange: string;
@@ -17,7 +17,7 @@ const ServiceSearchModal = () => {
 	const orderStore = useTrackedOrderStore();
 	const state = useTrackedModalStore();
 	const inputRef = useRef<HTMLInputElement>(null);
-	const [list, setList] = useState<ServicePackageType[] | null>(null);
+	const [list, setList] = useState<ServicePackageSpec[] | null>(null);
 	const [activeCols, setActiveCols] = useState<number[] | null>(null);
 
 	useEffect(() => {

@@ -1,18 +1,16 @@
 import useTrackedModalStore from '../stores/modalStore';
-import { useTrackedOrderStore, PaymentType} from '../stores/orderStore';
+import { useTrackedOrderStore, PaymentType } from '../stores/orderStore';
 import { id as localeId } from 'date-fns/locale';
 import { format } from 'date-fns';
 import formatPrice from '../lib/formatPrice';
 import iconClose from '../assets/icon-x.svg';
+import { IndexToIdentify } from '../lib/typesForComponents';
 
-type PaidModalType = {
-	index: number
-}
-const OrderDetailPaidModal = ({index} : PaidModalType) => {
+const OrderDetailPaidModal = ({ index }: IndexToIdentify) => {
 	const orderStore = useTrackedOrderStore();
 	const state = useTrackedModalStore();
-    const payment : PaymentType = orderStore.payments![index]
-    
+	const payment: PaymentType = orderStore.payments![index];
+
 	return (
 		<div
 			className="bg-white w-full max-w-sm p-4 pb-5 rounded-md relative"

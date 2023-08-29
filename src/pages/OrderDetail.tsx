@@ -26,7 +26,7 @@ import AddFeeModal from '../components/AddFeeModal';
 import PaymentModal from '../components/PaymentModal';
 import OrderDetailPaidModal from '../components/OrderDetailPaidModal';
 
-type DetailDataType = {
+type OrderDetailSpec = {
 	order_id: number;
 	customer: CustomerType;
 	start_date: Date;
@@ -43,7 +43,7 @@ type DetailDataType = {
 	order_status: string;
 };
 
-const detailData: DetailDataType = {
+const orderDetailDummy: OrderDetailSpec = {
 	order_id: 30,
 	customer: {
 		id: 4,
@@ -89,7 +89,7 @@ const detailData: DetailDataType = {
 	order_status: 'Sedang cuci',
 };
 
-const paymentTest = [
+const paymentsDummy = [
 	{ paydate: new Date('2023-08-05T17:00:00.000Z'), desc: 'DP', price: 60000 },
 	{ paydate: new Date('2023-08-06T17:00:00.000Z'), desc: 'Tambah transfer', price: 40000 },
 ];
@@ -109,13 +109,13 @@ function OrderDetail() {
 		method_shipping: shippingMethod,
 		order_paid: orderPaid,
 		order_status: orderStatus,
-	} = detailData;
-	const [services, setServices] = useState(detailData.services);
+	} = orderDetailDummy;
+	const [services, setServices] = useState(orderDetailDummy.services);
 	const [servicesPrice, setServicesPrice] = useState(0);
-	const [addFees, setAddFees] = useState<FeeType[] | null>(detailData.add_fees);
-	const [netPrice, setNetPrice] = useState(detailData.net_price);
-	const [payments, setPayments] = useState<PaymentType[] | null>(paymentTest);
-	const [currentBill, setCurrentBill] = useState(detailData.current_bill);
+	const [addFees, setAddFees] = useState<FeeType[] | null>(orderDetailDummy.add_fees);
+	const [netPrice, setNetPrice] = useState(orderDetailDummy.net_price);
+	const [payments, setPayments] = useState<PaymentType[] | null>(paymentsDummy);
+	const [currentBill, setCurrentBill] = useState(orderDetailDummy.current_bill);
 	const [orderInfo, setOrderInfo] = useState({
 		notes,
 		paymentMethod,
@@ -124,35 +124,28 @@ function OrderDetail() {
 		orderStatus,
 	});
 
-	function deleteAddFees(index: number) {
-		let newAddFees : FeeType[] | null = [...addFees!];
+	function deleteItemInArray<T>(array: T[] | null, index: number, setter:React.Dispatch<React.SetStateAction<T[]|null>>) {
+		let newArray : T[] | null = [...array!];
 
-		if (newAddFees.length > 1 && newAddFees[index]) {
-			newAddFees.splice(index, 1);
+		if (newArray.length > 1 && newArray[index]) {
+			newArray.splice(index, 1);
 		} else {
-			newAddFees = null
+			newArray = null
 		}
-		setAddFees(newAddFees);
-	}
-
-	function deletePayments(index: number) {
-		let newPayments : PaymentType[] | null = [...payments!];
-
-		if (newPayments.length > 1 && newPayments[index]) {
-			newPayments.splice(index, 1);
-		} else {
-			newPayments = null
-		}
-		setPayments(newPayments);
+		setter(newArray)
 	}
 
 	useEffect(() => {
 		store.resetOrderStore();
-		store.setServices(detailData.services)
-		store.setAddFees(detailData.add_fees);
-		store.setPayments(paymentTest)
+		store.setServices(orderDetailDummy.services)
+		store.setAddFees(orderDetailDummy.add_fees);
+		store.setPayments(paymentsDummy)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	useEffect(() => {
+		setServices(store.services)
+	}, [store.services])
 
 	useEffect(() => {
 		setAddFees(store.addFees)
@@ -402,7 +395,7 @@ function OrderDetail() {
 										} ${formatPrice(addFee.price)}`}</p>
 										<button
 											className="button-gray px-0.5 py-1.5 ml-2"
-											onClick={() => deleteAddFees(index)}
+											onClick={() => deleteItemInArray<FeeType>(addFees, index, setAddFees)}
 										>
 											<img src={iconClose} alt="" className="w-3" />
 										</button>
@@ -452,7 +445,7 @@ function OrderDetail() {
 											</p>
 											<button
 												className="button-gray px-0.5 py-1.5 ml-2"
-												onClick={() => deletePayments(index)}
+												onClick={() => deleteItemInArray<PaymentType>(payments, index, setPayments)}
 											>
 												<img src={iconClose} alt="" className="w-3" />
 											</button>
