@@ -20,6 +20,11 @@ const ServiceEditModal = ({ data, childNum }: DataInsertAndMarkPosition<ServiceT
 			? orderStore.services!.length - 1
 			: childNum - 1;
 
+	useEffect(() => {
+		setFormInput({ quantity, price: price.toString(), desc });
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [state.modalDisplay]);
+
 	function editService() {
 		let editedService: ServiceType = data;
 		let newServices: ServiceType[] | null = [...orderStore.services!];

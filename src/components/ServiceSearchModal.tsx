@@ -2,16 +2,10 @@ import { useState, useRef, useEffect } from 'react';
 import useTrackedModalStore from '../stores/modalStore';
 import { ServiceType, useTrackedOrderStore } from '../stores/orderStore';
 import servicePackages from '../../data/service_packages.json';
+import { ServicePackageSpec } from '../lib/typesForComponents';
 import iconClose from '../assets/icon-x.svg';
 import iconSearch from '../assets/icon-search.svg';
 import imgList from '../lib/imgList';
-
-type ServicePackageSpec = {
-	id: number;
-	name: string;
-	priceRange: string;
-	img: string;
-};
 
 const ServiceSearchModal = () => {
 	const orderStore = useTrackedOrderStore();
@@ -130,13 +124,11 @@ const ServiceSearchModal = () => {
 			<div className="bg-white w-full px-4 pt-6 min-[448px]:pt-4 pb-3 shadow-md absolute top-0 left-0 z-10">
 				<div className="relative w-full flex items-center mb-2">
 					<p className="font-semibold text-sm w-full">Cari Paket Layanan</p>
-					<button className=" absolute right-[-.25rem]">
-						<img
-							src={iconClose}
-							alt="Tutup Panel"
-							className="w-5"
-							onClick={() => state.closeModal()}
-						/>
+					<button
+						className=" absolute right-[-.25rem]"
+						onClick={() => state.closeModal()}
+					>
+						<img src={iconClose} alt="Tutup Panel" className="w-5" />
 					</button>
 				</div>
 				<div className="relative">

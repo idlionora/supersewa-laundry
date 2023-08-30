@@ -7,8 +7,14 @@ import {
 	PaymentType,
 	useTrackedOrderStore,
 } from '../stores/orderStore';
+import useTrackedModalStore from '../stores/modalStore';
 import { id as localeId } from 'date-fns/locale';
 import { format } from 'date-fns';
+import OrderDetailServiceCard from '../components/OrderDetailServiceCard';
+import AddFeeModal from '../components/AddFeeModal';
+import NewPaymentModal from '../components/NewPaymentModal';
+import PaidDescModal from '../components/PaidDescModal';
+import ServiceAddModal from '../components/ServiceAddModal';
 import formatPrice from '../lib/formatPrice';
 import iconArrowLeft from '../assets/icon-arrowleft.svg';
 import iconPencil from '../assets/icon-pencil.svg';
@@ -20,11 +26,7 @@ import iconStorefront from '../assets/icon-storefront.svg';
 import iconTruck from '../assets/icon-truck.svg';
 import iconClose from '../assets/icon-x.svg';
 import iconPlus from '../assets/icon-plus.svg';
-import OrderDetailServiceCard from '../components/OrderDetailServiceCard';
-import useTrackedModalStore from '../stores/modalStore';
-import AddFeeModal from '../components/AddFeeModal';
-import NewPaymentModal from '../components/NewPaymentModal';
-import PaidDescModal from '../components/PaidDescModal';
+
 
 type OrderDetailSpec = {
 	order_id: number;
@@ -357,7 +359,7 @@ function OrderDetail() {
 						</React.Fragment>
 					))}
 				</div>
-				<button className="button-gray text-sm mt-4 flex items-center gap-2 ml-2 min-[575px]:ml-0">
+				<button className="button-gray text-sm mt-4 flex items-center gap-2 ml-2 min-[575px]:ml-0" onClick={() => modalState.openModal(<ServiceAddModal />, 'full')}>
 					<img src={iconPlus} alt="" className="h-4 w-4" /> Tambah Layanan
 				</button>
 			</section>

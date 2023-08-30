@@ -41,13 +41,8 @@ const CustomerSearchModal = () => {
 			<div className="bg-white w-full px-4 pt-6 min-[448px]:pt-4 pb-3 shadow-md absolute top-0 left-0 z-10">
 				<div className="relative w-full flex items-center mb-2">
 					<p className="font-semibold text-sm w-full">Cari Pelanggan</p>
-					<button className="absolute right-[-.25rem]">
-						<img
-							src={iconClose}
-							alt="Tutup Panel"
-							className="w-5"
-							onClick={() => state.closeModal()}
-						/>
+					<button className="absolute right-[-.25rem]" onClick={() => state.closeModal()}>
+						<img src={iconClose} alt="Tutup Panel" className="w-5" />
 					</button>
 				</div>
 				<div className="relative">
