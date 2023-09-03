@@ -109,7 +109,7 @@ function Orders({ cardsCategory }: OrderPageType) {
 		});
 
 		if (filteredDatas.length > 1) {
-			filteredDatas.splice(0, 1);
+			filteredDatas.shift();
 			setFilteredActiveDatas(filteredDatas);
 
 			updatePageCount(filteredDatas);

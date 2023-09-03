@@ -36,7 +36,7 @@ export function parseOrdersData() {
 				method_payment: method_payment,
 			})
 	);
-	data.splice(data.length - 1);
+	data.pop();
 	return data;
 }
 
@@ -64,7 +64,7 @@ export function parseActiveData() {
 	});
 
 	function addToActiveData(indexArray: number[]) {
-		indexArray.splice(0, 1);
+		indexArray.shift();
 		indexArray.forEach((index) => {
 			activeData.push(ordersData[index]);
 		});
@@ -73,7 +73,7 @@ export function parseActiveData() {
 	addToActiveData(unpaidIndexes);
 	addToActiveData(inWashIndexes);
 	addToActiveData(picklistIndexes);
-	activeData.splice(0, 1);
+	activeData.shift();
 
 	return activeData;
 }
@@ -87,7 +87,7 @@ export function parseUnpaidOrdersData() {
 		}
 	});
 
-	unpaidData.splice(0, 1);
+	unpaidData.shift();
 	return unpaidData;
 }
 

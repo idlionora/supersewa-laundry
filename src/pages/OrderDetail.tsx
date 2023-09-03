@@ -17,6 +17,7 @@ import PaidDescModal from '../components/PaidDescModal';
 import ServiceAddModal from '../components/ServiceAddModal';
 import formatPrice from '../lib/formatPrice';
 import iconArrowLeft from '../assets/icon-arrowleft.svg';
+import iconWhatsApp from '../assets/icon-brand-whatsapp.svg';
 import iconPencil from '../assets/icon-pencil.svg';
 import iconCreditCard from '../assets/icon-creditcard.svg';
 import iconBanknotes from '../assets/icon-banknotes.svg';
@@ -212,15 +213,38 @@ function OrderDetail() {
 						</li>
 						<li className="detail-col-grid">
 							<div className="detail-left-grid">Pemesan</div>
-							<div className="w-full sm:w-3/4">{customer.name}</div>
+							<div className="w-full sm:w-3/4 font-medium text-theme-blue cursor-pointer">
+								{customer.name}
+							</div>
 						</li>
 						<li className="detail-col-grid">
 							<div className="detail-left-grid">Telepon</div>
-							<div className="w-full sm:w-3/4">{customer.phone}</div>
+							<div className="w-full sm:w-3/4 flex flex-col gap-y-1">
+								<p>{customer.phone}</p>
+								<a
+									href={`https://wa.me/62${customer.phone}?text=`}
+									target="_blank"
+									className="badge-pill-lightgreen"
+								>
+									<img
+										src={iconWhatsApp}
+										alt=""
+										className="w-3 filter-emerald-600"
+									/>
+									Buka WA
+								</a>
+							</div>
 						</li>
 						<li className="detail-col-grid">
 							<div className="detail-left-grid">Alamat</div>
-							<div className="w-full sm:w-3/4">{customer.address}</div>
+							<div className="w-full sm:w-3/4 flex flex-col gap-y-1">
+								<p>{customer.address}</p>
+								<a
+									href={`https://www.google.com/maps/search/?api=1&query=${customer.address}`}
+									target="_blank"
+									className="badge-pill-lightgreen"
+								>Cari di Maps</a>
+							</div>
 						</li>
 						<li className="detail-col-grid">
 							<div className="detail-left-grid">Tanggal Pesan</div>
@@ -359,7 +383,10 @@ function OrderDetail() {
 						</React.Fragment>
 					))}
 				</div>
-				<button className="button-gray text-sm mt-4 flex items-center gap-2 ml-2 min-[575px]:ml-0" onClick={() => modalState.openModal(<ServiceAddModal />, 'full')}>
+				<button
+					className="button-gray text-sm mt-4 flex items-center gap-2 ml-2 min-[575px]:ml-0"
+					onClick={() => modalState.openModal(<ServiceAddModal />, 'full')}
+				>
 					<img src={iconPlus} alt="" className="h-4 w-4" /> Tambah Layanan
 				</button>
 			</section>
@@ -499,15 +526,19 @@ function OrderDetail() {
 						</div>
 					</div>
 					<div className="flex gap-4">
-						<button
-							className="button-color text-sm flex items-center gap-2"
-							onClick={() => {
-								store.setPayments(payments);
-								modalState.openModal(<NewPaymentModal />, 'fit');
-							}}
-						>
-							<img src={iconPlus} alt="" className="h-4 w-4" /> Pembayaran Baru
-						</button>
+						{currentBill === 0 ? (
+							''
+						) : (
+							<button
+								className="button-color text-sm flex items-center gap-2"
+								onClick={() => {
+									store.setPayments(payments);
+									modalState.openModal(<NewPaymentModal />, 'fit');
+								}}
+							>
+								<img src={iconPlus} alt="" className="h-4 w-4" /> Pembayaran Baru
+							</button>
+						)}
 						<button className="button-gray text-sm">Nota Tagihan</button>
 					</div>
 				</div>

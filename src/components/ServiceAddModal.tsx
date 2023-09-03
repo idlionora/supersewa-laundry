@@ -8,20 +8,43 @@ import iconClose from '../assets/icon-x.svg';
 import iconSearch from '../assets/icon-search.svg';
 
 const ServiceAddModal = () => {
-    const orderStore = useTrackedOrderStore();
+	const orderStore = useTrackedOrderStore();
 	const state = useTrackedModalStore();
 	const inputRef = useRef<HTMLInputElement>(null);
-    const [list, setList] = useState<ServicePackageSpec[] | null>(null);
-    const [activeCol, setActiveCol] = useState<ServicePackageSpec | null>(null);
+	const [list, setList] = useState<ServicePackageSpec[] | null>(null);
+	const [activeCol, setActiveCol] = useState<ServicePackageSpec | null>(null);
 
-    useEffect(() => {
-        if (!state.modalDisplay) return;
+	useEffect(() => {
+		if (!state.modalDisplay) return;
 		inputRef.current?.focus();
-        setActiveCol(null)
-		setList(servicePackages.data);
+		setActiveCol(null);
+		setList(removeSelectedFromServicePackages());
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [state.modalDisplay]);
 
-    const confirmService = (selectedData: ServicePackageSpec) => {
+	const removeSelectedFromServicePackages = () => {
+		const newServicePackages = [...servicePackages.data];
+		const selectedIds = orderStore.services
+			? Array.from(orderStore.services, (service) => service.id)
+			: null;
+
+		selectedIds?.forEach((id) => {
+			const selectedIndex = newServicePackages.findIndex((service) => service.id === id);
+			newServicePackages.splice(selectedIndex, 1);
+		});
+
+		return newServicePackages;
+	};
+
+	function selectService(selectedData: ServicePackageSpec) {
+		setActiveCol(selectedData);
+
+		if (inputRef.current && inputRef.current.clientWidth >= 414) {
+			confirmService(selectedData);
+		}
+	}
+
+	function confirmService(selectedData: ServicePackageSpec) {
 		const addedService: ServiceType = { ...selectedData, quantity: 1, price: 0, desc: '' };
 		let newServices: ServiceType[] | null = null;
 
@@ -34,17 +57,9 @@ const ServiceAddModal = () => {
 
 		orderStore.setServices(newServices);
 		state.closeModal();
-	};
+	}
 
-    const selectService = (selectedData: ServicePackageSpec) => {
-        setActiveCol(selectedData)
-
-        if (inputRef.current && inputRef.current.clientWidth >= 414) {
-            confirmService(selectedData)
-        }
-    }
-
-    return (
+	return (
 		<div
 			className="bg-neutral-50 w-full max-w-md h-full min-[448px]:max-h-[85%] sm:max-h-[33.75rem] min-[448px]:rounded-md overflow-hidden relative"
 			onClick={(e) => e.stopPropagation()}
@@ -77,7 +92,7 @@ const ServiceAddModal = () => {
 							className={`w-full px-4 py-2 flex gap-4 items-center hover:bg-white ease-in-out border border-transparent cursor-pointer text-left ${
 								activeCol?.id === service.id ? 'col-active' : ''
 							}`}
-                            onClick={() => selectService(service)}
+							onClick={() => selectService(service)}
 						>
 							<div className="w-16 h-16 rounded overflow-hidden flex items-center">
 								<img
@@ -95,12 +110,16 @@ const ServiceAddModal = () => {
 				})}
 				<div className="min-[448px]:hidden w-full h-[4.5rem]" />
 			</div>
-			<button className="min-[448px]:hidden absolute text-theme-blue p-4 w-full h-16 bottom-0 bg-white text-center font-medium text-sm shadow-[0_-2px_4px_3px_rgba(108,114,124,0.1)]"
-            onClick={() =>{ if (activeCol) confirmService(activeCol)}}>
+			<button
+				className="min-[448px]:hidden absolute text-theme-blue p-4 w-full h-16 bottom-0 bg-white text-center font-medium text-sm shadow-[0_-2px_4px_3px_rgba(108,114,124,0.1)]"
+				onClick={() => {
+					if (activeCol) confirmService(activeCol);
+				}}
+			>
 				Pilih Layanan
 			</button>
 		</div>
 	);
-}
+};
 
 export default ServiceAddModal;

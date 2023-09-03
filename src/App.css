@@ -198,12 +198,21 @@
     border-color: transparent;
 }
 
-.text-clickable {
+.badge-pill-lightgreen {
+    padding: 5px 10px;
+    background-color: rgb(220, 248, 198);
+    color: rgb(5, 150, 105); /*emerald-600*/
+    font-size: .75rem;
+    display: flex;
+    justify-items: center;
+    gap: .25rem;
+    vertical-align: baseline;
+    font-weight: 700;
+    line-height: 1; 
+    flex-wrap: nowrap;
     cursor: pointer;
-    font-size: 0.875rem;
-    font-weight: 500;
-    line-height: 1.25rem; 
-    color: var(--color-theme-green);   
+    width: fit-content;
+    border-radius: 9999px;
 }
 
 .form-label {
@@ -283,6 +292,10 @@
 
 .filter-green-600 {
     filter: invert(41%) sepia(82%) saturate(627%) hue-rotate(94deg) brightness(99%) contrast(83%);
+}
+
+.filter-emerald-600 {
+    filter: invert(30%) sepia(89%) saturate(1643%) hue-rotate(142deg) brightness(97%) contrast(96%);
 }
 
 /* PROFILE BACKGROUND */

@@ -33,7 +33,7 @@ const NewPaymentModal = () => {
 			newInvalidCols.push('price');
 		}
 		if (newInvalidCols.includes('paydate') || newInvalidCols.includes('price')) {
-			newInvalidCols.splice(0, 1);
+			newInvalidCols.shift();
 			setinvalidCols(newInvalidCols);
 			console.log('newInvalidCols is set!!');
 			return;
@@ -47,7 +47,7 @@ const NewPaymentModal = () => {
 
 		newPayments.push(paymentToAdd);
 		if (newPayments[0].desc === 'dummy') {
-			newPayments.splice(0, 1);
+			newPayments.shift();
 		}
 		orderStore.setPayments(newPayments);
 		state.closeModal();

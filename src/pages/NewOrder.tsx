@@ -208,7 +208,7 @@ function NewOrder() {
 			newInvalidCols.push('laundryCost');
 		}
 		if (newInvalidCols.length > 1) {
-			newInvalidCols.splice(0, 1);
+			newInvalidCols.shift();
 			setInvalidCols(newInvalidCols);
 			return;
 		}
@@ -216,14 +216,14 @@ function NewOrder() {
 		serviceCards?.forEach(({ id, name, quantity, price, desc }) => {
 			confirmedServices.push({ id, name, quantity, price, desc });
 		});
-		confirmedServices.splice(0, 1);
+		confirmedServices.shift();
 
 		let confirmedAddFees: FeeType[] | null = [{ category: 'discount', label: '', price: 0 }];
 		if (addFees) {
 			addFees.forEach(({ category, label, price }) => {
 				confirmedAddFees?.push({ category, label, price });
 			});
-			confirmedAddFees.splice(0, 1);
+			confirmedAddFees.shift();
 		} else {
 			confirmedAddFees = null;
 		}

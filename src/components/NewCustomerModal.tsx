@@ -29,7 +29,7 @@ const NewCustomerModal = () => {
 			newInvalidCols.push('address');
 		}
 		if (newInvalidCols.length > 1) {
-			newInvalidCols.splice(0, 1);
+			newInvalidCols.shift();
 			setInvalidCols(newInvalidCols);
 			return;
 		}

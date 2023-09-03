@@ -22,7 +22,7 @@ const ServiceSearchModal = () => {
 			orderStore.services.forEach((service) => {
 				idArray.push(service.id);
 			});
-			idArray.splice(0, 1);
+			idArray.shift();
 			setActiveCols(idArray);
 		} else {
 			setActiveCols(null);
@@ -42,7 +42,7 @@ const ServiceSearchModal = () => {
 		if (!newActiveCols.includes(selectedId)) {
 			newActiveCols.push(selectedId);
 			if (newActiveCols[0] === 0) {
-				newActiveCols.splice(0, 1);
+				newActiveCols.shift();
 			}
 		} else if (newActiveCols.length === 1 && newActiveCols.includes(selectedId)) {
 			newActiveCols = null;
@@ -70,7 +70,7 @@ const ServiceSearchModal = () => {
 				if (processCols.length > 1) {
 					processCols.splice(processCols.indexOf(service.id), 1);
 				} else {
-					newStoreService.splice(0, 1);
+					newStoreService.shift();
 					processCols = null;
 				}
 			}
@@ -97,7 +97,7 @@ const ServiceSearchModal = () => {
 				if (processCols.length > 1) {
 					processCols.splice(processCols.indexOf(list[i].id), 1);
 				} else {
-					newStoreService.splice(0, 1);
+					newStoreService.shift();
 					processCols = null;
 					break;
 				}

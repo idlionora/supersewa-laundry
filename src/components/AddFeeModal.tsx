@@ -67,7 +67,7 @@ const AddFeeModal = () => {
 			newInvalidCols.push('price');
 		}
 		if (newInvalidCols.includes('label') || newInvalidCols.includes('price')) {
-			newInvalidCols.splice(0, 1);
+			newInvalidCols.shift()
 			setInvalidCols(newInvalidCols);
 			return;
 		}
@@ -85,7 +85,7 @@ const AddFeeModal = () => {
 
 			newAddFees.push(addedFee);
 			if (newAddFees[0].label === 'dummy') {
-				newAddFees.splice(0, 1);
+				newAddFees.shift();
 			}
 			orderStore.setAddFees(newAddFees);
 		}
