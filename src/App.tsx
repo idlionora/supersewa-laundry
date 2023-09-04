@@ -28,7 +28,6 @@ function App() {
 		to_be_sent: 'Daftar Kirim',
 		sent: 'Penjemputan',
 		new_order: 'Bikin Pesanan',
-		orders2: 'Daftar Pesanan',
 	};
 	const signIn = true;
 	// check if signed in, redirect to sign in form if not

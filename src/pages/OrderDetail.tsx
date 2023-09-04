@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
 	ServiceType,
@@ -27,7 +27,7 @@ import iconStorefront from '../assets/icon-storefront.svg';
 import iconTruck from '../assets/icon-truck.svg';
 import iconClose from '../assets/icon-x.svg';
 import iconPlus from '../assets/icon-plus.svg';
-
+import DropdownComp from '../components/DropdownComp';
 
 type OrderDetailSpec = {
 	order_id: number;
@@ -107,25 +107,27 @@ function OrderDetail() {
 		customer,
 		start_date: startDate,
 		user_email: userEmail,
-		notes_internal: notes,
-		method_payment: paymentMethod,
-		method_shipping: shippingMethod,
-		order_paid: orderPaid,
-		order_status: orderStatus,
 	} = orderDetailDummy;
-	const [services, setServices] = useState(orderDetailDummy.services);
+
+	const notesRef = useRef<HTMLTextAreaElement>(null);
+	const paymentMethodRef = useRef<HTMLDivElement>(null);
+	const orderPaidRef = useRef<HTMLDivElement>(null);
+	const shippingMethodRef = useRef<HTMLDivElement>(null);
+	const orderStatusRef = useRef<HTMLDivElement>(null);
+
+	const [notes, setNotes] = useState<string>(orderDetailDummy.notes_internal);
+	const [paymentMethod, setPaymentMethod] = useState<string>(orderDetailDummy.method_payment);
+	const [shippingMethod, setShippingMethod] = useState<string>(orderDetailDummy.method_shipping);
+	const [orderPaid, setOrderPaid] = useState<boolean>(orderDetailDummy.order_paid);
+	const [orderStatus, setOrderStatus] = useState<string>(orderDetailDummy.order_status);
+	const [activeEditOption, setActiveEditOption] = useState<string>('');
+
+	const [services, setServices] = useState<ServiceType[] | null>(orderDetailDummy.services);
 	const [servicesPrice, setServicesPrice] = useState(0);
 	const [addFees, setAddFees] = useState<FeeType[] | null>(orderDetailDummy.add_fees);
-	const [netPrice, setNetPrice] = useState(orderDetailDummy.net_price);
+	const [netPrice, setNetPrice] = useState<number>(orderDetailDummy.net_price);
 	const [payments, setPayments] = useState<PaymentType[] | null>(paymentsDummy);
-	const [currentBill, setCurrentBill] = useState(orderDetailDummy.current_bill);
-	const [orderInfo, setOrderInfo] = useState({
-		notes,
-		paymentMethod,
-		shippingMethod,
-		orderPaid,
-		orderStatus,
-	});
+	const [currentBill, setCurrentBill] = useState<number>(orderDetailDummy.current_bill);
 
 	function deleteItemInArray<T>(
 		array: T[] | null,
@@ -142,6 +144,18 @@ function OrderDetail() {
 		setter(newArray);
 	}
 
+	function setOrderPaidFromDropDown(input: string) {
+		if (input === 'Lunas') {
+			setOrderPaid(true);
+		} else {
+			setOrderPaid(false);
+		}
+	}
+
+	function setActiveMenuByString(value: string) {
+		activeEditOption === value ? setActiveEditOption('') : setActiveEditOption(value) 
+	}
+
 	useEffect(() => {
 		store.resetOrderStore();
 		store.setServices(orderDetailDummy.services);
@@ -149,6 +163,40 @@ function OrderDetail() {
 		store.setPayments(paymentsDummy);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	useEffect(() => {
+		if (activeEditOption === 'notes' && notesRef.current) {
+			notesRef.current.value = notes;
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [activeEditOption]);
+
+	useEffect(() => {
+		document.addEventListener('mousedown', closeEditOption);
+
+		return () => {
+			document.removeEventListener('mousedown', closeEditOption);
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [activeEditOption]);
+
+	function closeEditOption(event: MouseEvent) {
+		const clickTarget = event.target as Node;
+
+		function deactivateMenuByClickOutsideRef(
+			Ref: React.RefObject<HTMLDivElement>,
+			activeLabel: string
+		) {
+			if (Ref && activeEditOption === activeLabel && !Ref.current?.contains(clickTarget)) {
+				setActiveEditOption('');
+			}
+		}
+
+		deactivateMenuByClickOutsideRef(paymentMethodRef, 'payment-method');
+		deactivateMenuByClickOutsideRef(orderPaidRef, 'order-paid');
+		deactivateMenuByClickOutsideRef(shippingMethodRef, 'shipping-method');
+		deactivateMenuByClickOutsideRef(orderStatusRef, 'order-status');
+	}
 
 	useEffect(() => {
 		setServices(store.services);
@@ -243,7 +291,9 @@ function OrderDetail() {
 									href={`https://www.google.com/maps/search/?api=1&query=${customer.address}`}
 									target="_blank"
 									className="badge-pill-lightgreen"
-								>Cari di Maps</a>
+								>
+									Cari di Maps
+								</a>
 							</div>
 						</li>
 						<li className="detail-col-grid">
@@ -258,106 +308,205 @@ function OrderDetail() {
 						</li>
 						<li className="detail-col-grid">
 							<div className="detail-left-grid">Catatan</div>
-							<div className="w-full sm:w-3/4 flex items-center">
-								<p>{orderInfo.notes.length > 1 ? orderInfo.notes : '–'}</p>
-								<button className="ml-3">
-									<img
-										src={iconPencil}
-										alt="Ubah"
-										className="w-4 h-4 filter-orange-600"
+							{activeEditOption === 'notes' ? (
+								<form
+									className="w-full sm:w-3/4 "
+									onSubmit={(e) => {
+										e.preventDefault();
+										setNotes(notesRef.current?.value || '');
+										setActiveEditOption('');
+									}}
+								>
+									<textarea
+										ref={notesRef}
+										name="order_notes"
+										id="order-notes"
+										rows={3}
+										className="w-full bg-white form-input mb-2"
+										style={{ height: 'auto' }}
+										placeholder="catatan untuk keperluan internal"
 									/>
-								</button>
-							</div>
+									<div className="flex gap-2">
+										<button
+											className="button-color bg-theme-blue"
+											type="submit"
+										>
+											Ubah
+										</button>
+										<button
+											className="button-gray"
+											onClick={() => setActiveEditOption('')}
+										>
+											Batalkan
+										</button>
+									</div>
+								</form>
+							) : (
+								<div className="w-full sm:w-3/4 flex items-center">
+									<p>{notes.length > 1 ? notes : '–'}</p>
+									<button
+										className="ml-3"
+										onClick={() => setActiveEditOption('notes')}
+									>
+										<img
+											src={iconPencil}
+											alt="Ubah"
+											className="w-4 h-4 filter-orange-600"
+										/>
+									</button>
+								</div>
+							)}
 						</li>
 						<li className="detail-col-grid">
 							<div className="detail-left-grid">Metode Bayar</div>
-							<div className="w-full sm:w-3/4 flex items-center font-medium">
-								<img
-									src={
-										orderInfo.paymentMethod === 'Transfer'
-											? iconCreditCard
-											: iconBanknotes
-									}
-									alt=""
-									className="w-5 h-5 ml-[-2px] filter-green-600 mr-1.5"
-								/>
-								<p className="text-green-600">{orderInfo.paymentMethod}</p>
-								<button className="ml-3">
+							<div className="w-full sm:w-3/4 font-medium">
+								<DropdownComp
+									title="payment-method"
+									isOpen={activeEditOption === 'payment-method'}
+									setOpenedDropdown={setActiveEditOption}
+									options={['Transfer', 'Tunai']}
+									selectedOption={paymentMethod}
+									setSelectedOption={setPaymentMethod}
+									parentClass="flex items-center w-fit"
+									childClass=""
+									ref={paymentMethodRef}
+								>
 									<img
-										src={iconPencil}
-										alt="Ubah"
-										className="w-4 h-4 filter-orange-600"
+										src={
+											paymentMethod === 'Transfer'
+												? iconCreditCard
+												: iconBanknotes
+										}
+										alt=""
+										className="w-5 h-5 ml-[-2px] filter-green-600 mr-1.5"
 									/>
-								</button>
+									<p className="text-green-600">{paymentMethod}</p>
+									<button
+										className="ml-3"
+										onClick={() => setActiveMenuByString('payment-method')}
+									>
+										<img
+											src={iconPencil}
+											alt="Ubah"
+											className="w-4 h-4 filter-orange-600"
+										/>
+									</button>
+								</DropdownComp>
 							</div>
 						</li>
 						<li className="detail-col-grid">
 							<div className="detail-left-grid">Status Bayar</div>
-							<div className="w-full sm:w-3/4 flex items-center font-medium">
-								<img
-									src={orderInfo.orderPaid ? iconPaid : iconUnpaid}
-									alt=""
-									className={`w-5 h-5 ml-[-2px] mr-1.5 ${
-										orderInfo.orderPaid
-											? 'filter-green-600'
-											: 'filter-orange-600'
-									}`}
-								/>
-								{orderInfo.orderPaid ? (
-									<p className="text-green-600">Lunas</p>
-								) : (
-									<p className="text-orange-600">Belum lunas</p>
-								)}
-								<button className="ml-3">
+							<div className="w-full sm:w-3/4 font-medium">
+								<DropdownComp
+									title="order-paid"
+									isOpen={activeEditOption === 'order-paid'}
+									setOpenedDropdown={setActiveEditOption}
+									options={['Lunas', 'Belum lunas']}
+									selectedOption={orderPaid ? 'Lunas' : 'Belum lunas'}
+									setSelectedOption={setOrderPaidFromDropDown}
+									parentClass="flex items-center w-fit"
+									childClass=""
+									ref={orderPaidRef}
+								>
 									<img
-										src={iconPencil}
-										alt="Ubah"
-										className="w-4 h-4 filter-orange-600"
+										src={orderPaid ? iconPaid : iconUnpaid}
+										alt=""
+										className={`w-5 h-5 ml-[-2px] mr-1.5 ${
+											orderPaid ? 'filter-green-600' : 'filter-orange-600'
+										}`}
 									/>
-								</button>
+									{orderPaid ? (
+										<p className="text-green-600">Lunas</p>
+									) : (
+										<p className="text-orange-600">Belum lunas</p>
+									)}
+									<button
+										className="ml-3"
+										onClick={() => setActiveMenuByString('order-paid')}
+									>
+										<img
+											src={iconPencil}
+											alt="Ubah"
+											className="w-4 h-4 filter-orange-600"
+										/>
+									</button>
+								</DropdownComp>
 							</div>
 						</li>
 						<li className="detail-col-grid">
 							<div className="detail-left-grid">Metode Kirim</div>
-							<div className="w-full sm:w-3/4 flex items-center font-medium">
-								<img
-									src={
-										orderInfo.shippingMethod === 'Antar sendiri'
-											? iconStorefront
-											: iconTruck
-									}
-									alt=""
-									className="w-5 h-5 ml-[-2px] mr-1.5 filter-green-600"
-								/>
-								<p className="text-green-600">{orderInfo.shippingMethod}</p>
-								<button className="ml-3">
+							<div className="w-full sm:w-3/4 font-medium">
+								<DropdownComp
+									title="shipping-method"
+									isOpen={activeEditOption === 'shipping-method'}
+									setOpenedDropdown={setActiveEditOption}
+									options={[
+										'Antar sendiri',
+										'Kurir rental',
+										'Kurir pihak ketiga',
+									]}
+									selectedOption={shippingMethod}
+									setSelectedOption={setShippingMethod}
+									parentClass="flex items-center w-fit"
+									childClass=""
+									ref={shippingMethodRef}
+								>
 									<img
-										src={iconPencil}
-										alt="Ubah"
-										className="w-4 h-4 filter-orange-600"
+										src={
+											shippingMethod === 'Antar sendiri'
+												? iconStorefront
+												: iconTruck
+										}
+										alt=""
+										className="w-5 h-5 ml-[-2px] mr-1.5 filter-green-600"
 									/>
-								</button>
+									<p className="text-green-600">{shippingMethod}</p>
+									<button
+										className="ml-3"
+										onClick={() => setActiveMenuByString('shipping-method')}
+									>
+										<img
+											src={iconPencil}
+											alt="Ubah"
+											className="w-4 h-4 filter-orange-600"
+										/>
+									</button>
+								</DropdownComp>
 							</div>
 						</li>
 						<li className="detail-col-grid">
 							<div className="detail-left-grid">Status Pesanan</div>
-							<div
-								className={`w-full sm:w-3/4 flex items-center font-medium ${
-									orderInfo.orderStatus === 'Sedang cuci'
-										? 'text-theme-blue'
-										: orderInfo.orderStatus === 'Tunggu jemput'
-										? 'text-orange-500'
-										: 'text-green-600'
-								}`}
-							>
-								<p>{orderInfo.orderStatus}</p>
-								<button className="ml-3">
-									<img
-										src={iconPencil}
-										alt="Ubah"
-										className="w-4 h-4 filter-orange-600"
-									/>
-								</button>
+							<div className="w-full sm:w-3/4 flex items-center font-medium">
+								<DropdownComp
+									title="order-status"
+									isOpen={activeEditOption === 'order-status'}
+									setOpenedDropdown={setActiveEditOption}
+									options={['Sedang cuci', 'Tunggu jemput', 'Pesanan selesai']}
+									selectedOption={orderStatus}
+									setSelectedOption={setOrderStatus}
+									parentClass="flex items-center w-fit"
+									childClass=""
+									ref={orderStatusRef}
+								>
+									<p
+										className={
+											orderStatus === 'Sedang cuci'
+												? 'text-theme-blue'
+												: orderStatus === 'Tunggu jemput'
+												? 'text-orange-500'
+												: 'text-green-600'
+										}
+									>
+										{orderStatus}
+									</p>
+									<button className="ml-3" onClick={() => setActiveMenuByString('order-status')}>
+										<img
+											src={iconPencil}
+											alt="Ubah"
+											className="w-4 h-4 filter-orange-600"
+										/>
+									</button>
+								</DropdownComp>
 							</div>
 						</li>
 					</ul>
