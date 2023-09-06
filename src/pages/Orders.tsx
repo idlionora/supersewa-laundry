@@ -1,12 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '../components/ui/select.tsx';
-import {
 	OrderBasicSpec,
 	parseOrdersData,
 	parseActiveData,
@@ -16,6 +9,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import orderDataDummy from '../lib/orderDataDummy.tsx';
 import OrdersDataCard from '../components/OrdersDataCard.tsx';
 import iconSearch from '../assets/icon-search.svg';
+import { ChevronDown } from 'lucide-react';
+import DropdownComp from '../components/DropdownComp.tsx';
 
 type OrderPageType = {
 	cardsCategory: string;
@@ -29,28 +24,20 @@ function Orders({ cardsCategory }: OrderPageType) {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const navigate = useNavigate();
 	const timeoutId = useRef<NodeJS.Timeout | undefined>(undefined);
+	const categoryRef = useRef<HTMLDivElement>(null)
 
 	const [currentActiveDatas, setCurrentActiveDatas] =
 		useState<OrderBasicSpec[]>(activeOrderDatas);
 	const [currentDataMarker, setCurrentDataMarker] = useState('Masih Proses');
 	const [filteredActiveDatas, setFilteredActiveDatas] = useState<OrderBasicSpec[] | null>(null);
 	const [globalFilter, setGlobalFilter] = useState('');
-	const [maxPageNum, setMaxPageNum] = useState(10);
+	const [isDropdownActive, setIsDropdownActive] = useState(false)
+	const [maxPageNum, setMaxPageNum] = useState(1);
 	const contentPerPage = 25;
 	const currentPage =
 		parseInt(searchParams.get('page') ?? '1') > 0
 			? parseInt(searchParams.get('page') ?? '1')
 			: 1;
-
-	function updatePageCount(activeDatas: OrderBasicSpec[]) {
-		const latestMaxPageNum = Math.ceil(activeDatas.length / contentPerPage);
-		if (maxPageNum !== latestMaxPageNum) {
-			setMaxPageNum(latestMaxPageNum);
-		}
-		if (currentPage !== 1) {
-			setSearchParams({ page: '1' });
-		}
-	}
 
 	if (currentDataMarker !== cardsCategory && cardsCategory === 'Semua Data') {
 		setCurrentActiveDatas(allOrderDatas);
@@ -66,6 +53,21 @@ function Orders({ cardsCategory }: OrderPageType) {
 		setCurrentActiveDatas(unpaidOrderDatas);
 		setCurrentDataMarker('Belum Bayar');
 		setMaxPageNum(Math.ceil(unpaidOrderDatas.length / contentPerPage));
+	}
+
+	useEffect(() => {
+		document.addEventListener('mousedown', closeCategoryDropdown)
+
+		return () => {
+			document.removeEventListener('mousedown', closeCategoryDropdown)
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [isDropdownActive])
+
+	function closeCategoryDropdown(event: MouseEvent) {
+		if (categoryRef && isDropdownActive && !categoryRef.current?.contains(event.target as Node)){
+			setIsDropdownActive(false)
+		}
 	}
 
 	function spliceActiveDatas(datas: OrderBasicSpec[]) {
@@ -116,6 +118,16 @@ function Orders({ cardsCategory }: OrderPageType) {
 		}
 	}
 
+	function updatePageCount(activeDatas: OrderBasicSpec[]) {
+		const latestMaxPageNum = Math.ceil(activeDatas.length / contentPerPage);
+		if (maxPageNum !== latestMaxPageNum) {
+			setMaxPageNum(latestMaxPageNum);
+		}
+		if (currentPage !== 1) {
+			setSearchParams({ page: '1' });
+		}
+	}
+
 	useEffect(() => {
 		clearInterval(timeoutId.current);
 		timeoutId.current = setTimeout(() => {
@@ -123,6 +135,16 @@ function Orders({ cardsCategory }: OrderPageType) {
 		}, 500);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [globalFilter]);
+
+	function navigateFromDropdown(option: string) {
+		if (option === 'Semua Data') {
+			navigate('/orders/all');
+		} else if (option === 'Belum Bayar') {
+			navigate('/orders/unpaid');
+		} else {
+			navigate('/orders/ongoing');
+		}
+	}
 
 	return (
 		<main className="page-container pt-4">
@@ -150,29 +172,12 @@ function Orders({ cardsCategory }: OrderPageType) {
 								/>
 							</div>
 						</div>
-						<div className="flex items-center">
-							<Select
-								value={cardsCategory}
-								onValueChange={(category) => {
-									if (category === 'Semua Data') {
-										navigate('/orders/all');
-									} else if (category === 'Masih Proses') {
-										navigate('/orders/ongoing');
-									} else {
-										navigate('/orders/unpaid');
-									}
-								}}
-							>
-								<SelectTrigger className="bg-white whitespace-nowrap gap-2.5 px-2.5 text-[0.875rem] focus:ring-0 focus:outline-offset-[-1px] focus:outline-green-600 hover:bg-slate-50">
-									<SelectValue />
-								</SelectTrigger>
-								<SelectContent>
-									<SelectItem value="Semua Data">Semua Data</SelectItem>
-									<SelectItem value="Masih Proses">Masih Proses</SelectItem>
-									<SelectItem value="Belum Bayar">Belum Bayar</SelectItem>
-								</SelectContent>
-							</Select>
-						</div>
+						<DropdownComp title='cards-category' isDropdownActive={isDropdownActive} setActiveDropdown={() => setIsDropdownActive(false)} options={['Semua Data', 'Masih Proses', 'Belum Bayar']} selectedOption={cardsCategory} setSelectedOption={(input:string) => navigateFromDropdown(input)} parentClass='' childClass='w-36 translate-x-1/2 right-1/2' ref={categoryRef}>
+							<button className="form-input mb-0 flex items-center gap-x-2" onClick={() => setIsDropdownActive(!isDropdownActive)}>
+								<p>{cardsCategory}</p>
+								<ChevronDown className="h-4 w-4 opacity-50" />
+							</button>
+						</DropdownComp>
 					</div>
 				</div>
 				<div className="w-full mb-4 px-2.5 min-[575px]:px-0 flex justify-center sm:justify-start items-center">

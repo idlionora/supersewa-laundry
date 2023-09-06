@@ -1,24 +1,50 @@
 import React, { ReactNode, forwardRef, useEffect, useState } from "react";
 import { Check } from "lucide-react";
 
+// type DropdownRefProps = {
+//     ref: React.RefObject<HTMLDivElement>,
+//     activeLabel : string
+// }
+
+// type CloseDropdownRequirements = {
+//     event: MouseEvent,
+//     dropdowns: DropdownRefProps[],
+//     activeDropdown: string,
+//     setActiveDropdown: React.Dispatch<React.SetStateAction<string>>
+// }
+
+// export function closeDropdownEvent({event, dropdowns, activeDropdown, setActiveDropdown} : CloseDropdownRequirements) {
+//     const clickTarget = event.target as Node;
+    
+//     function deactivateDropdownByClick(dropdown : DropdownRefProps) {
+//         const {ref, activeLabel} = dropdown
+
+//         if (ref && activeDropdown === activeLabel && !ref.current?.contains(clickTarget)) {
+//             setActiveDropdown('')
+//         }
+//     }
+
+//     dropdowns.forEach((dropdown) => deactivateDropdownByClick(dropdown))
+// }
+
 type DropdownCompProps = {
 	title: string;
-	isOpen: boolean;
-	setOpenedDropdown: React.Dispatch<React.SetStateAction<string>> | ((input: string) => void);
+	isDropdownActive: boolean;
+	setActiveDropdown: React.Dispatch<React.SetStateAction<string>> | (() => void);
 	options: string[];
 	selectedOption: string;
 	setSelectedOption: React.Dispatch<React.SetStateAction<string>> | ((input: string) => void);
 	parentClass: string;
 	childClass: string;
-	children: ReactNode[];
+	children: ReactNode | ReactNode[];
 };
 
-const DropdownComp = forwardRef<HTMLDivElement, DropdownCompProps>(({title, isOpen, setOpenedDropdown, options, selectedOption, setSelectedOption, parentClass = '', childClass = '', children}, ref) => {
+const DropdownComp = forwardRef<HTMLDivElement, DropdownCompProps>(({title, isDropdownActive, setActiveDropdown, options, selectedOption, setSelectedOption, parentClass = '', childClass = '', children}, ref) => {
     const [dropdownDisplay, setDropdownDisplay] = useState<boolean>(false);
     const [dropdownOpacity, setDropdownOpacity] = useState<boolean>(false);
 
     useEffect(() => {
-        if (isOpen) {
+        if (isDropdownActive) {
             setDropdownDisplay(true);
             setTimeout(() => {
                 setDropdownOpacity(true);
@@ -29,11 +55,11 @@ const DropdownComp = forwardRef<HTMLDivElement, DropdownCompProps>(({title, isOp
                 setDropdownDisplay(false)
             }, 210)
         }
-    }, [isOpen])
+    }, [isDropdownActive])
 
     function selectDropdown(input: string) {
         setSelectedOption(input)
-        setOpenedDropdown('')
+        setActiveDropdown('')
     }
     return (
 		<div ref={ref} className={`relative ${parentClass}`}>

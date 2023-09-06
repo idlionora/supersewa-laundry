@@ -3,7 +3,7 @@ import { ServiceType, FeeType, useTrackedOrderStore } from '../stores/orderStore
 import useTrackedModalStore from '../stores/modalStore';
 import id from 'date-fns/locale/id';
 import { format } from 'date-fns';
-import { Calendar as CalendarIcon } from 'lucide-react';
+import { Calendar as CalendarIcon, ChevronDown } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { Button } from '../components/ui/button';
 import { Calendar } from '../components/ui/calendar';
@@ -16,19 +16,15 @@ import iconExclamation from '../assets/icon-exclamation-circle.svg';
 import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
 import { Label } from '../components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '../components/ui/select.tsx';
+import DropdownComp from '../components/DropdownComp.tsx';
 
 function NewOrder() {
 	const store = useTrackedOrderStore();
 	const modalState = useTrackedModalStore();
 	const notesInternalRef = useRef<HTMLTextAreaElement>(null);
 	const notesInvoiceRef = useRef<HTMLTextAreaElement>(null);
+	const paymentMethodRef = useRef<HTMLDivElement>(null);
+	const shippingMethodRef = useRef<HTMLDivElement>(null);
 	const [startDate, setStartDate] = useState<Date | undefined>(new Date());
 	const [serviceCards, setServiceCards] = useState<ServiceType[] | null>(null);
 	const [addFees, setAddFees] = useState<FeeType[] | null>(null);
@@ -36,41 +32,49 @@ function NewOrder() {
 	const [netPrice, setNetPrice] = useState(0);
 	const [paymentMethod, setPaymentMethod] = useState('Transfer');
 	const [shippingMethod, setShippingMethod] = useState('Antar sendiri');
+	const [activeDropdown, setActiveDropdown] = useState('')
 	const [orderPaid, setOrderPaid] = useState('order-paid-false');
 	const [invalidCols, setInvalidCols] = useState<string[] | null>(null);
 
+	useEffect(() => {
+		store.resetOrderStore();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	useEffect(() => {
+		document.addEventListener('mousedown', closeDropdown);
+
+		return () => {
+			document.removeEventListener('mousedown', closeDropdown)
+		}
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [activeDropdown])
+
+	function closeDropdown(event: MouseEvent) {
+		const clickTarget = event.target as Node;
+		const dropdowns = [{ref: paymentMethodRef, activeLabel: 'payment-method'}, {ref: shippingMethodRef, activeLabel: 'shipping-method'}]
+
+		function deactivateDropdownByClick(
+			ref: React.RefObject<HTMLDivElement>,
+			activeLabel: string
+		) {
+			if (ref && activeDropdown === activeLabel && !ref.current?.contains(clickTarget)) {
+				setActiveDropdown('');
+			}
+		}
+
+		dropdowns.forEach(({ ref, activeLabel }) => deactivateDropdownByClick(ref, activeLabel));
+	}
+	
 	function updateServiceCards(
 		id: number,
 		category: 'quantity' | 'price' | 'desc',
 		value: number | string
 	) {
-		let servicesCopy = [
-			{ id: 0, name: '', priceRange: '', img: '', quantity: 1, price: 0, desc: '' },
-		];
-		let packageCopy = {
-			id: 0,
-			name: '',
-			priceRange: '',
-			img: '',
-			quantity: 1,
-			price: 0,
-			desc: '',
-		};
-		let targetIndex = 0;
-
-		if (serviceCards) {
-			servicesCopy = [...serviceCards];
-		}
-
-		serviceCards?.forEach((item, index) => {
-			if (item.id === id) {
-				targetIndex = index;
-			}
-		});
-
-		if (serviceCards !== null) {
-			packageCopy = serviceCards[targetIndex];
-		}
+		const servicesCopy = [...serviceCards!];
+		const targetIndex = serviceCards!.findIndex((card) => card.id === id);
+		const packageCopy = serviceCards![targetIndex];
 
 		if (category === 'quantity' && typeof value === 'number') {
 			packageCopy.quantity = value;
@@ -85,20 +89,8 @@ function NewOrder() {
 	}
 
 	function deleteServiceCard(id: number) {
-		let servicesCopy: ServiceType[] | null = [
-			{ id: 0, name: '', priceRange: '', img: '', quantity: 1, price: 0, desc: '' },
-		];
-		let targetIndex = 0;
-
-		if (serviceCards) {
-			servicesCopy = [...serviceCards];
-		}
-
-		serviceCards?.forEach((item, index) => {
-			if (item.id === id) {
-				targetIndex = index;
-			}
-		});
+		let servicesCopy: ServiceType[] | null = [...serviceCards!];
+		const targetIndex = serviceCards!.findIndex((card) => card.id === id);
 
 		if (servicesCopy.length !== 1) {
 			servicesCopy.splice(targetIndex, 1);
@@ -110,13 +102,12 @@ function NewOrder() {
 	}
 
 	useEffect(() => {
-		store.resetOrderStore();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	useEffect(() => {
 		setServiceCards(store.services);
 	}, [store.services]);
+
+	useEffect(() => {
+		setAddFees(store.addFees);
+	}, [store.addFees]);
 
 	useEffect(() => {
 		let total = 0;
@@ -142,24 +133,21 @@ function NewOrder() {
 		setNetPrice(total);
 	}, [laundryCost, addFees]);
 
-	useEffect(() => {
-		setAddFees(store.addFees);
-	}, [store.addFees]);
-
 	function deleteAddFee(index: number) {
-		let addFeesCopy: FeeType[] = [{ category: 'discount', label: '', price: 0 }];
+		let addFeesCopy: FeeType[] | null = [...addFees!];
 
-		if (addFees) {
-			addFeesCopy = [...addFees];
+		if (addFeesCopy.length !== 1) {
+			addFeesCopy.splice(index, 1);
+		} else {
+			addFeesCopy = null
 		}
 
-		addFeesCopy.splice(index, 1);
 		setAddFees(addFeesCopy);
 	}
 
 	/* VALIDATION AND ERROR HANDLING */
 
-	function spliceInvalidCols(col: string) {
+	function removeInvalidCol(col: string) {
 		if (invalidCols?.includes(col)) {
 			let newInvalidCols: string[] | null = [...invalidCols];
 
@@ -173,22 +161,22 @@ function NewOrder() {
 	}
 
 	useEffect(() => {
-		spliceInvalidCols('customer');
+		removeInvalidCol('customer');
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [store.customer]);
 
 	useEffect(() => {
-		spliceInvalidCols('startDate');
+		removeInvalidCol('startDate');
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [startDate]);
 
 	useEffect(() => {
-		spliceInvalidCols('serviceCards');
+		removeInvalidCol('serviceCards');
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [serviceCards]);
 
 	useEffect(() => {
-		spliceInvalidCols('laundryCost');
+		removeInvalidCol('laundryCost');
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [laundryCost]);
 
@@ -504,28 +492,43 @@ function NewOrder() {
 							placeholder="catatan yang akan muncul di tagihan"
 						/>
 						<h4>Metode Pembayaran</h4>
-						<Select value={paymentMethod} onValueChange={setPaymentMethod}>
-							<SelectTrigger className="w-full max-w-sm">
-								<SelectValue placeholder="Pilih metode pembayaran" />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value="Transfer">Transfer</SelectItem>
-								<SelectItem value="Tunai">Tunai</SelectItem>
-							</SelectContent>
-						</Select>
+						<DropdownComp
+							title="payment-method"
+							isDropdownActive={activeDropdown === 'payment-method'}
+							setActiveDropdown={setActiveDropdown}
+							options={['Transfer', 'Tunai']}
+							selectedOption={paymentMethod}
+							setSelectedOption={setPaymentMethod}
+							parentClass="w-full max-w-sm"
+							childClass="w-full"
+							ref={paymentMethodRef}
+						>
+							<button
+								className="w-full max-w-sm form-input mb-0 text-left relative"
+								onClick={() =>
+									activeDropdown === ''
+										? setActiveDropdown('payment-method')
+										: setActiveDropdown('')
+								}
+							>
+								<p>{paymentMethod}</p>
+								<ChevronDown className="h-4 w-4 opacity-50 absolute right-3 bottom-1/2 translate-y-1/2" />
+							</button>
+						</DropdownComp>
 						<h4 className="mt-4">Metode Pengiriman</h4>
-						<Select value={shippingMethod} onValueChange={setShippingMethod}>
-							<SelectTrigger className="w-full max-w-sm">
-								<SelectValue placeholder="Pilih metode pengiriman" />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value="Antar sendiri">Antar sendiri</SelectItem>
-								<SelectItem value="Kurir rental">Kurir rental</SelectItem>
-								<SelectItem value="Kurir pihak ketiga">
-									Kurir pihak ketiga
-								</SelectItem>
-							</SelectContent>
-						</Select>
+						<DropdownComp title='shipping-method' isDropdownActive={activeDropdown === 'shipping-method'} setActiveDropdown={setActiveDropdown} options={['Antar sendiri', 'Kurir rental', 'Kurir pihak ketiga']} selectedOption={shippingMethod} setSelectedOption={setShippingMethod} parentClass='w-full max-w-sm' childClass='w-full' ref={shippingMethodRef}>
+							<button
+								className="w-full max-w-sm form-input mb-0 text-left relative"
+								onClick={() =>
+									activeDropdown === ''
+										? setActiveDropdown('shipping-method')
+										: setActiveDropdown('')
+								}
+							>
+								<p>{shippingMethod}</p>
+								<ChevronDown className="h-4 w-4 opacity-50 absolute right-3 bottom-1/2 translate-y-1/2" />
+							</button>
+						</DropdownComp>
 						<h4 className="mt-4">Pembayaran</h4>
 						<RadioGroup value={orderPaid} onValueChange={setOrderPaid}>
 							<div className="w-full max-w-xs flex flex-col sm:flex-row justify-between pt-2 gap-y-6 mb-4">

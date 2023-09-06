@@ -120,7 +120,7 @@ function OrderDetail() {
 	const [shippingMethod, setShippingMethod] = useState<string>(orderDetailDummy.method_shipping);
 	const [orderPaid, setOrderPaid] = useState<boolean>(orderDetailDummy.order_paid);
 	const [orderStatus, setOrderStatus] = useState<string>(orderDetailDummy.order_status);
-	const [activeEditOption, setActiveEditOption] = useState<string>('');
+	const [activeDropdown, setActiveDropdown] = useState<string>('');
 
 	const [services, setServices] = useState<ServiceType[] | null>(orderDetailDummy.services);
 	const [servicesPrice, setServicesPrice] = useState(0);
@@ -153,7 +153,7 @@ function OrderDetail() {
 	}
 
 	function setActiveMenuByString(value: string) {
-		activeEditOption === value ? setActiveEditOption('') : setActiveEditOption(value) 
+		activeDropdown === value ? setActiveDropdown('') : setActiveDropdown(value) 
 	}
 
 	useEffect(() => {
@@ -165,37 +165,35 @@ function OrderDetail() {
 	}, []);
 
 	useEffect(() => {
-		if (activeEditOption === 'notes' && notesRef.current) {
+		if (activeDropdown === 'notes' && notesRef.current) {
 			notesRef.current.value = notes;
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [activeEditOption]);
+	}, [activeDropdown]);
 
 	useEffect(() => {
-		document.addEventListener('mousedown', closeEditOption);
+		document.addEventListener('mousedown', closeDropdown);
 
 		return () => {
-			document.removeEventListener('mousedown', closeEditOption);
+			document.removeEventListener('mousedown', closeDropdown);
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [activeEditOption]);
+	}, [activeDropdown]);
 
-	function closeEditOption(event: MouseEvent) {
+	function closeDropdown(event: MouseEvent) {
 		const clickTarget = event.target as Node;
+		const dropdowns = [{ ref: paymentMethodRef, activeLabel: 'payment-method' }, {ref: orderPaidRef, activeLabel: 'order-paid'}, {ref: shippingMethodRef, activeLabel: 'shipping-method'}, {ref: orderStatusRef, activeLabel: 'order-status'}];
 
-		function deactivateMenuByClickOutsideRef(
-			Ref: React.RefObject<HTMLDivElement>,
+		function deactivateDropdownByClick(
+			ref: React.RefObject<HTMLDivElement>,
 			activeLabel: string
 		) {
-			if (Ref && activeEditOption === activeLabel && !Ref.current?.contains(clickTarget)) {
-				setActiveEditOption('');
+			if (ref && activeDropdown === activeLabel && !ref.current?.contains(clickTarget)) {
+				setActiveDropdown('');
 			}
 		}
 
-		deactivateMenuByClickOutsideRef(paymentMethodRef, 'payment-method');
-		deactivateMenuByClickOutsideRef(orderPaidRef, 'order-paid');
-		deactivateMenuByClickOutsideRef(shippingMethodRef, 'shipping-method');
-		deactivateMenuByClickOutsideRef(orderStatusRef, 'order-status');
+		dropdowns.forEach(({ref, activeLabel}) => deactivateDropdownByClick(ref, activeLabel))
 	}
 
 	useEffect(() => {
@@ -308,13 +306,13 @@ function OrderDetail() {
 						</li>
 						<li className="detail-col-grid">
 							<div className="detail-left-grid">Catatan</div>
-							{activeEditOption === 'notes' ? (
+							{activeDropdown === 'notes' ? (
 								<form
 									className="w-full sm:w-3/4 "
 									onSubmit={(e) => {
 										e.preventDefault();
 										setNotes(notesRef.current?.value || '');
-										setActiveEditOption('');
+										setActiveDropdown('');
 									}}
 								>
 									<textarea
@@ -331,11 +329,11 @@ function OrderDetail() {
 											className="button-color bg-theme-blue"
 											type="submit"
 										>
-											Ubah
+											Simpan
 										</button>
 										<button
 											className="button-gray"
-											onClick={() => setActiveEditOption('')}
+											onClick={() => setActiveDropdown('')}
 										>
 											Batalkan
 										</button>
@@ -346,7 +344,7 @@ function OrderDetail() {
 									<p>{notes.length > 1 ? notes : '–'}</p>
 									<button
 										className="ml-3"
-										onClick={() => setActiveEditOption('notes')}
+										onClick={() => setActiveDropdown('notes')}
 									>
 										<img
 											src={iconPencil}
@@ -362,8 +360,8 @@ function OrderDetail() {
 							<div className="w-full sm:w-3/4 font-medium">
 								<DropdownComp
 									title="payment-method"
-									isOpen={activeEditOption === 'payment-method'}
-									setOpenedDropdown={setActiveEditOption}
+									isDropdownActive={activeDropdown === 'payment-method'}
+									setActiveDropdown={setActiveDropdown}
 									options={['Transfer', 'Tunai']}
 									selectedOption={paymentMethod}
 									setSelectedOption={setPaymentMethod}
@@ -399,8 +397,8 @@ function OrderDetail() {
 							<div className="w-full sm:w-3/4 font-medium">
 								<DropdownComp
 									title="order-paid"
-									isOpen={activeEditOption === 'order-paid'}
-									setOpenedDropdown={setActiveEditOption}
+									isDropdownActive={activeDropdown === 'order-paid'}
+									setActiveDropdown={setActiveDropdown}
 									options={['Lunas', 'Belum lunas']}
 									selectedOption={orderPaid ? 'Lunas' : 'Belum lunas'}
 									setSelectedOption={setOrderPaidFromDropDown}
@@ -438,8 +436,8 @@ function OrderDetail() {
 							<div className="w-full sm:w-3/4 font-medium">
 								<DropdownComp
 									title="shipping-method"
-									isOpen={activeEditOption === 'shipping-method'}
-									setOpenedDropdown={setActiveEditOption}
+									isDropdownActive={activeDropdown === 'shipping-method'}
+									setActiveDropdown={setActiveDropdown}
 									options={[
 										'Antar sendiri',
 										'Kurir rental',
@@ -479,8 +477,8 @@ function OrderDetail() {
 							<div className="w-full sm:w-3/4 flex items-center font-medium">
 								<DropdownComp
 									title="order-status"
-									isOpen={activeEditOption === 'order-status'}
-									setOpenedDropdown={setActiveEditOption}
+									isDropdownActive={activeDropdown === 'order-status'}
+									setActiveDropdown={setActiveDropdown}
 									options={['Sedang cuci', 'Tunggu jemput', 'Pesanan selesai']}
 									selectedOption={orderStatus}
 									setSelectedOption={setOrderStatus}
