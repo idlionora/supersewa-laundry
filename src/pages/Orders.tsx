@@ -8,9 +8,9 @@ import {
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import orderDataDummy from '../lib/orderDataDummy.tsx';
 import OrdersDataCard from '../components/OrdersDataCard.tsx';
+import DropdownComp from '../components/DropdownComp.tsx';
 import iconSearch from '../assets/icon-search.svg';
 import { ChevronDown } from 'lucide-react';
-import DropdownComp from '../components/DropdownComp.tsx';
 
 type OrderPageType = {
 	cardsCategory: string;
@@ -24,14 +24,14 @@ function Orders({ cardsCategory }: OrderPageType) {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const navigate = useNavigate();
 	const timeoutId = useRef<NodeJS.Timeout | undefined>(undefined);
-	const categoryRef = useRef<HTMLDivElement>(null)
+	const categoryRef = useRef<HTMLDivElement>(null);
 
 	const [currentActiveDatas, setCurrentActiveDatas] =
 		useState<OrderBasicSpec[]>(activeOrderDatas);
 	const [currentDataMarker, setCurrentDataMarker] = useState('Masih Proses');
 	const [filteredActiveDatas, setFilteredActiveDatas] = useState<OrderBasicSpec[] | null>(null);
 	const [globalFilter, setGlobalFilter] = useState('');
-	const [isDropdownActive, setIsDropdownActive] = useState(false)
+	const [isDropdownActive, setIsDropdownActive] = useState(false);
 	const [maxPageNum, setMaxPageNum] = useState(1);
 	const contentPerPage = 25;
 	const currentPage =
@@ -56,17 +56,21 @@ function Orders({ cardsCategory }: OrderPageType) {
 	}
 
 	useEffect(() => {
-		document.addEventListener('mousedown', closeCategoryDropdown)
+		document.addEventListener('mousedown', closeCategoryDropdown);
 
 		return () => {
-			document.removeEventListener('mousedown', closeCategoryDropdown)
-		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isDropdownActive])
+			document.removeEventListener('mousedown', closeCategoryDropdown);
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [isDropdownActive]);
 
 	function closeCategoryDropdown(event: MouseEvent) {
-		if (categoryRef && isDropdownActive && !categoryRef.current?.contains(event.target as Node)){
-			setIsDropdownActive(false)
+		if (
+			categoryRef &&
+			isDropdownActive &&
+			!categoryRef.current?.contains(event.target as Node)
+		) {
+			setIsDropdownActive(false);
 		}
 	}
 
@@ -172,9 +176,28 @@ function Orders({ cardsCategory }: OrderPageType) {
 								/>
 							</div>
 						</div>
-						<DropdownComp title='cards-category' isDropdownActive={isDropdownActive} setActiveDropdown={() => setIsDropdownActive(false)} options={['Semua Data', 'Masih Proses', 'Belum Bayar']} selectedOption={cardsCategory} setSelectedOption={(input:string) => navigateFromDropdown(input)} parentClass='' childClass='w-36 translate-x-1/2 right-1/2' ref={categoryRef}>
-							<button className="form-input mb-0 flex items-center gap-x-2" onClick={() => setIsDropdownActive(!isDropdownActive)}>
-								<p className='whitespace-nowrap'>{cardsCategory}</p>
+						<DropdownComp
+							title="cards-category"
+							dropdownStatus={{
+								isOpen: isDropdownActive,
+								setStatus: () => setIsDropdownActive(false),
+							}}
+							options={{
+								values: ['Semua Data', 'Masih Proses', 'Belum Bayar'],
+								selected: cardsCategory,
+								setSelected: (input: string) => navigateFromDropdown(input),
+							}}
+							styling={{
+								parentClass: '',
+								childClass: 'w-36 translate-x-1/2 right-1/2',
+							}}
+							ref={categoryRef}
+						>
+							<button
+								className="form-input mb-0 flex items-center gap-x-2"
+								onClick={() => setIsDropdownActive(!isDropdownActive)}
+							>
+								<p className="whitespace-nowrap">{cardsCategory}</p>
 								<ChevronDown className="h-4 w-4 opacity-50" />
 							</button>
 						</DropdownComp>

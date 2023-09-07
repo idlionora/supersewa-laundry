@@ -1,5 +1,5 @@
-import React, { ReactNode, forwardRef, useEffect, useState } from "react";
-import { Check } from "lucide-react";
+import { Check } from 'lucide-react';
+import { ReactNode, forwardRef, useEffect, useState } from 'react';
 
 // type DropdownRefProps = {
 //     ref: React.RefObject<HTMLDivElement>,
@@ -29,71 +29,76 @@ import { Check } from "lucide-react";
 
 type DropdownCompProps = {
 	title: string;
-	isDropdownActive: boolean;
-	setActiveDropdown: React.Dispatch<React.SetStateAction<string>> | (() => void);
-	options: string[];
-	selectedOption: string;
-	setSelectedOption: React.Dispatch<React.SetStateAction<string>> | ((input: string) => void);
-	parentClass: string;
-	childClass: string;
+	dropdownStatus: {
+		isOpen: boolean;
+		setStatus: React.Dispatch<React.SetStateAction<string>> | (() => void);
+	};
+	options: {
+		values: string[];
+		selected: string;
+		setSelected: React.Dispatch<React.SetStateAction<string>> | ((input: string) => void);
+	};
+	styling: { parentClass: string; childClass: string };
 	children: ReactNode | ReactNode[];
 };
 
-const DropdownComp = forwardRef<HTMLDivElement, DropdownCompProps>(({title, isDropdownActive, setActiveDropdown, options, selectedOption, setSelectedOption, parentClass = '', childClass = '', children}, ref) => {
-    const [dropdownDisplay, setDropdownDisplay] = useState<boolean>(false);
-    const [dropdownOpacity, setDropdownOpacity] = useState<boolean>(false);
+const DropdownComp = forwardRef<HTMLDivElement, DropdownCompProps>(
+	({ title, dropdownStatus, options, styling, children }, ref) => {
+		const [dropdownDisplay, setDropdownDisplay] = useState<boolean>(false);
+		const [dropdownOpacity, setDropdownOpacity] = useState<boolean>(false);
 
-    useEffect(() => {
-        if (isDropdownActive) {
-            setDropdownDisplay(true);
-            setTimeout(() => {
-                setDropdownOpacity(true);
-            }, 10)
-        } else {
-            setDropdownOpacity(false);
-            setTimeout(() => {
-                setDropdownDisplay(false)
-            }, 210)
+        useEffect(() => {
+			if (dropdownStatus.isOpen) {
+				setDropdownDisplay(true);
+				setTimeout(() => {
+					setDropdownOpacity(true);
+				}, 10);
+			} else {
+				setDropdownOpacity(false);
+				setTimeout(() => {
+					setDropdownDisplay(false);
+				}, 210);
+			}
+		}, [dropdownStatus.isOpen]);
+
+        function selectDropdown(input: string) {
+            options.setSelected(input);
+            dropdownStatus.setStatus('')
         }
-    }, [isDropdownActive])
+        return (
+			<div ref={ref} className={`relative ${styling.parentClass}`}>
+				{children}
+				{dropdownDisplay ? (
+					<ul
+						className={`absolute top-full translate-y-1 z-50 bg-white p-1 rounded border border-[#d1d5db] drop-shadow-md transition-opacity duration-200 ease-in-out flex flex-col ${
+							dropdownOpacity ? 'opacity-100' : 'opacity-0'
+						} ${styling.childClass}`}
+						onClick={(e) => e.stopPropagation()}
+					>
+						{options.values.map((optionValue, index) => {
+							return (
+								<li key={`${title}-${index}`}>
+									<button
+										className={`flex items-center gap-x-2.5 py-4 px-2 text-sm rounded-sm outline-none outline-0 ring-0 hover:bg-slate-100 focus:bg-slate-100 w-full`}
+										onClick={() => selectDropdown(optionValue)}
+									>
+										<Check
+											className={`h-4 w-4 ${
+												options.selected === optionValue ? '' : 'opacity-0'
+											}`}
+										/>
+										<p className="text-left">{optionValue}</p>
+									</button>
+								</li>
+							);
+						})}
+					</ul>
+				) : (
+					''
+				)}
+			</div>
+		);
+	}
+);
 
-    function selectDropdown(input: string) {
-        setSelectedOption(input)
-        setActiveDropdown('')
-    }
-    return (
-		<div ref={ref} className={`relative ${parentClass}`}>
-			{children}
-			{dropdownDisplay ? (
-				<ul
-					className={`absolute top-full translate-y-1 z-50 bg-white p-1 rounded border border-[#d1d5db] drop-shadow-md transition-opacity duration-200 ease-in-out flex flex-col ${
-						dropdownOpacity ? 'opacity-100' : 'opacity-0'
-					} ${childClass}`}
-					onClick={(e) => e.stopPropagation()}
-				>
-					{options.map((option, index) => {
-						return (
-							<li key={`${title}-${index}`}>
-								<button
-									className={`flex items-center gap-x-2.5 py-4 px-2 text-sm rounded-sm outline-none outline-0 ring-0 hover:bg-slate-100 focus:bg-slate-100 w-full`}
-									onClick={() => selectDropdown(option)}
-								>
-									<Check
-										className={`h-4 w-4 ${
-											selectedOption === option ? '' : 'opacity-0'
-										}`}
-									/>
-									<p className="text-left">{option}</p>
-								</button>
-							</li>
-						);
-					})}
-				</ul>
-			) : (
-				''
-			)}
-		</div>
-	);
-})
-
-export default DropdownComp;
+export default DropdownComp

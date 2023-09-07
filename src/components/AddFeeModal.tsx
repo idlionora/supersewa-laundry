@@ -2,10 +2,10 @@
 import { useEffect, useRef, useState } from 'react';
 import useTrackedModalStore from '../stores/modalStore';
 import { FeeType, useTrackedOrderStore } from '../stores/orderStore.tsx';
-import DropdownComp from './DropdownComp.tsx';
 import { ChevronDown } from 'lucide-react';
 import iconClose from '../assets/icon-x.svg';
 import iconExclamation from '../assets/icon-exclamation-circle.svg';
+import DropdownCompTest from './DropdownComp.tsx';
 
 const AddFeeModal = () => {
 	const orderStore = useTrackedOrderStore();
@@ -21,22 +21,25 @@ const AddFeeModal = () => {
 		if (!state.modalDisplay) return;
 		setLabel('');
 		setPrice('0');
-		console.log(categoryRef.current)
+		(categoryRef.current?.children[0] as HTMLElement).focus();
 	}, [state.modalDisplay]);
 
-	useEffect(()=> {
+	useEffect(() => {
 		document.addEventListener('mousedown', closeDropdown);
-		
 		return () => {
 			document.removeEventListener('mousedown', closeDropdown);
-		}
-	}, [activeDropdown])
+		};
+	}, [activeDropdown]);
 
 	function closeDropdown(event: MouseEvent) {
 		const clickTarget = event.target as Node;
-		
-		if (categoryRef && activeDropdown === 'addfee-category' && !categoryRef.current?.contains(clickTarget)) {
-			setActiveDropdown('')
+
+		if (
+			categoryRef &&
+			activeDropdown === 'addfee-category' &&
+			!categoryRef.current?.contains(clickTarget)
+		) {
+			setActiveDropdown('');
 		}
 	}
 
@@ -79,7 +82,7 @@ const AddFeeModal = () => {
 			newInvalidCols.push('price');
 		}
 		if (newInvalidCols.includes('label') || newInvalidCols.includes('price')) {
-			newInvalidCols.shift()
+			newInvalidCols.shift();
 			setInvalidCols(newInvalidCols);
 			return;
 		}
@@ -115,15 +118,18 @@ const AddFeeModal = () => {
 					<img src={iconClose} alt="Tutup Panel" className="w-5" />
 				</button>
 			</div>
-			<DropdownComp
+			<DropdownCompTest
 				title="addfee-category"
-				isDropdownActive={activeDropdown === 'addfee-category'}
-				setActiveDropdown={setActiveDropdown}
-				options={['Diskon', 'Biaya Tambahan']}
-				selectedOption={category}
-				setSelectedOption={setCategory}
-				parentClass="w-full"
-				childClass="w-full"
+				dropdownStatus={{
+					isOpen: activeDropdown === 'addfee-category',
+					setStatus: setActiveDropdown,
+				}}
+				options={{
+					values: ['Diskon', 'Biaya Tambahan'],
+					selected: category,
+					setSelected: setCategory,
+				}}
+				styling={{ parentClass: 'w-full', childClass: 'w-full' }}
 				ref={categoryRef}
 			>
 				<button
@@ -137,7 +143,7 @@ const AddFeeModal = () => {
 					<p>{category}</p>
 					<ChevronDown className="h-4 w-4 opacity-50 absolute right-3 bottom-1/2 translate-y-1/2" />
 				</button>
-			</DropdownComp>
+			</DropdownCompTest>
 			<form onSubmit={(e) => confirmFee(e)}>
 				<label htmlFor="addfee-label" className="block font-semibold text-sm w-full mt-4">
 					Label

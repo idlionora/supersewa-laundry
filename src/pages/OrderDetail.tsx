@@ -15,6 +15,7 @@ import AddFeeModal from '../components/AddFeeModal';
 import NewPaymentModal from '../components/NewPaymentModal';
 import PaidDescModal from '../components/PaidDescModal';
 import ServiceAddModal from '../components/ServiceAddModal';
+import DropdownComp from '../components/DropdownComp';
 import formatPrice from '../lib/formatPrice';
 import iconArrowLeft from '../assets/icon-arrowleft.svg';
 import iconWhatsApp from '../assets/icon-brand-whatsapp.svg';
@@ -27,7 +28,6 @@ import iconStorefront from '../assets/icon-storefront.svg';
 import iconTruck from '../assets/icon-truck.svg';
 import iconClose from '../assets/icon-x.svg';
 import iconPlus from '../assets/icon-plus.svg';
-import DropdownComp from '../components/DropdownComp';
 
 type OrderDetailSpec = {
 	order_id: number;
@@ -153,7 +153,7 @@ function OrderDetail() {
 	}
 
 	function setActiveMenuByString(value: string) {
-		activeDropdown === value ? setActiveDropdown('') : setActiveDropdown(value) 
+		activeDropdown === value ? setActiveDropdown('') : setActiveDropdown(value);
 	}
 
 	useEffect(() => {
@@ -182,7 +182,12 @@ function OrderDetail() {
 
 	function closeDropdown(event: MouseEvent) {
 		const clickTarget = event.target as Node;
-		const dropdowns = [{ ref: paymentMethodRef, activeLabel: 'payment-method' }, {ref: orderPaidRef, activeLabel: 'order-paid'}, {ref: shippingMethodRef, activeLabel: 'shipping-method'}, {ref: orderStatusRef, activeLabel: 'order-status'}];
+		const dropdowns = [
+			{ ref: paymentMethodRef, activeLabel: 'payment-method' },
+			{ ref: orderPaidRef, activeLabel: 'order-paid' },
+			{ ref: shippingMethodRef, activeLabel: 'shipping-method' },
+			{ ref: orderStatusRef, activeLabel: 'order-status' },
+		];
 
 		function deactivateDropdownByClick(
 			ref: React.RefObject<HTMLDivElement>,
@@ -193,7 +198,7 @@ function OrderDetail() {
 			}
 		}
 
-		dropdowns.forEach(({ref, activeLabel}) => deactivateDropdownByClick(ref, activeLabel))
+		dropdowns.forEach(({ ref, activeLabel }) => deactivateDropdownByClick(ref, activeLabel));
 	}
 
 	useEffect(() => {
@@ -360,13 +365,19 @@ function OrderDetail() {
 							<div className="w-full sm:w-3/4 font-medium">
 								<DropdownComp
 									title="payment-method"
-									isDropdownActive={activeDropdown === 'payment-method'}
-									setActiveDropdown={setActiveDropdown}
-									options={['Transfer', 'Tunai']}
-									selectedOption={paymentMethod}
-									setSelectedOption={setPaymentMethod}
-									parentClass="flex items-center w-fit"
-									childClass=""
+									dropdownStatus={{
+										isOpen: activeDropdown === 'payment-method',
+										setStatus: setActiveDropdown,
+									}}
+									options={{
+										values: ['Transfer', 'Tunai'],
+										selected: paymentMethod,
+										setSelected: setPaymentMethod,
+									}}
+									styling={{
+										parentClass: 'flex items-center w-fit',
+										childClass: '',
+									}}
 									ref={paymentMethodRef}
 								>
 									<img
@@ -397,13 +408,19 @@ function OrderDetail() {
 							<div className="w-full sm:w-3/4 font-medium">
 								<DropdownComp
 									title="order-paid"
-									isDropdownActive={activeDropdown === 'order-paid'}
-									setActiveDropdown={setActiveDropdown}
-									options={['Lunas', 'Belum lunas']}
-									selectedOption={orderPaid ? 'Lunas' : 'Belum lunas'}
-									setSelectedOption={setOrderPaidFromDropDown}
-									parentClass="flex items-center w-fit"
-									childClass=""
+									dropdownStatus={{
+										isOpen: activeDropdown === 'order-paid',
+										setStatus: setActiveDropdown,
+									}}
+									options={{
+										values: ['Lunas', 'Belum lunas'],
+										selected: orderPaid ? 'Lunas' : 'Belum lunas',
+										setSelected: setOrderPaidFromDropDown,
+									}}
+									styling={{
+										parentClass: 'flex items-center w-fit',
+										childClass: '',
+									}}
 									ref={orderPaidRef}
 								>
 									<img
@@ -436,17 +453,23 @@ function OrderDetail() {
 							<div className="w-full sm:w-3/4 font-medium">
 								<DropdownComp
 									title="shipping-method"
-									isDropdownActive={activeDropdown === 'shipping-method'}
-									setActiveDropdown={setActiveDropdown}
-									options={[
-										'Antar sendiri',
-										'Kurir rental',
-										'Kurir pihak ketiga',
-									]}
-									selectedOption={shippingMethod}
-									setSelectedOption={setShippingMethod}
-									parentClass="flex items-center w-fit"
-									childClass=""
+									dropdownStatus={{
+										isOpen: activeDropdown === 'shipping-method',
+										setStatus: setActiveDropdown,
+									}}
+									options={{
+										values: [
+											'Antar sendiri',
+											'Kurir rental',
+											'Kurir pihak ketiga',
+										],
+										selected: shippingMethod,
+										setSelected: setShippingMethod,
+									}}
+									styling={{
+										parentClass: 'flex items-center w-fit',
+										childClass: '',
+									}}
 									ref={shippingMethodRef}
 								>
 									<img
@@ -477,13 +500,19 @@ function OrderDetail() {
 							<div className="w-full sm:w-3/4 flex items-center font-medium">
 								<DropdownComp
 									title="order-status"
-									isDropdownActive={activeDropdown === 'order-status'}
-									setActiveDropdown={setActiveDropdown}
-									options={['Sedang cuci', 'Tunggu jemput', 'Pesanan selesai']}
-									selectedOption={orderStatus}
-									setSelectedOption={setOrderStatus}
-									parentClass="flex items-center w-fit"
-									childClass=""
+									dropdownStatus={{
+										isOpen: activeDropdown === 'order-status',
+										setStatus: setActiveDropdown,
+									}}
+									options={{
+										values: ['Sedang cuci', 'Tunggu jemput', 'Pesanan selesai'],
+										selected: orderStatus,
+										setSelected: setOrderStatus,
+									}}
+									styling={{
+										parentClass: 'flex items-center w-fit',
+										childClass: '',
+									}}
 									ref={orderStatusRef}
 								>
 									<p
@@ -497,7 +526,10 @@ function OrderDetail() {
 									>
 										{orderStatus}
 									</p>
-									<button className="ml-3" onClick={() => setActiveMenuByString('order-status')}>
+									<button
+										className="ml-3"
+										onClick={() => setActiveMenuByString('order-status')}
+									>
 										<img
 											src={iconPencil}
 											alt="Ubah"

@@ -11,12 +11,12 @@ import CustomerSearchModal from '../components/CustomerSearchModal.tsx';
 import ServiceSearchModal from '../components/ServiceSearchModal.tsx';
 import AddFeeModal from '../components/AddFeeModal.tsx';
 import NewOrderServiceCard from '../components/NewOrderServiceCard.tsx';
-import iconClose from '../assets/icon-x.svg';
-import iconExclamation from '../assets/icon-exclamation-circle.svg';
 import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
 import { Label } from '../components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
 import DropdownComp from '../components/DropdownComp.tsx';
+import iconClose from '../assets/icon-x.svg';
+import iconExclamation from '../assets/icon-exclamation-circle.svg';
 
 function NewOrder() {
 	const store = useTrackedOrderStore();
@@ -32,7 +32,7 @@ function NewOrder() {
 	const [netPrice, setNetPrice] = useState(0);
 	const [paymentMethod, setPaymentMethod] = useState('Transfer');
 	const [shippingMethod, setShippingMethod] = useState('Antar sendiri');
-	const [activeDropdown, setActiveDropdown] = useState('')
+	const [activeDropdown, setActiveDropdown] = useState('');
 	const [orderPaid, setOrderPaid] = useState('order-paid-false');
 	const [invalidCols, setInvalidCols] = useState<string[] | null>(null);
 
@@ -45,15 +45,18 @@ function NewOrder() {
 		document.addEventListener('mousedown', closeDropdown);
 
 		return () => {
-			document.removeEventListener('mousedown', closeDropdown)
-		}
+			document.removeEventListener('mousedown', closeDropdown);
+		};
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [activeDropdown])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [activeDropdown]);
 
 	function closeDropdown(event: MouseEvent) {
 		const clickTarget = event.target as Node;
-		const dropdowns = [{ref: paymentMethodRef, activeLabel: 'payment-method'}, {ref: shippingMethodRef, activeLabel: 'shipping-method'}]
+		const dropdowns = [
+			{ ref: paymentMethodRef, activeLabel: 'payment-method' },
+			{ ref: shippingMethodRef, activeLabel: 'shipping-method' },
+		];
 
 		function deactivateDropdownByClick(
 			ref: React.RefObject<HTMLDivElement>,
@@ -66,7 +69,7 @@ function NewOrder() {
 
 		dropdowns.forEach(({ ref, activeLabel }) => deactivateDropdownByClick(ref, activeLabel));
 	}
-	
+
 	function updateServiceCards(
 		id: number,
 		category: 'quantity' | 'price' | 'desc',
@@ -139,7 +142,7 @@ function NewOrder() {
 		if (addFeesCopy.length !== 1) {
 			addFeesCopy.splice(index, 1);
 		} else {
-			addFeesCopy = null
+			addFeesCopy = null;
 		}
 
 		setAddFees(addFeesCopy);
@@ -494,13 +497,16 @@ function NewOrder() {
 						<h4>Metode Pembayaran</h4>
 						<DropdownComp
 							title="payment-method"
-							isDropdownActive={activeDropdown === 'payment-method'}
-							setActiveDropdown={setActiveDropdown}
-							options={['Transfer', 'Tunai']}
-							selectedOption={paymentMethod}
-							setSelectedOption={setPaymentMethod}
-							parentClass="w-full max-w-sm"
-							childClass="w-full"
+							dropdownStatus={{
+								isOpen: activeDropdown === 'payment-method',
+								setStatus: setActiveDropdown,
+							}}
+							options={{
+								values: ['Transfer', 'Tunai'],
+								selected: paymentMethod,
+								setSelected: setPaymentMethod,
+							}}
+							styling={{ parentClass: 'wfull max-w-sm', childClass: 'w-full' }}
 							ref={paymentMethodRef}
 						>
 							<button
@@ -516,7 +522,20 @@ function NewOrder() {
 							</button>
 						</DropdownComp>
 						<h4 className="mt-4">Metode Pengiriman</h4>
-						<DropdownComp title='shipping-method' isDropdownActive={activeDropdown === 'shipping-method'} setActiveDropdown={setActiveDropdown} options={['Antar sendiri', 'Kurir rental', 'Kurir pihak ketiga']} selectedOption={shippingMethod} setSelectedOption={setShippingMethod} parentClass='w-full max-w-sm' childClass='w-full' ref={shippingMethodRef}>
+						<DropdownComp
+							title="shipping-method"
+							dropdownStatus={{
+								isOpen: activeDropdown === 'shipping-method',
+								setStatus: setActiveDropdown,
+							}}
+							options={{
+								values: ['Antar sendiri', 'Kurir rental', 'Kurir pihak ketiga'],
+								selected: shippingMethod,
+								setSelected: setShippingMethod,
+							}}
+							styling={{ parentClass: 'w-full max-w-sm', childClass: 'w-full' }}
+							ref={shippingMethodRef}
+						>
 							<button
 								className="w-full max-w-sm form-input mb-0 text-left relative"
 								onClick={() =>
