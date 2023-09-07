@@ -123,7 +123,7 @@ function NewOrder() {
 		let total = laundryCost;
 
 		addFees?.forEach(({ category, price }) => {
-			if (category === 'discount') {
+			if (category === 'Diskon') {
 				total -= price;
 			} else {
 				total += price;
@@ -206,7 +206,7 @@ function NewOrder() {
 		});
 		confirmedServices.shift();
 
-		let confirmedAddFees: FeeType[] | null = [{ category: 'discount', label: '', price: 0 }];
+		let confirmedAddFees: FeeType[] | null = [{ category: 'Diskon', label: '', price: 0 }];
 		if (addFees) {
 			addFees.forEach(({ category, label, price }) => {
 				confirmedAddFees?.push({ category, label, price });
@@ -396,7 +396,7 @@ function NewOrder() {
 									<React.Fragment key={`additional-${index}`}>
 										<div
 											className={`max-w-[16rem] col-span-1 w-full flex justify-between font-medium ${
-												category === 'discount' ? 'text-theme-blue' : ''
+												category === 'Diskon' ? 'text-theme-blue' : ''
 											}`}
 										>
 											<p>{label}</p>
@@ -405,12 +405,12 @@ function NewOrder() {
 										<div className="max-w-[16rem] col-span-1 font-medium flex justify-center items-center relative">
 											<div
 												className={`flex w-full justify-between ml-3 border-b border-gray-600 mr-6 ${
-													category === 'discount' ? 'text-theme-blue' : ''
+													category === 'Diskon' ? 'text-theme-blue' : ''
 												}`}
 											>
 												<p
 													className={`absolute translate-x-[-100%] ${
-														category === 'discount' ? '' : 'hidden'
+														category === 'Diskon' ? '' : 'hidden'
 													}`}
 												>
 													–

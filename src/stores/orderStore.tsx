@@ -20,7 +20,7 @@ export type ServiceType = {
 };
 
 export type FeeType = {
-	category: 'discount' | 'additional';
+	category: 'Diskon' | 'Biaya Tambahan';
 	label: string;
 	price: number;
 };

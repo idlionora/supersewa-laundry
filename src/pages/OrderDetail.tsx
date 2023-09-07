@@ -78,9 +78,9 @@ const orderDetailDummy: OrderDetailSpec = {
 		},
 	],
 	add_fees: [
-		{ category: 'additional', label: 'Pewangi tambahan', price: 5000 },
-		{ category: 'additional', label: 'Biaya transportasi', price: 10000 },
-		{ category: 'discount', label: 'Diskon awal bulan', price: 15000 },
+		{ category: 'Biaya Tambahan', label: 'Pewangi tambahan', price: 5000 },
+		{ category: 'Biaya Tambahan', label: 'Biaya transportasi', price: 10000 },
+		{ category: 'Diskon', label: 'Diskon awal bulan', price: 15000 },
 	],
 	net_price: 160000,
 	payments: null,
@@ -222,7 +222,7 @@ function OrderDetail() {
 		let newNetPrice = servicesPrice;
 
 		addFees?.forEach((addFee) => {
-			if (addFee.category === 'discount') {
+			if (addFee.category === 'Diskon') {
 				newNetPrice -= addFee.price;
 			} else {
 				newNetPrice += addFee.price;
@@ -567,11 +567,11 @@ function OrderDetail() {
 									<p className="w-full">{addFee.label}</p>
 									<div
 										className={`flex shrink-0 items-center ${
-											addFee.category === 'discount' ? 'text-theme-blue' : ''
+											addFee.category === 'Diskon' ? 'text-theme-blue' : ''
 										}`}
 									>
 										<p className="w-fit whitespace-nowrap">{`${
-											addFee.category === 'discount' ? '–' : ''
+											addFee.category === 'Diskon' ? '–' : ''
 										} ${formatPrice(addFee.price)}`}</p>
 										<button
 											className="button-gray px-0.5 py-1.5 ml-2"

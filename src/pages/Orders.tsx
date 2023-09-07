@@ -174,7 +174,7 @@ function Orders({ cardsCategory }: OrderPageType) {
 						</div>
 						<DropdownComp title='cards-category' isDropdownActive={isDropdownActive} setActiveDropdown={() => setIsDropdownActive(false)} options={['Semua Data', 'Masih Proses', 'Belum Bayar']} selectedOption={cardsCategory} setSelectedOption={(input:string) => navigateFromDropdown(input)} parentClass='' childClass='w-36 translate-x-1/2 right-1/2' ref={categoryRef}>
 							<button className="form-input mb-0 flex items-center gap-x-2" onClick={() => setIsDropdownActive(!isDropdownActive)}>
-								<p>{cardsCategory}</p>
+								<p className='whitespace-nowrap'>{cardsCategory}</p>
 								<ChevronDown className="h-4 w-4 opacity-50" />
 							</button>
 						</DropdownComp>
