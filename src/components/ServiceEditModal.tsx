@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { DataInsertAndMarkPosition } from '../lib/typesForComponents.tsx';
 import useTrackedModalStore from '../stores/modalStore';
 import { ServiceType, useTrackedOrderStore } from '../stores/orderStore.tsx';
@@ -9,6 +9,7 @@ import iconExclamation from '../assets/icon-exclamation-circle.svg';
 const ServiceEditModal = ({ data, childNum }: DataInsertAndMarkPosition<ServiceType>) => {
 	const orderStore = useTrackedOrderStore();
 	const state = useTrackedModalStore();
+	const priceRef = useRef<HTMLInputElement>(null);
 
 	const { id, name, priceRange, img, quantity, price, desc } = data;
 	const [formInput, setFormInput] = useState({ quantity, price: price.toString(), desc });
@@ -22,10 +23,19 @@ const ServiceEditModal = ({ data, childNum }: DataInsertAndMarkPosition<ServiceT
 
 	useEffect(() => {
 		setFormInput({ quantity, price: price.toString(), desc });
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		priceRef.current?.focus()
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [state.modalDisplay]);
 
-	function editService() {
+	function setFormPriceWithoutZeroAtFront(priceInString: string) {
+		if (priceInString.length > 1 && priceInString.startsWith('0')) {
+			setFormInput({ ...formInput, price: priceInString.slice(1)});
+		} else {
+			setFormInput({ ...formInput, price: priceInString });
+		}
+	}
+
+	function confirmServiceEdit() {
 		let editedService: ServiceType = data;
 		let newServices: ServiceType[] | null = [...orderStore.services!];
 
@@ -92,15 +102,16 @@ const ServiceEditModal = ({ data, childNum }: DataInsertAndMarkPosition<ServiceT
 			<p className="form-label">Harga</p>
 			<div className="w-full relative">
 				<input
+					ref={priceRef}
 					id="price-service-edit"
 					name="price-service-edit"
 					type="number"
 					className={`form-input w-full ${isPriceEmpty ? 'form-invalid' : ''}`}
 					value={formInput.price}
-					onChange={(e) => setFormInput({ ...formInput, price: e.target.value })}
+					onChange={(e) => setFormPriceWithoutZeroAtFront(e.target.value)}
 				/>
 				<div className="absolute mb-4 top-0 right-0 h-[2.75rem] flex items-center">
-					<p className="mr-3 bg-white">x {formInput.quantity}</p>
+					<p className="pl-0.5 mr-3 bg-white">x {formInput.quantity}</p>
 				</div>
 			</div>
 			<p className="form-label">Keterangan</p>
@@ -123,8 +134,7 @@ const ServiceEditModal = ({ data, childNum }: DataInsertAndMarkPosition<ServiceT
 				</button>
 				<button
 					className="text-green-600"
-					onClick={() => 
-						setFormInput({ ...formInput, quantity: formInput.quantity + 1 })}
+					onClick={() => setFormInput({ ...formInput, quantity: formInput.quantity + 1 })}
 				>
 					Tambah Paket
 				</button>
@@ -149,7 +159,7 @@ const ServiceEditModal = ({ data, childNum }: DataInsertAndMarkPosition<ServiceT
 					className={`button-color ${
 						formInput.quantity < 1 ? 'bg-theme-orange border-red-500' : ''
 					}`}
-					onClick={() => editService()}
+					onClick={() => confirmServiceEdit()}
 				>
 					{formInput.quantity < 1 ? 'Hapus Pesanan' : 'Simpan Pesanan'}
 				</button>

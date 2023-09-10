@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import useTrackedModalStore from '../stores/modalStore';
 import { useTrackedOrderStore } from '../stores/orderStore';
 import iconExclamation from '../assets/icon-exclamation-circle.svg';
@@ -7,6 +7,7 @@ import iconClose from '../assets/icon-x.svg';
 const NewCustomerModal = () => {
 	const orderStore = useTrackedOrderStore();
 	const state = useTrackedModalStore();
+	const nameRef = useRef<HTMLInputElement>(null)
 	const zipcodeRef = useRef<HTMLInputElement>(null);
 	const cityRef = useRef<HTMLInputElement>(null);
 	const emailRef = useRef<HTMLInputElement>(null);
@@ -14,6 +15,10 @@ const NewCustomerModal = () => {
 	const [phone, setPhone] = useState('');
 	const [address, setAddress] = useState('');
 	const [invalidCols, setInvalidCols] = useState<string[] | null>(null);
+
+	useEffect(() => {
+		nameRef.current?.focus()
+	}, [state.modalDisplay])
 
 	function confirmNewCustomer(event: React.FormEvent) {
 		event.preventDefault();
@@ -64,6 +69,7 @@ const NewCustomerModal = () => {
 					Nama<span className="required-asterisk">*</span>
 				</label>
 				<input
+					ref={nameRef}
 					id="customer-name"
 					name="customer-name"
 					type="text"

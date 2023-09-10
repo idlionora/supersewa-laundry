@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import useTrackedModalStore from '../stores/modalStore';
 import { useTrackedOrderStore, PaymentType } from '../stores/orderStore';
 import { id as localeId } from 'date-fns/locale';
@@ -15,10 +15,15 @@ import iconExclamation from '../assets/icon-exclamation-circle.svg';
 const NewPaymentModal = () => {
 	const orderStore = useTrackedOrderStore();
 	const state = useTrackedModalStore();
+	const paydateRef = useRef<HTMLButtonElement>(null)
 	const [paydate, setPaydate] = useState<Date | undefined>(new Date());
 	const [desc, setDesc] = useState('');
 	const [price, setPrice] = useState('0');
 	const [invalidCols, setinvalidCols] = useState<string[] | null>(null);
+	
+	useEffect(() => {
+		paydateRef.current?.focus()
+	}, [state.modalDisplay])
 
 	function confirmPayment(event: React.FormEvent) {
 		event.preventDefault();
@@ -65,6 +70,7 @@ const NewPaymentModal = () => {
 			<Popover>
 				<PopoverTrigger asChild>
 					<Button
+						ref={paydateRef}
 						variant={'outline'}
 						className={cn(
 							'w-full justify-start text-left px-3 font-normal text-sm mt-1 border-gray-300 rounded mb-5 h-11 focus:border-green-600 focus:outline-green-600 relative',

@@ -43,31 +43,34 @@ const AddFeeModal = () => {
 		}
 	}
 
-	useEffect(() => {
-		if (invalidCols?.includes('label')) {
-			let newInvalidCols: string[] | null = [...invalidCols];
-
-			if (newInvalidCols.length > 1) {
-				newInvalidCols.splice(invalidCols.indexOf('label'), 1);
-			} else {
-				newInvalidCols = null;
-			}
-			setInvalidCols(newInvalidCols);
+	function setPriceWithoutZeroAtFront(priceInString: string) {
+		if (priceInString.length > 1 && priceInString.startsWith('0')) {
+			setPrice(priceInString.slice(1));
+		} else {
+			setPrice(priceInString);
 		}
+	}
+
+	useEffect(() => {
+		removeInvalidCols('label');
 	}, [label]);
 
 	useEffect(() => {
-		if (invalidCols?.includes('price')) {
+		removeInvalidCols('price');
+	}, [price]);
+
+	function removeInvalidCols(invalidLabel : string) {
+		if (invalidCols?.includes(invalidLabel)) {
 			let newInvalidCols: string[] | null = [...invalidCols];
 
 			if (newInvalidCols.length > 1) {
-				newInvalidCols.splice(invalidCols.indexOf('price'), 1);
+				newInvalidCols.splice(invalidCols.indexOf(invalidLabel), 1);
 			} else {
 				newInvalidCols = null;
 			}
 			setInvalidCols(newInvalidCols);
 		}
-	}, [price]);
+	}
 
 	function confirmFee(event: React.FormEvent) {
 		event.preventDefault();
@@ -172,7 +175,7 @@ const AddFeeModal = () => {
 						className={`form-input w-full mt-2 pl-10 pr-2 ${
 							invalidCols?.includes('price') ? 'form-invalid' : ''
 						}`}
-						onChange={(e) => setPrice(e.target.value)}
+						onChange={(e) => setPriceWithoutZeroAtFront(e.target.value)}
 					/>
 				</div>
 				{invalidCols ? (

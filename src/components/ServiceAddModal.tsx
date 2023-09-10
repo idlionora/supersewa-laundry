@@ -6,6 +6,7 @@ import { ServicePackageSpec } from '../lib/typesForComponents';
 import imgList from '../lib/imgList';
 import iconClose from '../assets/icon-x.svg';
 import iconSearch from '../assets/icon-search.svg';
+import ServiceEditModal from './ServiceEditModal';
 
 const ServiceAddModal = () => {
 	const orderStore = useTrackedOrderStore();
@@ -56,7 +57,7 @@ const ServiceAddModal = () => {
 		}
 
 		orderStore.setServices(newServices);
-		state.closeModal();
+		state.switchModal(<ServiceEditModal data={addedService} childNum='last' />, 'full')
 	}
 
 	return (
