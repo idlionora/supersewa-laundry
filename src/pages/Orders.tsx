@@ -88,6 +88,24 @@ function Orders({ cardsCategory }: OrderPageType) {
 		return splicedCurrentDatas;
 	}
 
+	function updatePageCount(activeDatas: OrderBasicSpec[]) {
+		const latestMaxPageNum = Math.ceil(activeDatas.length / contentPerPage);
+		if (maxPageNum !== latestMaxPageNum) {
+			setMaxPageNum(latestMaxPageNum);
+		}
+		if (currentPage !== 1) {
+			setSearchParams({ page: '1' });
+		}
+	}
+
+	useEffect(() => {
+		clearInterval(timeoutId.current);
+		timeoutId.current = setTimeout(() => {
+			filterActiveDatas(globalFilter);
+		}, 500);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [globalFilter]);
+
 	function filterActiveDatas(filter: string) {
 		const filteredDatas: OrderBasicSpec[] = [...orderDataDummy];
 
@@ -121,24 +139,6 @@ function Orders({ cardsCategory }: OrderPageType) {
 			updatePageCount(filteredDatas);
 		}
 	}
-
-	function updatePageCount(activeDatas: OrderBasicSpec[]) {
-		const latestMaxPageNum = Math.ceil(activeDatas.length / contentPerPage);
-		if (maxPageNum !== latestMaxPageNum) {
-			setMaxPageNum(latestMaxPageNum);
-		}
-		if (currentPage !== 1) {
-			setSearchParams({ page: '1' });
-		}
-	}
-
-	useEffect(() => {
-		clearInterval(timeoutId.current);
-		timeoutId.current = setTimeout(() => {
-			filterActiveDatas(globalFilter);
-		}, 500);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [globalFilter]);
 
 	function navigateFromDropdown(option: string) {
 		if (option === 'Semua Data') {
@@ -279,9 +279,7 @@ function Orders({ cardsCategory }: OrderPageType) {
 								/>
 							</React.Fragment>
 						))
-					) : currentActiveDatas[0].order_id === 0 ? (
-						<p className="w-full text-center p-4">Data tidak ditemukan</p>
-					) : (
+					) : currentActiveDatas[0].order_id !== 0 ? (
 						spliceActiveDatas(currentActiveDatas).map((data, index) => (
 							<React.Fragment key={`ordercard-${index}`}>
 								<OrdersDataCard
@@ -297,6 +295,8 @@ function Orders({ cardsCategory }: OrderPageType) {
 								/>
 							</React.Fragment>
 						))
+					) : (
+						<p className="w-full text-center p-4">Data tidak ditemukan</p>
 					)}
 				</div>
 			</section>

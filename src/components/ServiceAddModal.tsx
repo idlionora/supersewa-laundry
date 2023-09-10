@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import useTrackedModalStore from '../stores/modalStore';
 import { ServiceType, useTrackedOrderStore } from '../stores/orderStore';
 import servicePackages from '../../data/service_packages.json';
@@ -12,18 +12,45 @@ const ServiceAddModal = () => {
 	const orderStore = useTrackedOrderStore();
 	const state = useTrackedModalStore();
 	const inputRef = useRef<HTMLInputElement>(null);
-	const [list, setList] = useState<ServicePackageSpec[] | null>(null);
+	const timeoutId = useRef<NodeJS.Timeout | undefined>(undefined);
+	const [servicesList, setServicesList] = useState<ServicePackageSpec[] | null>(null);
+	const [nameFilter, setNameFilter] = useState<string>('');
+	const [filteredList, setFilteredList] = useState<ServicePackageSpec[] | null>(null);
 	const [activeCol, setActiveCol] = useState<ServicePackageSpec | null>(null);
+
+	const ServiceCard = ({ serviceDesc }: { serviceDesc: ServicePackageSpec }) => {
+		const { id, name, priceRange, img } = serviceDesc;
+		return (
+			<button
+				className={`w-full px-4 py-2 flex gap-4 items-center hover:bg-white ease-in-out border border-transparent cursor-pointer text-left ${
+					activeCol?.id === id ? 'col-active' : ''
+				}`}
+				onClick={() => selectService(serviceDesc)}
+			>
+				<div className="w-16 h-16 rounded overflow-hidden flex items-center">
+					<img
+						src={imgList[img as keyof typeof imgList]}
+						alt=""
+						className="w-full shrink-0"
+					/>
+				</div>
+				<div>
+					<p className="font-semibold mb-0.5">{name}</p>
+					<p>{priceRange}</p>
+				</div>
+			</button>
+		);
+	};
 
 	useEffect(() => {
 		if (!state.modalDisplay) return;
 		inputRef.current?.focus();
 		setActiveCol(null);
-		setList(removeSelectedFromServicePackages());
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		setServicesList(loadPackagesWithoutSelectedServices());
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [state.modalDisplay]);
 
-	const removeSelectedFromServicePackages = () => {
+	function loadPackagesWithoutSelectedServices() {
 		const newServicePackages = [...servicePackages.data];
 		const selectedIds = orderStore.services
 			? Array.from(orderStore.services, (service) => service.id)
@@ -35,7 +62,29 @@ const ServiceAddModal = () => {
 		});
 
 		return newServicePackages;
-	};
+	}
+
+	useEffect(() => {
+		clearInterval(timeoutId.current);
+		timeoutId.current = setTimeout(() => {
+			filterServicesWithoutSelected(nameFilter);
+		}, 500);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [nameFilter]);
+
+	function filterServicesWithoutSelected(nameFilter: string) {
+		let newFilteredServices: ServicePackageSpec[] | null = null;
+
+		if (nameFilter.length < 1 || !servicesList) {
+			setFilteredList(null);
+			return;
+		}
+
+		newFilteredServices = servicesList.filter((service) =>
+			service.name.toLowerCase().includes(nameFilter.toLowerCase())
+		);
+		setFilteredList(newFilteredServices);
+	}
 
 	function selectService(selectedData: ServicePackageSpec) {
 		setActiveCol(selectedData);
@@ -57,7 +106,7 @@ const ServiceAddModal = () => {
 		}
 
 		orderStore.setServices(newServices);
-		state.switchModal(<ServiceEditModal data={addedService} childNum='last' />, 'full')
+		state.switchModal(<ServiceEditModal data={addedService} childNum="last" />, 'full');
 	}
 
 	return (
@@ -78,6 +127,7 @@ const ServiceAddModal = () => {
 						name="input-servicesearch"
 						ref={inputRef}
 						type="text"
+						onChange={(e) => setNameFilter(e.target.value)}
 						className="form-input w-full pl-9"
 					/>
 					<div className="absolute top-0 left-0 h-[2.75rem] flex items-center">
@@ -86,29 +136,21 @@ const ServiceAddModal = () => {
 				</div>
 			</div>
 			<div className="w-full h-full pt-[8rem] overflow-y-auto">
-				{list?.map((service) => {
-					return (
-						<button
-							key={`list-service-${service.id}`}
-							className={`w-full px-4 py-2 flex gap-4 items-center hover:bg-white ease-in-out border border-transparent cursor-pointer text-left ${
-								activeCol?.id === service.id ? 'col-active' : ''
-							}`}
-							onClick={() => selectService(service)}
-						>
-							<div className="w-16 h-16 rounded overflow-hidden flex items-center">
-								<img
-									src={imgList[service.img as keyof typeof imgList]}
-									alt=""
-									className="w-full shrink-0"
-								/>
-							</div>
-							<div>
-								<p className="font-semibold mb-0.5">{service.name}</p>
-								<p>{service.priceRange}</p>
-							</div>
-						</button>
-					);
-				})}
+				{filteredList ? (
+					filteredList.map((servicePackage) => (
+						<React.Fragment key={`list-service-${servicePackage.id}`}>
+							<ServiceCard serviceDesc={servicePackage} />
+						</React.Fragment>
+					))
+				) : servicesList ? (
+					servicesList.map((servicePackage) => (
+						<React.Fragment key={`list-service-${servicePackage.id}`}>
+							<ServiceCard serviceDesc={servicePackage} />
+						</React.Fragment>
+					))
+				) : (
+					<p className="w-full text-center p-4">Data tidak ditemukan</p>
+				)}
 				<div className="min-[448px]:hidden w-full h-[4.5rem]" />
 			</div>
 			<button

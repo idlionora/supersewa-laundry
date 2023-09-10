@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import useTrackedModalStore from '../stores/modalStore';
 import { ServiceType, useTrackedOrderStore } from '../stores/orderStore';
 import servicePackages from '../../data/service_packages.json';
@@ -11,8 +11,35 @@ const ServiceSearchModal = () => {
 	const orderStore = useTrackedOrderStore();
 	const state = useTrackedModalStore();
 	const inputRef = useRef<HTMLInputElement>(null);
-	const [list, setList] = useState<ServicePackageSpec[] | null>(null);
+	const timeoutId = useRef<NodeJS.Timeout | undefined>(undefined);
+	const [servicesList, setServicesList] = useState<ServicePackageSpec[] | null>(null)
+	const [nameFilter, setNameFilter] = useState<string>('');
+	const [filteredList, setFilteredList] = useState<ServicePackageSpec[] | null>(null);
 	const [activeCols, setActiveCols] = useState<number[] | null>(null);
+
+	const ServiceCard = ({ serviceDesc }: { serviceDesc: ServicePackageSpec }) => {
+		const { id, name, priceRange, img } = serviceDesc;
+		return (
+			<button
+				className={`w-full px-4 py-2 flex gap-4 items-center hover:bg-white ease-in-out border border-transparent cursor-pointer text-left ${
+					activeCols?.includes(id) ? 'col-active' : ''
+				}`}
+				onClick={() => selectPackage(id)}
+			>
+				<div className="w-16 h-16 rounded overflow-hidden flex items-center">
+					<img
+						src={imgList[img as keyof typeof imgList]}
+						alt=""
+						className="w-full shrink-0"
+					/>
+				</div>
+				<div>
+					<p className="font-semibold mb-0.5">{name}</p>
+					<p>{priceRange}</p>
+				</div>
+			</button>
+		);
+	};
 
 	useEffect(() => {
 		if (!state.modalDisplay) return;
@@ -27,12 +54,34 @@ const ServiceSearchModal = () => {
 		} else {
 			setActiveCols(null);
 		}
-		setList(servicePackages.data);
+		setServicesList(servicePackages.data);
 		inputRef.current?.focus();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [state.modalDisplay]);
 
-	const selectPackage = (selectedId: number) => {
+	useEffect(() => {
+		clearInterval(timeoutId.current);
+		timeoutId.current = setTimeout(() => {
+			filterServicesByName(nameFilter);
+		}, 500);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [nameFilter]);
+
+	function filterServicesByName(nameFilter: string) {
+		let newFilteredServices: ServicePackageSpec[] | null = null;
+
+		if (nameFilter.length < 1 || !servicesList) {
+			setFilteredList(null);
+			return;
+		}
+
+		newFilteredServices = servicesList.filter((service) =>
+			service.name.toLowerCase().includes(nameFilter.toLowerCase())
+		);
+		setFilteredList(newFilteredServices);
+	}
+
+	function selectPackage(selectedId: number) {
 		let newActiveCols: number[] | null = [0];
 
 		if (activeCols) {
@@ -51,14 +100,14 @@ const ServiceSearchModal = () => {
 			newActiveCols.splice(index, 1);
 		}
 		setActiveCols(newActiveCols);
-	};
+	}
 
-	const updateService = () => {
+	function updateService() {
 		if (!activeCols) {
 			orderStore.setServices(null);
 			return;
 		}
-		if (!list) return;
+		if (!servicesList) return;
 		let processCols: number[] | null = [...activeCols];
 		const newStoreService = [
 			{ id: 0, name: '', priceRange: '', img: '', quantity: 1, price: 0, desc: '' },
@@ -81,13 +130,13 @@ const ServiceSearchModal = () => {
 			return;
 		}
 
-		for (let i = 0; i < list.length; i++) {
-			if (processCols.includes(list[i].id)) {
+		for (let i = 0; i < servicesList.length; i++) {
+			if (processCols.includes(servicesList[i].id)) {
 				const newService: ServiceType = {
-					id: list[i].id,
-					name: list[i].name,
-					priceRange: list[i].priceRange,
-					img: list[i].img,
+					id: servicesList[i].id,
+					name: servicesList[i].name,
+					priceRange: servicesList[i].priceRange,
+					img: servicesList[i].img,
 					quantity: 1,
 					price: 0,
 					desc: '',
@@ -95,7 +144,7 @@ const ServiceSearchModal = () => {
 
 				newStoreService.push(newService);
 				if (processCols.length > 1) {
-					processCols.splice(processCols.indexOf(list[i].id), 1);
+					processCols.splice(processCols.indexOf(servicesList[i].id), 1);
 				} else {
 					newStoreService.shift();
 					processCols = null;
@@ -105,7 +154,7 @@ const ServiceSearchModal = () => {
 		}
 
 		if (processCols) {
-			/* Please fetch individual data if list does not contain selected service */
+			/* Please fetch individual data if servicesList does not contain selected service */
 			console.error(
 				`data for ${processCols.join(', ')} ${
 					processCols.length === 1 ? 'is' : 'are'
@@ -114,7 +163,7 @@ const ServiceSearchModal = () => {
 			return;
 		}
 		orderStore.setServices(newStoreService);
-	};
+	}
 
 	return (
 		<div
@@ -137,6 +186,7 @@ const ServiceSearchModal = () => {
 						name="input-servicesearch"
 						ref={inputRef}
 						type="text"
+						onChange={(e) => setNameFilter(e.target.value)}
 						className="form-input w-full pl-9"
 					/>
 					<div className="absolute top-0 left-0 h-[2.75rem] flex items-center">
@@ -145,29 +195,21 @@ const ServiceSearchModal = () => {
 				</div>
 			</div>
 			<div className="w-full h-full pt-[8rem] overflow-y-auto">
-				{list?.map(({ id, name, priceRange, img }) => {
-					return (
-						<button
-							key={`list-service-${id}`}
-							className={`w-full px-4 py-2 flex gap-4 items-center hover:bg-white ease-in-out border border-transparent cursor-pointer text-left ${
-								activeCols?.includes(id) ? 'col-active' : ''
-							}`}
-							onClick={() => selectPackage(id)}
-						>
-							<div className="w-16 h-16 rounded overflow-hidden flex items-center">
-								<img
-									src={imgList[img as keyof typeof imgList]}
-									alt=""
-									className="w-full shrink-0"
-								/>
-							</div>
-							<div>
-								<p className="font-semibold mb-0.5">{name}</p>
-								<p>{priceRange}</p>
-							</div>
-						</button>
-					);
-				})}
+				{filteredList ? (
+					filteredList.map((servicePackage) => (
+						<React.Fragment key={`list-service-${servicePackage.id}`}>
+							<ServiceCard serviceDesc={servicePackage} />
+						</React.Fragment>
+					))
+				) : servicesList ? (
+					servicesList.map((servicePackage) => (
+						<React.Fragment key={`list-service-${servicePackage.id}`}>
+							<ServiceCard serviceDesc={servicePackage} />
+						</React.Fragment>
+					))
+				) : (
+					<p className="w-full text-center p-4">Data tidak ditemukan</p>
+				)}
 				<div className="w-full h-[4.5rem]" />
 			</div>
 			<button

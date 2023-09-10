@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import useTrackedModalStore from '../stores/modalStore';
 import { CustomerType, useTrackedOrderStore } from '../stores/orderStore';
 import customers from '../../data/customers.json';
@@ -11,13 +11,62 @@ const CustomerSearchModal = () => {
 	const orderStore = useTrackedOrderStore();
 	const state = useTrackedModalStore();
 	const inputRef = useRef<HTMLInputElement>(null);
-	const [list, setList] = useState<CustomerType[] | null>(null);
+	const timeoutId = useRef<NodeJS.Timeout | undefined>(undefined);
+	const [customerList, setCustomerList] = useState<CustomerType[] | null>(null);
+	const [nameFilter, setNameFilter] = useState<string>('')
+	const [filteredList, setFilteredList] = useState<CustomerType[] | null>(null)
 	const [activeCol, setActiveCol] = useState<CustomerType | null>(null);
+
+	const CustomerCard = ({customerDesc}: {customerDesc: CustomerType}) => {
+		const {id, name, phone, address, img} = customerDesc
+		return (
+			<button
+				key={`list-customer-${id}`}
+				className={`w-full p-4 flex gap-4 hover:bg-white ease-in-out border border-transparent cursor-pointer text-left ${
+					activeCol?.id === id ? 'col-active' : ''
+				}`}
+				onClick={() => selectCustomer(customerDesc)}
+			>
+				<div
+					className={`relative top-1 rounded-full shrink-0 ${img} text-white w-10 h-10 font-medium text-sm flex justify-center items-center`}
+				>
+					{name[0]}
+				</div>
+				<div>
+					<p className="font-semibold mb-0.5">{name}</p>
+					<p className="mb-0.5">{phone}</p>
+					<p>{address}</p>
+				</div>
+			</button>
+		);
+	}
 
 	useEffect(() => {
 		inputRef.current?.focus();
-		setList(customers.data);
+		setCustomerList(customers.data);
 	}, [state.modalDisplay]);
+
+	useEffect(() => {
+		clearInterval(timeoutId.current);
+		timeoutId.current = setTimeout(() => {
+			filterCustomerByName(nameFilter)
+		}, 500)
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [nameFilter])
+
+	function filterCustomerByName(nameFilter: string) {
+		let newFilteredCustomers: CustomerType[] | null = null
+
+		if (nameFilter.length < 1 || !customerList) {
+			setFilteredList(null);
+			return;
+		}
+
+		newFilteredCustomers = customerList.filter((customer) =>
+		customer.name.toLowerCase().includes(nameFilter.toLowerCase())		
+		)
+		setFilteredList(newFilteredCustomers);
+	}
 
 	const selectCustomer = (selectedData: CustomerType) => {
 		setActiveCol(selectedData);
@@ -51,6 +100,7 @@ const CustomerSearchModal = () => {
 						name="input-customersearch"
 						ref={inputRef}
 						type="text"
+						onChange={(e) => setNameFilter(e.target.value)}
 						className="form-input w-full pl-9"
 					/>
 					<div className="absolute top-0 left-0 h-[2.75rem] flex items-center">
@@ -59,28 +109,21 @@ const CustomerSearchModal = () => {
 				</div>
 			</div>
 			<div className="w-full h-full pt-[8rem] overflow-y-auto">
-				{list?.map((customer) => {
-					return (
-						<button
-							key={`list-customer-${customer.id}`}
-							className={`w-full p-4 flex gap-4 hover:bg-white ease-in-out border border-transparent cursor-pointer text-left ${
-								activeCol?.id === customer.id ? 'col-active' : ''
-							}`}
-							onClick={() => selectCustomer(customer)}
-						>
-							<div
-								className={`relative top-1 rounded-full shrink-0 ${customer.img} text-white w-10 h-10 font-medium text-sm flex justify-center items-center`}
-							>
-								{customer.name[0]}
-							</div>
-							<div>
-								<p className="font-semibold mb-0.5">{customer.name}</p>
-								<p className="mb-0.5">{customer.phone}</p>
-								<p>{customer.address}</p>
-							</div>
-						</button>
-					);
-				})}
+				{filteredList ? (
+					filteredList.map((customer) => (
+						<React.Fragment key={`list-customer-${customer.id}`}>
+							<CustomerCard customerDesc={customer} />
+						</React.Fragment>
+					))
+				) : customerList ? (
+					customerList.map((customer) => (
+						<React.Fragment key={`list-customer-${customer.id}`}>
+							<CustomerCard customerDesc={customer} />
+						</React.Fragment>
+					))
+				) : (
+					<p className="w-full text-center p-4">Data tidak ditemukan</p>
+				)}
 				<div className="min-[448px]:hidden w-full h-[4rem]" />
 			</div>
 			<button
