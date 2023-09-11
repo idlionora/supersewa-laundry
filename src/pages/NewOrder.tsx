@@ -1,35 +1,30 @@
-import React from 'react';
-import { useEffect, useState, useRef } from 'react';
-import { ServiceType, FeeType, useTrackedOrderStore } from '../stores/orderStore';
+import React, { useEffect, useState, useRef } from 'react';
+import { ServiceType, FeeType, useTrackedOrderStore } from '../stores/orderStore.tsx';
 import useTrackedModalStore from '../stores/modalStore';
 import id from 'date-fns/locale/id';
 import { format } from 'date-fns';
-import { Calendar as CalendarIcon } from 'lucide-react';
+import { Calendar as CalendarIcon, ChevronDown } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { Button } from '../components/ui/button';
 import { Calendar } from '../components/ui/calendar';
-import CustomerSearch from '../components/CustomerSearch';
-import ServiceSearch from '../components/ServiceSearch.tsx';
+import CustomerSearchModal from '../components/CustomerSearchModal.tsx';
+import ServiceSearchModal from '../components/ServiceSearchModal.tsx';
 import AddFeeModal from '../components/AddFeeModal.tsx';
-import ServiceCardComp from '../components/ServiceCardComp';
-import iconClose from '../assets/icon-x.svg';
-import iconExclamation from '../assets/icon-exclamation-circle.svg';
+import NewOrderServiceCard from '../components/NewOrderServiceCard.tsx';
 import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
 import { Label } from '../components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '../components/ui/select.tsx';
+import DropdownComp from '../components/DropdownComp.tsx';
+import iconClose from '../assets/icon-x.svg';
+import iconExclamation from '../assets/icon-exclamation-circle.svg';
 
 function NewOrder() {
 	const store = useTrackedOrderStore();
 	const modalState = useTrackedModalStore();
 	const notesInternalRef = useRef<HTMLTextAreaElement>(null);
 	const notesInvoiceRef = useRef<HTMLTextAreaElement>(null);
+	const paymentMethodRef = useRef<HTMLDivElement>(null);
+	const shippingMethodRef = useRef<HTMLDivElement>(null);
 	const [startDate, setStartDate] = useState<Date | undefined>(new Date());
 	const [serviceCards, setServiceCards] = useState<ServiceType[] | null>(null);
 	const [addFees, setAddFees] = useState<FeeType[] | null>(null);
@@ -37,41 +32,52 @@ function NewOrder() {
 	const [netPrice, setNetPrice] = useState(0);
 	const [paymentMethod, setPaymentMethod] = useState('Transfer');
 	const [shippingMethod, setShippingMethod] = useState('Antar sendiri');
+	const [activeDropdown, setActiveDropdown] = useState('');
 	const [orderPaid, setOrderPaid] = useState('order-paid-false');
 	const [invalidCols, setInvalidCols] = useState<string[] | null>(null);
+
+	useEffect(() => {
+		store.resetOrderStore();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	useEffect(() => {
+		document.addEventListener('mousedown', closeDropdown);
+
+		return () => {
+			document.removeEventListener('mousedown', closeDropdown);
+		};
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [activeDropdown]);
+
+	function closeDropdown(event: MouseEvent) {
+		const clickTarget = event.target as Node;
+		const dropdowns = [
+			{ ref: paymentMethodRef, activeLabel: 'payment-method' },
+			{ ref: shippingMethodRef, activeLabel: 'shipping-method' },
+		];
+
+		function deactivateDropdownByClick(
+			ref: React.RefObject<HTMLDivElement>,
+			activeLabel: string
+		) {
+			if (ref && activeDropdown === activeLabel && !ref.current?.contains(clickTarget)) {
+				setActiveDropdown('');
+			}
+		}
+
+		dropdowns.forEach(({ ref, activeLabel }) => deactivateDropdownByClick(ref, activeLabel));
+	}
 
 	function updateServiceCards(
 		id: number,
 		category: 'quantity' | 'price' | 'desc',
 		value: number | string
 	) {
-		let servicesCopy = [
-			{ id: 0, name: '', priceRange: '', img: '', quantity: 1, price: 0, desc: '' },
-		];
-		let packageCopy = {
-			id: 0,
-			name: '',
-			priceRange: '',
-			img: '',
-			quantity: 1,
-			price: 0,
-			desc: '',
-		};
-		let targetIndex = 0;
-
-		if (serviceCards) {
-			servicesCopy = [...serviceCards];
-		}
-
-		serviceCards?.forEach((item, index) => {
-			if (item.id === id) {
-				targetIndex = index;
-			}
-		});
-
-		if (serviceCards !== null) {
-			packageCopy = serviceCards[targetIndex];
-		}
+		const servicesCopy = [...serviceCards!];
+		const targetIndex = serviceCards!.findIndex((card) => card.id === id);
+		const packageCopy = serviceCards![targetIndex];
 
 		if (category === 'quantity' && typeof value === 'number') {
 			packageCopy.quantity = value;
@@ -86,20 +92,8 @@ function NewOrder() {
 	}
 
 	function deleteServiceCard(id: number) {
-		let servicesCopy: ServiceType[] | null = [
-			{ id: 0, name: '', priceRange: '', img: '', quantity: 1, price: 0, desc: '' },
-		];
-		let targetIndex = 0;
-
-		if (serviceCards) {
-			servicesCopy = [...serviceCards];
-		}
-
-		serviceCards?.forEach((item, index) => {
-			if (item.id === id) {
-				targetIndex = index;
-			}
-		});
+		let servicesCopy: ServiceType[] | null = [...serviceCards!];
+		const targetIndex = serviceCards!.findIndex((card) => card.id === id);
 
 		if (servicesCopy.length !== 1) {
 			servicesCopy.splice(targetIndex, 1);
@@ -115,6 +109,10 @@ function NewOrder() {
 	}, [store.services]);
 
 	useEffect(() => {
+		setAddFees(store.addFees);
+	}, [store.addFees]);
+
+	useEffect(() => {
 		let total = 0;
 
 		serviceCards?.forEach((card) => {
@@ -128,7 +126,7 @@ function NewOrder() {
 		let total = laundryCost;
 
 		addFees?.forEach(({ category, price }) => {
-			if (category === 'discount') {
+			if (category === 'Diskon') {
 				total -= price;
 			} else {
 				total += price;
@@ -138,38 +136,21 @@ function NewOrder() {
 		setNetPrice(total);
 	}, [laundryCost, addFees]);
 
-	useEffect(() => {
-		setAddFees(store.addFees);
-	}, [store.addFees]);
-
-	/*function editAddFees (index: number, type: 'discount' | 'additional', label: string, price: number) {
-		let addFeesCopy: FeeType[] = [{ type: 'discount', label: '', price: 0 }];
-
-		if (addFees) {
-			addFeesCopy = [...addFees];
-		}
-
-		if (addFeesCopy[index]) {
-			addFeesCopy.splice(index, 1, {type, label, price})
-		}
-
-		setAddFees(addFeesCopy)
-	} */
-
 	function deleteAddFee(index: number) {
-		let addFeesCopy: FeeType[] = [{ category: 'discount', label: '', price: 0 }];
+		let addFeesCopy: FeeType[] | null = [...addFees!];
 
-		if (addFees) {
-			addFeesCopy = [...addFees];
+		if (addFeesCopy.length !== 1) {
+			addFeesCopy.splice(index, 1);
+		} else {
+			addFeesCopy = null;
 		}
 
-		addFeesCopy.splice(index, 1);
 		setAddFees(addFeesCopy);
 	}
 
 	/* VALIDATION AND ERROR HANDLING */
 
-	function spliceInvalidCols(col: string) {
+	function removeInvalidCol(col: string) {
 		if (invalidCols?.includes(col)) {
 			let newInvalidCols: string[] | null = [...invalidCols];
 
@@ -182,23 +163,23 @@ function NewOrder() {
 		}
 	}
 
-	useEffect(()=> {
-		spliceInvalidCols('customer')
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	},[store.customer])
+	useEffect(() => {
+		removeInvalidCol('customer');
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [store.customer]);
 
 	useEffect(() => {
-		spliceInvalidCols('startDate');
+		removeInvalidCol('startDate');
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [startDate]);
 
 	useEffect(() => {
-		spliceInvalidCols('serviceCards');
+		removeInvalidCol('serviceCards');
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [serviceCards]);
 
 	useEffect(() => {
-		spliceInvalidCols('laundryCost');
+		removeInvalidCol('laundryCost');
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [laundryCost]);
 
@@ -218,7 +199,7 @@ function NewOrder() {
 			newInvalidCols.push('laundryCost');
 		}
 		if (newInvalidCols.length > 1) {
-			newInvalidCols.splice(0, 1);
+			newInvalidCols.shift();
 			setInvalidCols(newInvalidCols);
 			return;
 		}
@@ -226,13 +207,23 @@ function NewOrder() {
 		serviceCards?.forEach(({ id, name, quantity, price, desc }) => {
 			confirmedServices.push({ id, name, quantity, price, desc });
 		});
-		confirmedServices.splice(0, 1);
+		confirmedServices.shift();
+
+		let confirmedAddFees: FeeType[] | null = [{ category: 'Diskon', label: '', price: 0 }];
+		if (addFees) {
+			addFees.forEach(({ category, label, price }) => {
+				confirmedAddFees?.push({ category, label, price });
+			});
+			confirmedAddFees.shift();
+		} else {
+			confirmedAddFees = null;
+		}
 
 		const orderData = {
 			customer: { id: store.customer.id, name: store.customer.name },
-			start_date: startDate,
+			start_date: startDate?.toJSON(),
 			services: confirmedServices,
-			add_fees: addFees,
+			add_fees: confirmedAddFees,
 			net_price: netPrice,
 			notes_internal: notesInternalRef.current?.value || '',
 			notes_invoice: notesInvoiceRef.current?.value || '',
@@ -258,7 +249,9 @@ function NewOrder() {
 							</h4>
 							<button
 								className="mt-2 font-semibold text-green-600"
-								onClick={() => modalState.openModal(<CustomerSearch />, 'full')}
+								onClick={() =>
+									modalState.openModal(<CustomerSearchModal />, 'full')
+								}
 							>
 								{store.customer.id === 0 ? 'Pilih Kontak' : 'Ganti Kontak'}
 							</button>
@@ -342,7 +335,7 @@ function NewOrder() {
 								className="mt-2 font-semibold text-green-600"
 								onClick={() => {
 									store.setServices(serviceCards);
-									modalState.openModal(<ServiceSearch />, 'full');
+									modalState.openModal(<ServiceSearchModal />, 'full');
 								}}
 							>
 								Tambah Layanan
@@ -368,7 +361,7 @@ function NewOrder() {
 								>
 									{serviceCards ? (
 										serviceCards.map((serviceData) => (
-											<ServiceCardComp
+											<NewOrderServiceCard
 												key={`service-${serviceData.id}`}
 												serviceData={serviceData}
 												updateServiceCards={updateServiceCards}
@@ -406,7 +399,7 @@ function NewOrder() {
 									<React.Fragment key={`additional-${index}`}>
 										<div
 											className={`max-w-[16rem] col-span-1 w-full flex justify-between font-medium ${
-												category === 'discount' ? 'text-theme-blue' : ''
+												category === 'Diskon' ? 'text-theme-blue' : ''
 											}`}
 										>
 											<p>{label}</p>
@@ -415,12 +408,12 @@ function NewOrder() {
 										<div className="max-w-[16rem] col-span-1 font-medium flex justify-center items-center relative">
 											<div
 												className={`flex w-full justify-between ml-3 border-b border-gray-600 mr-6 ${
-													category === 'discount' ? 'text-theme-blue' : ''
+													category === 'Diskon' ? 'text-theme-blue' : ''
 												}`}
 											>
 												<p
 													className={`absolute translate-x-[-100%] ${
-														category === 'discount' ? '' : 'hidden'
+														category === 'Diskon' ? '' : 'hidden'
 													}`}
 												>
 													–
@@ -502,28 +495,59 @@ function NewOrder() {
 							placeholder="catatan yang akan muncul di tagihan"
 						/>
 						<h4>Metode Pembayaran</h4>
-						<Select value={paymentMethod} onValueChange={setPaymentMethod}>
-							<SelectTrigger className="w-full max-w-sm">
-								<SelectValue placeholder="Pilih metode pembayaran" />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value="Transfer">Transfer</SelectItem>
-								<SelectItem value="COD">COD</SelectItem>
-							</SelectContent>
-						</Select>
+						<DropdownComp
+							title="payment-method"
+							dropdownStatus={{
+								isOpen: activeDropdown === 'payment-method',
+								setStatus: setActiveDropdown,
+							}}
+							options={{
+								values: ['Transfer', 'Tunai'],
+								selected: paymentMethod,
+								setSelected: setPaymentMethod,
+							}}
+							styling={{ parentClass: 'wfull max-w-sm', childClass: 'w-full' }}
+							ref={paymentMethodRef}
+						>
+							<button
+								className="w-full max-w-sm form-input mb-0 text-left relative"
+								onClick={() =>
+									activeDropdown === ''
+										? setActiveDropdown('payment-method')
+										: setActiveDropdown('')
+								}
+							>
+								<p>{paymentMethod}</p>
+								<ChevronDown className="h-4 w-4 opacity-50 absolute right-3 bottom-1/2 translate-y-1/2" />
+							</button>
+						</DropdownComp>
 						<h4 className="mt-4">Metode Pengiriman</h4>
-						<Select value={shippingMethod} onValueChange={setShippingMethod}>
-							<SelectTrigger className="w-full max-w-sm">
-								<SelectValue placeholder="Pilih metode pengiriman" />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value="Antar sendiri">Antar sendiri</SelectItem>
-								<SelectItem value="Kurir rental">Kurir rental</SelectItem>
-								<SelectItem value="Kurir pihak ketiga">
-									Kurir pihak ketiga
-								</SelectItem>
-							</SelectContent>
-						</Select>
+						<DropdownComp
+							title="shipping-method"
+							dropdownStatus={{
+								isOpen: activeDropdown === 'shipping-method',
+								setStatus: setActiveDropdown,
+							}}
+							options={{
+								values: ['Antar sendiri', 'Kurir rental', 'Kurir pihak ketiga'],
+								selected: shippingMethod,
+								setSelected: setShippingMethod,
+							}}
+							styling={{ parentClass: 'w-full max-w-sm', childClass: 'w-full' }}
+							ref={shippingMethodRef}
+						>
+							<button
+								className="w-full max-w-sm form-input mb-0 text-left relative"
+								onClick={() =>
+									activeDropdown === ''
+										? setActiveDropdown('shipping-method')
+										: setActiveDropdown('')
+								}
+							>
+								<p>{shippingMethod}</p>
+								<ChevronDown className="h-4 w-4 opacity-50 absolute right-3 bottom-1/2 translate-y-1/2" />
+							</button>
+						</DropdownComp>
 						<h4 className="mt-4">Pembayaran</h4>
 						<RadioGroup value={orderPaid} onValueChange={setOrderPaid}>
 							<div className="w-full max-w-xs flex flex-col sm:flex-row justify-between pt-2 gap-y-6 mb-4">

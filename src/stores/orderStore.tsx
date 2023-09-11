@@ -20,48 +20,42 @@ export type ServiceType = {
 };
 
 export type FeeType = {
-	category: 'discount' | 'additional';
+	category: 'Diskon' | 'Biaya Tambahan';
 	label: string;
 	price: number;
 };
 
+export type PaymentType = {
+	paydate: Date;
+	desc: string;
+	price: number;
+}
+
 interface IOrder {
 	customer: CustomerType;
-	startDate: Date;
 	services: ServiceType[] | null;
 	addFees: FeeType[] | null;
-	netPrice: number;
-	notesInternal: string;
-	notesInvoice: string;
+	payments: PaymentType[] | null;
 	setCustomer: (newCustomer: CustomerType) => void;
-	setStartDate: (newDate: Date) => void;
 	setServices: (newServices: ServiceType[] | null) => void;
 	setAddFees: (newFees: FeeType[] | null) => void;
-	setNetPrice: (newPrice: number) => void;
-	setNotesInternal: (newNotes: string) => void;
-	setNotesInvoice: (newNotes: string) => void;
+	setPayments: (newPayment: PaymentType[] | null) => void;
 	resetOrderStore: () => void;
 }
 
 const defaultStoreState = {
 	customer: { id: 0, name: '', phone: '', address: '', img: '' },
-	startDate: new Date(0),
 	services: null,
 	addFees: null,
-	netPrice: 0,
-	notesInternal: '',
-	notesInvoice: '',
+	payments: null,
 };
 
 const useOrderStore = create<IOrder>((set) => ({
 	...defaultStoreState,
 	setCustomer: (newCustomer: CustomerType) => set({ customer: newCustomer }),
-	setStartDate: (newDate: Date) => set({ startDate: newDate }),
 	setServices: (newServices: ServiceType[] | null) => set({ services: newServices }),
 	setAddFees: (newFees: FeeType[] | null) => set({ addFees: newFees }),
-	setNetPrice: (newPrice: number) => set({ netPrice: newPrice }),
-	setNotesInternal: (newNotes: string) => set({ notesInternal: newNotes }),
-	setNotesInvoice: (newNotes: string) => set({ notesInvoice: newNotes }),
+	setPayments: (newPayment: PaymentType[] | null ) => set({ payments: newPayment }),
 	resetOrderStore: () => {
 		set({
 			...defaultStoreState,

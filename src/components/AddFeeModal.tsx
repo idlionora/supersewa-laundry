@@ -2,21 +2,17 @@
 import { useEffect, useRef, useState } from 'react';
 import useTrackedModalStore from '../stores/modalStore';
 import { FeeType, useTrackedOrderStore } from '../stores/orderStore.tsx';
+import { ChevronDown } from 'lucide-react';
 import iconClose from '../assets/icon-x.svg';
 import iconExclamation from '../assets/icon-exclamation-circle.svg';
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '../components/ui/select.tsx';
+import DropdownCompTest from './DropdownComp.tsx';
 
 const AddFeeModal = () => {
 	const orderStore = useTrackedOrderStore();
 	const state = useTrackedModalStore();
-	const selectRef = useRef<HTMLButtonElement>(null)
-	const [category, setCategory] = useState('discount');
+	const categoryRef = useRef<HTMLDivElement>(null);
+	const [category, setCategory] = useState('Diskon');
+	const [activeDropdown, setActiveDropdown] = useState('');
 	const [label, setLabel] = useState('');
 	const [price, setPrice] = useState('0');
 	const [invalidCols, setInvalidCols] = useState<string[] | null>(null);
@@ -25,39 +21,61 @@ const AddFeeModal = () => {
 		if (!state.modalDisplay) return;
 		setLabel('');
 		setPrice('0');
-		selectRef.current?.focus()
+		(categoryRef.current?.children[0] as HTMLElement).focus();
 	}, [state.modalDisplay]);
 
 	useEffect(() => {
-		if (invalidCols?.includes('label')) {
-			let newInvalidCols: string[] | null = [...invalidCols];
+		document.addEventListener('mousedown', closeDropdown);
+		return () => {
+			document.removeEventListener('mousedown', closeDropdown);
+		};
+	}, [activeDropdown]);
 
-			if (newInvalidCols.length > 1) {
-				newInvalidCols.splice(invalidCols.indexOf('label'), 1);
-			} else {
-				newInvalidCols = null;
-			}
-			setInvalidCols(newInvalidCols);
+	function closeDropdown(event: MouseEvent) {
+		const clickTarget = event.target as Node;
+
+		if (
+			categoryRef &&
+			activeDropdown === 'addfee-category' &&
+			!categoryRef.current?.contains(clickTarget)
+		) {
+			setActiveDropdown('');
 		}
+	}
+
+	function setPriceWithoutZeroAtFront(priceInString: string) {
+		if (priceInString.length > 1 && priceInString.startsWith('0')) {
+			setPrice(priceInString.slice(1));
+		} else {
+			setPrice(priceInString);
+		}
+	}
+
+	useEffect(() => {
+		removeInvalidCols('label');
 	}, [label]);
 
 	useEffect(() => {
-		if (invalidCols?.includes('price')) {
+		removeInvalidCols('price');
+	}, [price]);
+
+	function removeInvalidCols(invalidLabel : string) {
+		if (invalidCols?.includes(invalidLabel)) {
 			let newInvalidCols: string[] | null = [...invalidCols];
 
 			if (newInvalidCols.length > 1) {
-				newInvalidCols.splice(invalidCols.indexOf('price'), 1);
+				newInvalidCols.splice(invalidCols.indexOf(invalidLabel), 1);
 			} else {
 				newInvalidCols = null;
 			}
 			setInvalidCols(newInvalidCols);
 		}
-	}, [price]);
+	}
 
 	function confirmFee(event: React.FormEvent) {
 		event.preventDefault();
 		const newInvalidCols = ['throwError'];
-		let newAddFees: FeeType[] = [{ category: 'discount', label: 'dummy', price: 0 }];
+		let newAddFees: FeeType[] = [{ category: 'Diskon', label: 'dummy', price: 0 }];
 		let addedFee: FeeType;
 
 		if (label.length < 1) {
@@ -67,7 +85,7 @@ const AddFeeModal = () => {
 			newInvalidCols.push('price');
 		}
 		if (newInvalidCols.includes('label') || newInvalidCols.includes('price')) {
-			newInvalidCols.splice(0, 1);
+			newInvalidCols.shift();
 			setInvalidCols(newInvalidCols);
 			return;
 		}
@@ -76,7 +94,7 @@ const AddFeeModal = () => {
 			newAddFees = [...orderStore.addFees];
 		}
 
-		if (category === 'discount' || category === 'additional') {
+		if (category === 'Diskon' || category === 'Biaya Tambahan') {
 			addedFee = {
 				category,
 				label,
@@ -85,7 +103,7 @@ const AddFeeModal = () => {
 
 			newAddFees.push(addedFee);
 			if (newAddFees[0].label === 'dummy') {
-				newAddFees.splice(0, 1);
+				newAddFees.shift();
 			}
 			orderStore.setAddFees(newAddFees);
 		}
@@ -99,22 +117,36 @@ const AddFeeModal = () => {
 		>
 			<div className="relative w-full flex items-center mb-2">
 				<p className="font-semibold text-sm w-full">Kategori </p>
-				<button
-					className="absolute right-[-.25rem]"
-					onClick={() => state.closeModal()}
-				>
+				<button className="absolute right-[-.25rem]" onClick={() => state.closeModal()}>
 					<img src={iconClose} alt="Tutup Panel" className="w-5" />
 				</button>
 			</div>
-			<Select onValueChange={setCategory} value={category}>
-				<SelectTrigger ref={selectRef} className="w-full">
-					<SelectValue placeholder="Pilih kategori harga" />
-				</SelectTrigger>
-				<SelectContent>
-					<SelectItem value="discount">Diskon</SelectItem>
-					<SelectItem value="additional">Biaya Tambahan</SelectItem>
-				</SelectContent>
-			</Select>
+			<DropdownCompTest
+				title="addfee-category"
+				dropdownStatus={{
+					isOpen: activeDropdown === 'addfee-category',
+					setStatus: setActiveDropdown,
+				}}
+				options={{
+					values: ['Diskon', 'Biaya Tambahan'],
+					selected: category,
+					setSelected: setCategory,
+				}}
+				styling={{ parentClass: 'w-full', childClass: 'w-full' }}
+				ref={categoryRef}
+			>
+				<button
+					className="w-full form-input mb-0 text-left relative"
+					onClick={() =>
+						activeDropdown === ''
+							? setActiveDropdown('addfee-category')
+							: setActiveDropdown('')
+					}
+				>
+					<p>{category}</p>
+					<ChevronDown className="h-4 w-4 opacity-50 absolute right-3 bottom-1/2 translate-y-1/2" />
+				</button>
+			</DropdownCompTest>
 			<form onSubmit={(e) => confirmFee(e)}>
 				<label htmlFor="addfee-label" className="block font-semibold text-sm w-full mt-4">
 					Label
@@ -127,7 +159,7 @@ const AddFeeModal = () => {
 					className={`form-input w-full mt-2 ${
 						invalidCols?.includes('label') ? 'form-invalid' : ''
 					}`}
-					placeholder={`label ${category === 'discount' ? 'diskon' : 'biaya tambahan'}`}
+					placeholder={`label ${category === 'Diskon' ? 'diskon' : 'biaya tambahan'}`}
 					onChange={(e) => setLabel(e.target.value)}
 				/>
 				<label htmlFor="addfee-price" className="block font-semibold text-sm w-full">
@@ -143,7 +175,7 @@ const AddFeeModal = () => {
 						className={`form-input w-full mt-2 pl-10 pr-2 ${
 							invalidCols?.includes('price') ? 'form-invalid' : ''
 						}`}
-						onChange={(e) => setPrice(e.target.value)}
+						onChange={(e) => setPriceWithoutZeroAtFront(e.target.value)}
 					/>
 				</div>
 				{invalidCols ? (

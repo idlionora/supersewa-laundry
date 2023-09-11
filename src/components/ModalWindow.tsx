@@ -1,7 +1,7 @@
 import useTrackedModalStore from '../stores/modalStore';
 // Modal handler uses global state management
 
-const AppModal = () => {
+const ModalWindow = () => {
 	const state = useTrackedModalStore();
 
 	return (
@@ -29,4 +29,4 @@ const AppModal = () => {
 	);
 };
 
-export default AppModal;
+export default ModalWindow;

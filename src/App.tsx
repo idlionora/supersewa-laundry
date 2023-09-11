@@ -15,7 +15,7 @@ import iconQuestion from './assets/icon-questionmark-outline.svg';
 import iconWhatsApp from './assets/icon-brand-whatsapp.svg';
 import iconDots from './assets/icon-dotsvertical.svg';
 import './App.css';
-import AppModal from './components/AppModal';
+import ModalWindow from './components/ModalWindow';
 
 
 function App() {
@@ -42,13 +42,12 @@ function App() {
 	const pathnames: string[] = location.pathname
 		.split('/')
 		.filter((path) => path !== '')
-		.filter((path) => !path.match(/\d+/));
+		.filter((path) => !path.match(/^\d+/));
 	const pathNameKey: string = pathnames[pathnames.length - 1].replace(/-/g, '_');
 	const nameFromList = pageNameList[pathNameKey as keyof typeof pageNameList];
 	if (nameFromList && pageName !== nameFromList) {
 		setPageName(nameFromList);
 	}
-
 	console.log(pathNameKey);
 
 	return (
@@ -56,7 +55,9 @@ function App() {
 			<header className="fixed z-[5] top-0 left-0 w-full shadow bg-white">
 				<div className="w-full h-[3.75rem] px-[16px] py-[10px] min-[1200px]:h-8 min-[1200px]:py-0 xl:hidden">
 					<div className="w-full h-full px-4 flex justify-between items-center">
-						<img src={iconHome} alt="Home" className="h-6 w-6 cursor-pointer" />
+						<NavLink to="/orders">
+							<img src={iconHome} alt="Home" className="h-6 w-6 cursor-pointer" />
+						</NavLink>
 						<p className="px-4 font-semibold text-sm">{pageName}</p>
 						<img
 							src={iconAnnounce}
@@ -161,7 +162,7 @@ function App() {
 					</button>
 				</div>
 			</nav>
-			<AppModal/>
+			<ModalWindow />
 			<Outlet />
 		</div>
 	);

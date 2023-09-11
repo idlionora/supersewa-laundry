@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ServiceType } from '../stores/orderStore';
 import imgList from '../lib/imgList';
 
-type ServiceCardType = {
+type NewOrderServiceCardType = {
 	serviceData: ServiceType;
 	updateServiceCards: (
 		id: number,
@@ -12,15 +12,29 @@ type ServiceCardType = {
 	deleteServiceCard: (id: number) => void;
 };
 
-const ServiceCardComp = ({
+const NewOrderServiceCard = ({
 	serviceData,
 	updateServiceCards,
 	deleteServiceCard,
-}: ServiceCardType) => {
+}: NewOrderServiceCardType) => {
 	const { id, name, priceRange, img, quantity, price, desc } = serviceData;
-	// const [compQuantity, setCompQuantity] = useState(quantity);
 	const [compPrice, setCompPrice] = useState(price.toString());
-	// const [compDesc, setcompDesc] = useState(desc)
+
+	function setCompPriceWithoutZeroAtFront(priceInString: string) {
+		if (priceInString.length > 1 && priceInString.startsWith('0')) {
+			setCompPrice(priceInString.slice(1));
+		} else {
+			setCompPrice(priceInString);
+		}
+	}
+
+	function setParentPriceInNumber (priceInString: string) {
+		if (priceInString.length > 0) {
+			updateServiceCards(id, 'price', parseInt(priceInString));
+		} else if (priceInString === '') {
+			updateServiceCards(id, 'price', 0);
+		}
+	}
 
 	return (
 		<div
@@ -43,24 +57,24 @@ const ServiceCardComp = ({
 			<p className="form-label">Harga</p>
 			<div className="w-full relative">
 				<input
+					id={`price-service-${id}`}
+					name={`price-service-${id}`}
 					type="number"
 					className="form-input w-full"
 					value={compPrice}
 					onChange={(e) => {
-						setCompPrice(e.target.value);
-						if (e.target.value.length > 0) {
-							updateServiceCards(id, 'price', parseInt(e.target.value));
-						} else if (e.target.value === '') {
-							updateServiceCards(id, 'price', 0);
-						}
+						setCompPriceWithoutZeroAtFront(e.target.value)						
+						setParentPriceInNumber(e.target.value)
 					}}
 				/>
 				<div className="absolute mb-4 top-0 right-0 h-[2.75rem] flex items-center">
-					<p className="mr-3 bg-white">x {quantity}</p>
+					<p className="pl-0.5 mr-3 bg-white">x {quantity}</p>
 				</div>
 			</div>
 			<p className="form-label">Keterangan</p>
 			<input
+				id={`desc-service-${id}`}
+				name={`desc-service-${id}`}
 				type="text"
 				className="form-input w-full"
 				value={desc}
@@ -96,4 +110,4 @@ const ServiceCardComp = ({
 	);
 };
 
-export default ServiceCardComp;
+export default NewOrderServiceCard;

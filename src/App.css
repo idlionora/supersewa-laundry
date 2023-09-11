@@ -179,12 +179,40 @@
     background-color: rgb(243, 244, 246);
 }
 
-.text-clickable {
+.button-pagination {
+    padding: 8px 12px;
+    background-color: white;
+    font-weight: 600;
+    color: var(--color-theme-blue);
+    border: 1px solid transparent;
+}
+
+.button-pagination:hover {
+    background-color: #e2e8f0;
+    border-color: #cbd5e1;
+}
+
+.button-pagination:disabled {
+    color: #6b7280;
+    background-color: white;
+    border-color: transparent;
+}
+
+.badge-pill-lightgreen {
+    padding: 5px 10px;
+    background-color: rgb(220, 248, 198);
+    color: rgb(5, 150, 105); /*emerald-600*/
+    font-size: .75rem;
+    display: flex;
+    justify-items: center;
+    gap: .25rem;
+    vertical-align: baseline;
+    font-weight: 700;
+    line-height: 1; 
+    flex-wrap: nowrap;
     cursor: pointer;
-    font-size: 0.875rem;
-    font-weight: 500;
-    line-height: 1.25rem; 
-    color: var(--color-theme-green);   
+    width: fit-content;
+    border-radius: 9999px;
 }
 
 .form-label {
@@ -228,6 +256,46 @@
     color: var(--color-theme-orange);
     font-weight: 500;
     margin-left: 0.125rem;
+}
+
+/* ORDER DETAIL PAGE */
+.detail-col-grid {
+    gap: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-left-grid {
+        font-weight: 600;
+        width: 100%;
+}
+
+@media (min-width: 640px) {
+    .detail-col-grid {
+        flex-direction: row;
+    }
+
+    .detail-left-grid {
+        width: 25%;
+    }
+}
+
+@media (min-width: 1024px) {
+    .detail-left-grid {
+        text-align: right;
+    }
+}
+
+.filter-orange-600 {
+    filter: invert(27%) sepia(35%) saturate(3594%) hue-rotate(336deg) brightness(95%) contrast(114%);
+}
+
+.filter-green-600 {
+    filter: invert(41%) sepia(82%) saturate(627%) hue-rotate(94deg) brightness(99%) contrast(83%);
+}
+
+.filter-emerald-600 {
+    filter: invert(30%) sepia(89%) saturate(1643%) hue-rotate(142deg) brightness(97%) contrast(96%);
 }
 
 /* PROFILE BACKGROUND */
