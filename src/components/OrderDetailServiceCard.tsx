@@ -4,7 +4,11 @@ import imgList from '../lib/imgList';
 import ServiceEditModal from './ServiceEditModal';
 import useTrackedModalStore from '../stores/modalStore';
 
-const OrderDetailServiceCard = ({ data, childNum }: DataInsertAndMarkPosition<ServiceType>) => {
+type ServiceCardCategory = {
+	cardCategory: "editor" | "forDisplay" 
+}
+
+const OrderDetailServiceCard = ({ data, childNum, cardCategory }: DataInsertAndMarkPosition<ServiceType> & ServiceCardCategory) => {
 	const modalState = useTrackedModalStore()
 	const { name, img, quantity, price, desc } = data;
 	const formattedPrice = new Intl.NumberFormat('id-ID', {
@@ -31,13 +35,13 @@ const OrderDetailServiceCard = ({ data, childNum }: DataInsertAndMarkPosition<Se
 						<p>
 							{quantity} x {formattedPrice}
 						</p>
-						<p>{desc.length > 0 ? desc : '-'}</p>
+						<p className={desc.length === 0 && cardCategory === 'forDisplay' ? 'hidden' : ''}>{desc.length > 0 ? desc : '-'}</p>
 					</div>
 				</div>
 			</div>
 			<div className="flex justify-center w-full min-[355px]:w-fit">
 				<button
-					className="button-gray py-1.5 min-[448px]:py-2"
+					className={`button-gray py-1.5 min-[448px]:py-2 ${cardCategory === 'forDisplay' ? 'hidden' : ''}`}
 					onClick={() => modalState.openModal(<ServiceEditModal data={data} childNum={childNum}/>, 'full')}
 				>
 					Ubah

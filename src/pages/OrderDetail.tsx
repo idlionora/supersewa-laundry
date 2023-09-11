@@ -20,16 +20,16 @@ import formatPrice from '../lib/formatPrice';
 import iconArrowLeft from '../assets/icon-arrowleft.svg';
 import iconWhatsApp from '../assets/icon-brand-whatsapp.svg';
 import iconPencil from '../assets/icon-pencil.svg';
-import iconCreditCard from '../assets/icon-creditcard.svg';
-import iconBanknotes from '../assets/icon-banknotes.svg';
 import iconPaid from '../assets/icon-badgecheck.svg';
 import iconUnpaid from '../assets/icon-xcircle.svg';
+import iconCreditCard from '../assets/icon-creditcard.svg';
+import iconBanknotes from '../assets/icon-banknotes.svg';
 import iconStorefront from '../assets/icon-storefront.svg';
 import iconTruck from '../assets/icon-truck.svg';
 import iconClose from '../assets/icon-x.svg';
 import iconPlus from '../assets/icon-plus.svg';
 
-type OrderDetailSpec = {
+export type OrderDetailSpec = {
 	order_id: number;
 	customer: CustomerType;
 	start_date: Date;
@@ -40,6 +40,7 @@ type OrderDetailSpec = {
 	payments: PaymentType[] | null;
 	current_bill: number;
 	notes_internal: string;
+	notes_invoice: string;
 	method_payment: string;
 	method_shipping: string;
 	order_paid: boolean;
@@ -86,6 +87,7 @@ const orderDetailDummy: OrderDetailSpec = {
 	payments: null,
 	current_bill: 160000,
 	notes_internal: '',
+	notes_invoice: 'Pemilihan pengharum diserahkan pada pihak laundry pada saat pemesanan',
 	method_payment: 'Transfer',
 	method_shipping: 'Kurir pihak ketiga',
 	order_paid: false,
@@ -111,7 +113,6 @@ function OrderDetail() {
 
 	const notesRef = useRef<HTMLTextAreaElement>(null);
 	const paymentMethodRef = useRef<HTMLDivElement>(null);
-	const orderPaidRef = useRef<HTMLDivElement>(null);
 	const shippingMethodRef = useRef<HTMLDivElement>(null);
 	const orderStatusRef = useRef<HTMLDivElement>(null);
 
@@ -142,14 +143,6 @@ function OrderDetail() {
 			newArray = null;
 		}
 		setter(newArray);
-	}
-
-	function setOrderPaidFromDropDown(input: string) {
-		if (input === 'Lunas') {
-			setOrderPaid(true);
-		} else {
-			setOrderPaid(false);
-		}
 	}
 
 	function setActiveMenuByString(value: string) {
@@ -184,7 +177,6 @@ function OrderDetail() {
 		const clickTarget = event.target as Node;
 		const dropdowns = [
 			{ ref: paymentMethodRef, activeLabel: 'payment-method' },
-			{ ref: orderPaidRef, activeLabel: 'order-paid' },
 			{ ref: shippingMethodRef, activeLabel: 'shipping-method' },
 			{ ref: orderStatusRef, activeLabel: 'order-status' },
 		];
@@ -245,7 +237,18 @@ function OrderDetail() {
 		});
 
 		setCurrentBill(newBill);
+		updateOrderPaid(newBill)
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [payments, netPrice]);
+
+	function updateOrderPaid(remainingBill: number) {
+		if (remainingBill <= 0 && !orderPaid) {
+			setOrderPaid(true)
+		}
+		if (remainingBill > 0 && orderPaid) {
+			setOrderPaid(false)
+		}
+	}
 
 	return (
 		<main className="page-container pt-4">
@@ -361,6 +364,23 @@ function OrderDetail() {
 							)}
 						</li>
 						<li className="detail-col-grid">
+							<div className="detail-left-grid">Status Bayar</div>
+							<div className="w-full sm:w-3/4 flex items-center font-medium">
+								<img
+									src={orderPaid ? iconPaid : iconUnpaid}
+									alt=""
+									className={`w-5 h-5 ml-[-2px] mr-1.5 ${
+										orderPaid ? 'filter-green-600' : 'filter-orange-600'
+									}`}
+								/>
+								{orderPaid ? (
+									<p className="text-green-600">Lunas</p>
+								) : (
+									<p className="text-orange-600">Belum lunas</p>
+								)}
+							</div>
+						</li>
+						<li className="detail-col-grid">
 							<div className="detail-left-grid">Metode Bayar</div>
 							<div className="w-full sm:w-3/4 font-medium">
 								<DropdownComp
@@ -393,51 +413,6 @@ function OrderDetail() {
 									<button
 										className="ml-3"
 										onClick={() => setActiveMenuByString('payment-method')}
-									>
-										<img
-											src={iconPencil}
-											alt="Ubah"
-											className="w-4 h-4 filter-orange-600"
-										/>
-									</button>
-								</DropdownComp>
-							</div>
-						</li>
-						<li className="detail-col-grid">
-							<div className="detail-left-grid">Status Bayar</div>
-							<div className="w-full sm:w-3/4 font-medium">
-								<DropdownComp
-									title="order-paid"
-									dropdownStatus={{
-										isOpen: activeDropdown === 'order-paid',
-										setStatus: setActiveDropdown,
-									}}
-									options={{
-										values: ['Lunas', 'Belum lunas'],
-										selected: orderPaid ? 'Lunas' : 'Belum lunas',
-										setSelected: setOrderPaidFromDropDown,
-									}}
-									styling={{
-										parentClass: 'flex items-center w-fit',
-										childClass: '',
-									}}
-									ref={orderPaidRef}
-								>
-									<img
-										src={orderPaid ? iconPaid : iconUnpaid}
-										alt=""
-										className={`w-5 h-5 ml-[-2px] mr-1.5 ${
-											orderPaid ? 'filter-green-600' : 'filter-orange-600'
-										}`}
-									/>
-									{orderPaid ? (
-										<p className="text-green-600">Lunas</p>
-									) : (
-										<p className="text-orange-600">Belum lunas</p>
-									)}
-									<button
-										className="ml-3"
-										onClick={() => setActiveMenuByString('order-paid')}
 									>
 										<img
 											src={iconPencil}
@@ -558,6 +533,7 @@ function OrderDetail() {
 										? 'last'
 										: index
 								}
+								cardCategory='editor'
 							/>
 						</React.Fragment>
 					))}

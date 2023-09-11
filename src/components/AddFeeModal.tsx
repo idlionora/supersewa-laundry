@@ -5,7 +5,7 @@ import { FeeType, useTrackedOrderStore } from '../stores/orderStore.tsx';
 import { ChevronDown } from 'lucide-react';
 import iconClose from '../assets/icon-x.svg';
 import iconExclamation from '../assets/icon-exclamation-circle.svg';
-import DropdownCompTest from './DropdownComp.tsx';
+import DropdownComp from './DropdownComp.tsx';
 
 const AddFeeModal = () => {
 	const orderStore = useTrackedOrderStore();
@@ -121,7 +121,7 @@ const AddFeeModal = () => {
 					<img src={iconClose} alt="Tutup Panel" className="w-5" />
 				</button>
 			</div>
-			<DropdownCompTest
+			<DropdownComp
 				title="addfee-category"
 				dropdownStatus={{
 					isOpen: activeDropdown === 'addfee-category',
@@ -146,7 +146,7 @@ const AddFeeModal = () => {
 					<p>{category}</p>
 					<ChevronDown className="h-4 w-4 opacity-50 absolute right-3 bottom-1/2 translate-y-1/2" />
 				</button>
-			</DropdownCompTest>
+			</DropdownComp>
 			<form onSubmit={(e) => confirmFee(e)}>
 				<label htmlFor="addfee-label" className="block font-semibold text-sm w-full mt-4">
 					Label

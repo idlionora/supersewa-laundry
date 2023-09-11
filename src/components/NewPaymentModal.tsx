@@ -23,13 +23,21 @@ const NewPaymentModal = () => {
 	
 	useEffect(() => {
 		paydateRef.current?.focus()
+		setDesc('')
+		setPrice('0')
 	}, [state.modalDisplay])
+
+	function setPriceWithoutZeroAtFront(priceInString: string) {
+		if (priceInString.length > 1 && priceInString.startsWith('0')) {
+			setPrice(priceInString.slice(1));
+		} else {
+			setPrice(priceInString);
+		}
+	}
 
 	function confirmPayment(event: React.FormEvent) {
 		event.preventDefault();
 		const newInvalidCols = ['throwError'];
-		let newPayments: PaymentType[] = [{ paydate: new Date(), desc: 'dummy', price: 0 }];
-		let paymentToAdd: PaymentType | null = null;
 
 		if (!paydate) {
 			newInvalidCols.push('paydate');
@@ -44,18 +52,25 @@ const NewPaymentModal = () => {
 			return;
 		}
 
-		if (orderStore.payments) {
-			newPayments = [...orderStore.payments];
-		}
-
-		paymentToAdd = { paydate: paydate!, desc, price: parseInt(price) };
-
-		newPayments.push(paymentToAdd);
-		if (newPayments[0].desc === 'dummy') {
-			newPayments.shift();
-		}
-		orderStore.setPayments(newPayments);
+		setConfirmedPayment()
 		state.closeModal();
+	}
+
+	function setConfirmedPayment() {
+		let newPayments: PaymentType[] | null = orderStore.payments ? [...orderStore.payments] : null;
+		const paymentToAdd: PaymentType | null = {
+			paydate: paydate!,
+			desc,
+			price: parseInt(price),
+		};
+
+		if (newPayments) {
+			newPayments.push(paymentToAdd)
+		} else {
+			newPayments = [paymentToAdd]
+		}
+		
+		orderStore.setPayments(newPayments)
 	}
 
 	return (
@@ -115,7 +130,7 @@ const NewPaymentModal = () => {
 						className={`form-input w-full mt-2 pl-10 pr-2 ${
 							invalidCols?.includes('price') ? 'form-invalid' : ''
 						}`}
-						onChange={(e) => setPrice(e.target.value)}
+						onChange={(e) => setPriceWithoutZeroAtFront(e.target.value)}
 					/>
 				</div>
 				<label htmlFor="payment-desc" className="block font-semibold text-sm w-full">
