@@ -3,6 +3,10 @@ import { useParams } from 'react-router-dom';
 import { id as localeId } from 'date-fns/locale';
 import { format } from 'date-fns';
 import { OrderDetailSpec } from './OrderDetail';
+import iconNotes from '../assets/noun-notes-5752576.svg';
+import iconWater from '../assets/noun-water-4923007.svg';
+import iconBasket from '../assets/noun-basket-745994.svg';
+import iconCheck from '../assets/noun-checkmark-3772773.svg'
 import iconPaid from '../assets/icon-badgecheck.svg';
 import iconUnpaid from '../assets/icon-xcircle.svg';
 import iconCreditCard from '../assets/icon-creditcard.svg';
@@ -67,16 +71,28 @@ const invoiceConfig = {
 	message_end: 'Pembayaran ke bank BCA rek 12345678\nTerima kasih atas kepercayaannya.',
 };
 
+const StatusCircle = ({fill} : {fill:boolean}) => {
+	return (
+		<div
+			className={`w-2/5 aspect-square max-w-[1rem] max-h-[1rem] rounded-full flex items-center justify-center border-2 ${
+				fill ? 'border-[#1f223c] bg-[#1f223c]' : 'border-[#bdbdbd] bg-white'
+			}`}
+		>
+			<div
+				className={`aspect-square rounded-full ${fill ? 'hidden' : 'w-1/2 bg-[#bdbdbd]'}`}
+			></div>
+		</div>
+	);
+}
+
 function OrderDetailPublic() {
 	const { id: paramId } = useParams();
 	const invoiceStartMessage = invoiceConfig.message_start;
 	const invoiceEndMessage = invoiceConfig.message_end;
-
 	const {
 		order_id: orderId,
 		customer,
 		start_date: startDate,
-		user_email: userEmail,
 		services,
 		add_fees: addFees,
 		net_price: netPrice,
@@ -86,7 +102,26 @@ function OrderDetailPublic() {
 		method_payment: paymentMethod,
 		method_shipping: shippingMethod,
 		order_paid: orderPaid,
+		order_status: orderStatus
 	} = orderPublicDummy;
+
+	let displayedOrderStatus = ''
+
+	let displayedOrderPaid = ''
+	if (!orderPaid) {
+		displayedOrderPaid = ',\nmenunggu pembayaran'
+	}
+
+	if (orderStatus === 'Pesanan selesai' && orderPaid) {
+		displayedOrderStatus = 'Transaksi selesai'
+	} else if (orderStatus === 'Sedang cuci') {
+		displayedOrderStatus = `Barang sedang dicuci${displayedOrderPaid}`
+	} else if (orderStatus === 'Tunggu jemput' && orderPaid) {
+		displayedOrderStatus = 'Barang dapat diambil'
+	} else {
+		displayedOrderStatus = `Barang selesai dicuci${displayedOrderPaid}`
+	}
+
 	return (
 		<div className="w-full min-h-screen bg-[#e5e7eb] flex flex-col items-center relative pt-10">
 			<main className="page-container">
@@ -96,7 +131,98 @@ function OrderDetailPublic() {
 					</div>
 				</section>
 				<section className="page-section py-6">
-					<div className="card-white p-4 w-full">Menunggu Pembayaran</div>
+					<div className="card-white p-4 w-full">
+						<div className="w-full flex justify-between">
+							<div className="order-status-square mb-3.5">
+								<img
+									src={iconNotes}
+									alt=""
+									className="w-full relative translate-y-[15%] translate-x-[5%]"
+								/>
+							</div>
+							<div className="order-status-square mb-3.5">
+								<img
+									src={iconWater}
+									alt=""
+									className={`w-[90%] relative translate-y-[12%] ${
+										orderStatus === 'Sedang cuci' || orderStatus === 'Tunggu jemput' || orderStatus === 'Pesanan selesai'
+											? 'filter-icon-dark'
+											: 'filter-icon-grey'
+									}`}
+								/>
+							</div>
+							<div className="order-status-square mb-3.5">
+								<img
+									src={iconBasket}
+									alt=""
+									className={`w-full relative translate-y-[10%] ${
+										orderStatus === 'Tunggu jemput' ||
+										orderStatus === 'Pesanan selesai'
+											? 'filter-icon-dark'
+											: 'filter-icon-grey'
+									}`}
+								/>
+							</div>
+							<div className="order-status-square mb-3.5">
+								<img
+									src={iconCheck}
+									alt=""
+									className={`w-[90%] relative translate-y-[20%] ${
+										orderStatus === 'Pesanan selesai' && orderPaid
+											? 'filter-icon-dark'
+											: 'filter-icon-grey'
+									}`}
+								/>
+							</div>
+						</div>
+						<div className="w-full flex relative min-h-[1rem] pb-[3%] mb-4">
+							<div className="absolute flex items-center w-full bottom-1/2 translate-y-1/2">
+								<div className="h-full w-[6.25%] max-w-[1.4rem]"></div>
+								<div className="w-full h-[3px] bg-[#bdbdbd]">
+									<div
+										className={`h-full bg-[#1f223c] ${
+											orderStatus === 'Pesanan selesai' && orderPaid
+												? 'w-full'
+												: orderStatus === 'Tunggu jemput' || orderStatus === 'Pesanan selesai'
+												? 'w-2/3'
+												: 'w-1/3'
+										}`}
+									/>
+								</div>
+								<div className="h-full w-[6.25%] max-w-[1.4rem]"></div>
+							</div>
+							<div className="absolute w-full flex justify-between bottom-1/2 translate-y-1/2">
+								<div className="order-status-square">
+									<StatusCircle fill={true} />
+								</div>
+								<div className="order-status-square">
+									<StatusCircle
+										fill={
+											orderStatus === 'Sedang cuci' ||
+											orderStatus === 'Tunggu jemput' ||
+											orderStatus === 'Pesanan selesai'
+										}
+									/>
+								</div>
+								<div className="order-status-square">
+									<StatusCircle
+										fill={
+											orderStatus === 'Tunggu jemput' ||
+											orderStatus === 'Pesanan selesai'
+										}
+									/>
+								</div>
+								<div className="order-status-square">
+									<StatusCircle
+										fill={orderStatus === 'Pesanan selesai' && orderPaid}
+									/>
+								</div>
+							</div>
+						</div>
+						<p className="w-full text-center whitespace-pre-wrap font-semibold">
+							{displayedOrderStatus}
+						</p>
+					</div>
 				</section>
 				<section className="page-section py-6">
 					<h3 className="leading-[1.2]">
@@ -186,17 +312,19 @@ function OrderDetailPublic() {
 					<h3 className="leading-[1.2]">
 						<span className="hashtag-bullet">#</span> Link Pembayaran
 					</h3>
-					<div className="card-white p-4 w-full">
-						<a href="#">
-							{`http://laundry.supersewa.id/unrestricted/orders/${
-								paramId ? paramId : '0'
-							}/xendit`}
-						</a>
+					<div className="card-white px-4 w-full">
+						<div className="py-4 w-full overflow-x-auto">
+							<a href="#" className="text-theme-blue">
+								{`http://laundry.supersewa.id/unrestricted/orders/${
+									paramId ? paramId : '0'
+								}/xendit`}
+							</a>
+						</div>
 					</div>
 				</section>
 				<section className="page-section py-6">
 					<h3 className="leading-[1.2]">
-						<span className="hashtag-bullet">#</span> Paket Layanan
+						<span className="hashtag-bullet">#</span> Paket Cuci
 					</h3>
 					<div className="card-white w-full bg-gray-300 flex flex-col gap-y-0.5">
 						{services?.map((service, index) => (
@@ -269,9 +397,9 @@ function OrderDetailPublic() {
 												locale: localeId,
 											})}
 										</p>
-                                        <p className="whitespace-nowrap">
-                                            {formatPrice(payment.price)}
-                                        </p>
+										<p className="whitespace-nowrap">
+											{formatPrice(payment.price)}
+										</p>
 									</div>
 								);
 							})
@@ -285,6 +413,15 @@ function OrderDetailPublic() {
 						</div>
 					</div>
 				</section>
+				<section className="page-section py-6">
+					<div className="card-white p-4 w-full whitespace-pre-wrap">
+						{invoiceEndMessage}
+					</div>
+				</section>
+
+				<p className="mb-6">Powered by Supersewa</p>
+
+				{/* breakpoint 768px */}
 			</main>
 		</div>
 	);
