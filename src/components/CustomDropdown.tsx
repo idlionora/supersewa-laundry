@@ -27,7 +27,7 @@ import { ReactNode, forwardRef, useEffect, useState } from 'react';
 //     dropdowns.forEach((dropdown) => deactivateDropdownByClick(dropdown))
 // }
 
-type DropdownCompProps = {
+type CustomDropdownProps = {
 	title: string;
 	dropdownStatus: {
 		isOpen: boolean;
@@ -42,7 +42,7 @@ type DropdownCompProps = {
 	children: ReactNode | ReactNode[];
 };
 
-const DropdownComp = forwardRef<HTMLDivElement, DropdownCompProps>(
+const CustomDropdown = forwardRef<HTMLDivElement, CustomDropdownProps>(
 	({ title, dropdownStatus, options, styling, children }, ref) => {
 		const [dropdownDisplay, setDropdownDisplay] = useState<boolean>(false);
 		const [dropdownOpacity, setDropdownOpacity] = useState<boolean>(false);
@@ -101,4 +101,4 @@ const DropdownComp = forwardRef<HTMLDivElement, DropdownCompProps>(
 	}
 );
 
-export default DropdownComp
+export default CustomDropdown

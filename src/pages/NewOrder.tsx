@@ -14,7 +14,7 @@ import NewOrderServiceCard from '../components/NewOrderServiceCard.tsx';
 import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
 import { Label } from '../components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
-import DropdownComp from '../components/DropdownComp.tsx';
+import CustomDropdown from '../components/CustomDropdown.tsx';
 import iconClose from '../assets/icon-x.svg';
 import iconExclamation from '../assets/icon-exclamation-circle.svg';
 
@@ -495,7 +495,7 @@ function NewOrder() {
 							placeholder="catatan yang akan muncul di tagihan"
 						/>
 						<h4>Metode Pembayaran</h4>
-						<DropdownComp
+						<CustomDropdown
 							title="payment-method"
 							dropdownStatus={{
 								isOpen: activeDropdown === 'payment-method',
@@ -520,9 +520,9 @@ function NewOrder() {
 								<p>{paymentMethod}</p>
 								<ChevronDown className="h-4 w-4 opacity-50 absolute right-3 bottom-1/2 translate-y-1/2" />
 							</button>
-						</DropdownComp>
+						</CustomDropdown>
 						<h4 className="mt-4">Metode Pengiriman</h4>
-						<DropdownComp
+						<CustomDropdown
 							title="shipping-method"
 							dropdownStatus={{
 								isOpen: activeDropdown === 'shipping-method',
@@ -547,7 +547,7 @@ function NewOrder() {
 								<p>{shippingMethod}</p>
 								<ChevronDown className="h-4 w-4 opacity-50 absolute right-3 bottom-1/2 translate-y-1/2" />
 							</button>
-						</DropdownComp>
+						</CustomDropdown>
 						<h4 className="mt-4">Pembayaran</h4>
 						<RadioGroup value={orderPaid} onValueChange={setOrderPaid}>
 							<div className="w-full max-w-xs flex flex-col sm:flex-row justify-between pt-2 gap-y-6 mb-4">

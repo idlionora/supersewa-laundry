@@ -5,7 +5,7 @@ import { FeeType, useTrackedOrderStore } from '../stores/orderStore.tsx';
 import { ChevronDown } from 'lucide-react';
 import iconClose from '../assets/icon-x.svg';
 import iconExclamation from '../assets/icon-exclamation-circle.svg';
-import DropdownComp from './DropdownComp.tsx';
+import CustomDropdown from './CustomDropdown.tsx';
 
 const AddFeeModal = () => {
 	const orderStore = useTrackedOrderStore();
@@ -59,7 +59,7 @@ const AddFeeModal = () => {
 		removeInvalidCols('price');
 	}, [price]);
 
-	function removeInvalidCols(invalidLabel : string) {
+	function removeInvalidCols(invalidLabel: string) {
 		if (invalidCols?.includes(invalidLabel)) {
 			let newInvalidCols: string[] | null = [...invalidCols];
 
@@ -121,7 +121,7 @@ const AddFeeModal = () => {
 					<img src={iconClose} alt="Tutup Panel" className="w-5" />
 				</button>
 			</div>
-			<DropdownComp
+			<CustomDropdown
 				title="addfee-category"
 				dropdownStatus={{
 					isOpen: activeDropdown === 'addfee-category',
@@ -146,7 +146,7 @@ const AddFeeModal = () => {
 					<p>{category}</p>
 					<ChevronDown className="h-4 w-4 opacity-50 absolute right-3 bottom-1/2 translate-y-1/2" />
 				</button>
-			</DropdownComp>
+			</CustomDropdown>
 			<form onSubmit={(e) => confirmFee(e)}>
 				<label htmlFor="addfee-label" className="block font-semibold text-sm w-full mt-4">
 					Label

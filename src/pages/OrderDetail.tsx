@@ -15,8 +15,9 @@ import AddFeeModal from '../components/AddFeeModal';
 import NewPaymentModal from '../components/NewPaymentModal';
 import PaidDescModal from '../components/PaidDescModal';
 import ServiceAddModal from '../components/ServiceAddModal';
-import DropdownComp from '../components/DropdownComp';
+import CustomDropdown from '../components/CustomDropdown';
 import formatPrice from '../lib/formatPrice';
+import { Copy, ExternalLink } from 'lucide-react';
 import iconArrowLeft from '../assets/icon-arrowleft.svg';
 import iconWhatsApp from '../assets/icon-brand-whatsapp.svg';
 import iconPencil from '../assets/icon-pencil.svg';
@@ -28,6 +29,8 @@ import iconStorefront from '../assets/icon-storefront.svg';
 import iconTruck from '../assets/icon-truck.svg';
 import iconClose from '../assets/icon-x.svg';
 import iconPlus from '../assets/icon-plus.svg';
+import CustomPopover from '../components/CustomPopover';
+import useCopyToClipboard from '../lib/useCopyToClipboard';
 
 export type OrderDetailSpec = {
 	order_id: number;
@@ -123,31 +126,20 @@ function OrderDetail() {
 	const [orderStatus, setOrderStatus] = useState<string>(orderDetailDummy.order_status);
 	const [activeDropdown, setActiveDropdown] = useState<string>('');
 
+	const publicLinkRef = useRef<HTMLInputElement>(null);
+	const [copyToClipboard, copyResult] = useCopyToClipboard();
+	const [copyButtonInner, setCopyButtonInner] = useState<string>('Salin Link');
+	const [activePopover, setActivePopover] = useState<{
+		copyButton: boolean;
+		externalLink: boolean;
+	}>({ copyButton: false, externalLink: false });
+
 	const [services, setServices] = useState<ServiceType[] | null>(orderDetailDummy.services);
 	const [servicesPrice, setServicesPrice] = useState(0);
 	const [addFees, setAddFees] = useState<FeeType[] | null>(orderDetailDummy.add_fees);
 	const [netPrice, setNetPrice] = useState<number>(orderDetailDummy.net_price);
 	const [payments, setPayments] = useState<PaymentType[] | null>(paymentsDummy);
 	const [currentBill, setCurrentBill] = useState<number>(orderDetailDummy.current_bill);
-
-	function deleteItemInArray<T>(
-		array: T[] | null,
-		index: number,
-		setter: React.Dispatch<React.SetStateAction<T[] | null>>
-	) {
-		let newArray: T[] | null = [...array!];
-
-		if (newArray.length > 1 && newArray[index]) {
-			newArray.splice(index, 1);
-		} else {
-			newArray = null;
-		}
-		setter(newArray);
-	}
-
-	function setActiveMenuByString(value: string) {
-		activeDropdown === value ? setActiveDropdown('') : setActiveDropdown(value);
-	}
 
 	useEffect(() => {
 		store.resetOrderStore();
@@ -191,6 +183,47 @@ function OrderDetail() {
 		}
 
 		dropdowns.forEach(({ ref, activeLabel }) => deactivateDropdownByClick(ref, activeLabel));
+	}
+
+	async function clickCopyButton() {
+		await copyToClipboard(publicLinkRef.current?.value || '');
+	}
+
+	useEffect(() => {
+		if (copyResult?.state === 'success') {
+			if (publicLinkRef?.current) publicLinkRef.current.select()
+			setCopyButtonInner('Berhasil disalin');
+			setActivePopover({ ...activePopover, copyButton: true });
+		} else if (copyResult === null) {
+			setActivePopover({ ...activePopover, copyButton: false });
+			setTimeout(() => {
+				setCopyButtonInner('Salin Link');
+			}, 210);
+		} else {
+			setCopyButtonInner('Gagal menyalin');
+			setActivePopover({ ...activePopover, copyButton: true });
+			console.log(copyResult.message);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [copyResult]);
+
+	function deleteItemInArray<T>(
+		array: T[] | null,
+		index: number,
+		setter: React.Dispatch<React.SetStateAction<T[] | null>>
+	) {
+		let newArray: T[] | null = [...array!];
+
+		if (newArray.length > 1 && newArray[index]) {
+			newArray.splice(index, 1);
+		} else {
+			newArray = null;
+		}
+		setter(newArray);
+	}
+
+	function setActiveMenuByString(value: string) {
+		activeDropdown === value ? setActiveDropdown('') : setActiveDropdown(value);
 	}
 
 	useEffect(() => {
@@ -237,16 +270,16 @@ function OrderDetail() {
 		});
 
 		setCurrentBill(newBill);
-		updateOrderPaid(newBill)
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		updateOrderPaid(newBill);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [payments, netPrice]);
 
 	function updateOrderPaid(remainingBill: number) {
 		if (remainingBill <= 0 && !orderPaid) {
-			setOrderPaid(true)
+			setOrderPaid(true);
 		}
 		if (remainingBill > 0 && orderPaid) {
-			setOrderPaid(false)
+			setOrderPaid(false);
 		}
 	}
 
@@ -383,7 +416,7 @@ function OrderDetail() {
 						<li className="detail-col-grid">
 							<div className="detail-left-grid">Metode Bayar</div>
 							<div className="w-full sm:w-3/4 font-medium">
-								<DropdownComp
+								<CustomDropdown
 									title="payment-method"
 									dropdownStatus={{
 										isOpen: activeDropdown === 'payment-method',
@@ -420,13 +453,13 @@ function OrderDetail() {
 											className="w-4 h-4 filter-orange-600"
 										/>
 									</button>
-								</DropdownComp>
+								</CustomDropdown>
 							</div>
 						</li>
 						<li className="detail-col-grid">
 							<div className="detail-left-grid">Metode Kirim</div>
 							<div className="w-full sm:w-3/4 font-medium">
-								<DropdownComp
+								<CustomDropdown
 									title="shipping-method"
 									dropdownStatus={{
 										isOpen: activeDropdown === 'shipping-method',
@@ -467,13 +500,13 @@ function OrderDetail() {
 											className="w-4 h-4 filter-orange-600"
 										/>
 									</button>
-								</DropdownComp>
+								</CustomDropdown>
 							</div>
 						</li>
 						<li className="detail-col-grid">
 							<div className="detail-left-grid">Status Pesanan</div>
 							<div className="w-full sm:w-3/4 flex items-center font-medium">
-								<DropdownComp
+								<CustomDropdown
 									title="order-status"
 									dropdownStatus={{
 										isOpen: activeDropdown === 'order-status',
@@ -511,7 +544,75 @@ function OrderDetail() {
 											className="w-4 h-4 filter-orange-600"
 										/>
 									</button>
-								</DropdownComp>
+								</CustomDropdown>
+							</div>
+						</li>
+						<li className="detail-col-grid">
+							<div className="detail-left-grid">Link Publik</div>
+							<div className="w-full sm:w-3/4 flex items-center font-medium gap-x-4">
+								<div className="w-full flex items-center">
+									<input
+										ref={publicLinkRef}
+										value={`http://laundry.supersewa.id/unrestricted/orders/${
+											paramId ?? ''
+										}`}
+										type="text"
+										readOnly
+										className="form-input rounded-r-none border-r-0 mb-0 h-[2.375rem] w-full focus:border-gray-300 focus:outline-none"
+									/>
+									<CustomPopover
+										isPopoverOpen={activePopover.copyButton}
+										popoverContent={copyButtonInner}
+									>
+										<button
+											className="button-gray rounded-l-none h-[2.375rem] w-[2.875rem] flex items-center justify-center"
+											onMouseEnter={() =>
+												setActivePopover({
+													...activePopover,
+													copyButton: true,
+												})
+											}
+											onMouseLeave={() =>
+												copyResult?.state === 'success'
+													? null
+													: setActivePopover({
+															...activePopover,
+															copyButton: false,
+													})
+											}
+											// eslint-disable-next-line @typescript-eslint/no-misused-promises
+											onClick={() => clickCopyButton()}
+										>
+											<Copy strokeWidth={'2.25px'} size={'1rem'} />
+										</button>
+									</CustomPopover>
+								</div>
+								<CustomPopover
+									isPopoverOpen={activePopover.externalLink}
+									popoverContent="Buka Link"
+								>
+									<a
+										href={`http://localhost:5173/unrestricted/orders/${
+											paramId ?? ''
+										}`}
+										target="_blank"
+										className="button-gray h-[2.375rem] w-[2.875rem] flex items-center justify-center"
+										onMouseEnter={() =>
+											setActivePopover({
+												...activePopover,
+												externalLink: true,
+											})
+										}
+										onMouseLeave={() =>
+											setActivePopover({
+												...activePopover,
+												externalLink: false,
+											})
+										}
+									>
+										<ExternalLink strokeWidth={'2px'} size={'1rem'} />
+									</a>
+								</CustomPopover>
 							</div>
 						</li>
 					</ul>
@@ -533,7 +634,7 @@ function OrderDetail() {
 										? 'last'
 										: index
 								}
-								cardCategory='editor'
+								cardCategory="editor"
 							/>
 						</React.Fragment>
 					))}

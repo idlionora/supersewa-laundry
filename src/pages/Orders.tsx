@@ -8,7 +8,7 @@ import {
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import orderDataDummy from '../lib/orderDataDummy.tsx';
 import OrdersDataCard from '../components/OrdersDataCard.tsx';
-import DropdownComp from '../components/DropdownComp.tsx';
+import CustomDropdown from '../components/CustomDropdown.tsx';
 import iconSearch from '../assets/icon-search.svg';
 import { ChevronDown } from 'lucide-react';
 
@@ -176,7 +176,7 @@ function Orders({ cardsCategory }: OrderPageType) {
 								/>
 							</div>
 						</div>
-						<DropdownComp
+						<CustomDropdown
 							title="cards-category"
 							dropdownStatus={{
 								isOpen: isDropdownActive,
@@ -200,7 +200,7 @@ function Orders({ cardsCategory }: OrderPageType) {
 								<p className="whitespace-nowrap">{cardsCategory}</p>
 								<ChevronDown className="h-4 w-4 opacity-50" />
 							</button>
-						</DropdownComp>
+						</CustomDropdown>
 					</div>
 				</div>
 				<div className="w-full mb-4 px-2.5 min-[575px]:px-0 flex justify-center sm:justify-start items-center">
