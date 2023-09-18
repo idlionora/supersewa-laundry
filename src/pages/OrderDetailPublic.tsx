@@ -3,18 +3,19 @@ import { useParams } from 'react-router-dom';
 import { id as localeId } from 'date-fns/locale';
 import { format } from 'date-fns';
 import { OrderDetailSpec } from './OrderDetail';
+import formatPrice from '../lib/formatPrice';
+import OrderDetailServiceCard from '../components/OrderDetailServiceCard';
+import iconWhatsApp from '../assets/icon-brand-whatsapp.svg';
 import iconNotes from '../assets/noun-notes-5752576.svg';
 import iconWater from '../assets/noun-water-4923007.svg';
 import iconBasket from '../assets/noun-basket-745994.svg';
-import iconCheck from '../assets/noun-checkmark-3772773.svg'
+import iconCheck from '../assets/noun-checkmark-3772773.svg';
 import iconPaid from '../assets/icon-badgecheck.svg';
 import iconUnpaid from '../assets/icon-xcircle.svg';
 import iconCreditCard from '../assets/icon-creditcard.svg';
 import iconBanknotes from '../assets/icon-banknotes.svg';
 import iconStorefront from '../assets/icon-storefront.svg';
 import iconTruck from '../assets/icon-truck.svg';
-import OrderDetailServiceCard from '../components/OrderDetailServiceCard';
-import formatPrice from '../lib/formatPrice';
 
 const orderPublicDummy: OrderDetailSpec = {
 	order_id: 30,
@@ -71,7 +72,7 @@ const invoiceConfig = {
 	message_end: 'Pembayaran ke bank BCA rek 12345678\nTerima kasih atas kepercayaannya.',
 };
 
-const StatusCircle = ({fill} : {fill:boolean}) => {
+const StatusCircle = ({ fill }: { fill: boolean }) => {
 	return (
 		<div
 			className={`w-2/5 aspect-square max-w-[1rem] max-h-[1rem] rounded-full flex items-center justify-center border-2 ${
@@ -83,7 +84,7 @@ const StatusCircle = ({fill} : {fill:boolean}) => {
 			></div>
 		</div>
 	);
-}
+};
 
 function OrderDetailPublic() {
 	const { id: paramId } = useParams();
@@ -102,24 +103,24 @@ function OrderDetailPublic() {
 		method_payment: paymentMethod,
 		method_shipping: shippingMethod,
 		order_paid: orderPaid,
-		order_status: orderStatus
+		order_status: orderStatus,
 	} = orderPublicDummy;
 
-	let displayedOrderStatus = ''
+	let displayedOrderStatus = '';
 
-	let displayedOrderPaid = ''
+	let displayedOrderPaid = '';
 	if (!orderPaid) {
-		displayedOrderPaid = ',\nmenunggu pembayaran'
+		displayedOrderPaid = ',\nmenunggu pembayaran';
 	}
 
 	if (orderStatus === 'Pesanan selesai' && orderPaid) {
-		displayedOrderStatus = 'Transaksi selesai'
+		displayedOrderStatus = 'Transaksi selesai';
 	} else if (orderStatus === 'Sedang cuci') {
-		displayedOrderStatus = `Barang sedang dicuci${displayedOrderPaid}`
+		displayedOrderStatus = `Barang sedang dicuci${displayedOrderPaid}`;
 	} else if (orderStatus === 'Tunggu jemput' && orderPaid) {
-		displayedOrderStatus = 'Barang dapat diambil'
+		displayedOrderStatus = 'Barang dapat diambil';
 	} else {
-		displayedOrderStatus = `Barang selesai dicuci${displayedOrderPaid}`
+		displayedOrderStatus = `Barang selesai dicuci${displayedOrderPaid}`;
 	}
 
 	return (
@@ -145,7 +146,9 @@ function OrderDetailPublic() {
 									src={iconWater}
 									alt=""
 									className={`w-[90%] relative translate-y-[12%] ${
-										orderStatus === 'Sedang cuci' || orderStatus === 'Tunggu jemput' || orderStatus === 'Pesanan selesai'
+										orderStatus === 'Sedang cuci' ||
+										orderStatus === 'Tunggu jemput' ||
+										orderStatus === 'Pesanan selesai'
 											? 'filter-icon-dark'
 											: 'filter-icon-grey'
 									}`}
@@ -183,7 +186,8 @@ function OrderDetailPublic() {
 										className={`h-full bg-[#1f223c] ${
 											orderStatus === 'Pesanan selesai' && orderPaid
 												? 'w-full'
-												: orderStatus === 'Tunggu jemput' || orderStatus === 'Pesanan selesai'
+												: orderStatus === 'Tunggu jemput' ||
+												orderStatus === 'Pesanan selesai'
 												? 'w-2/3'
 												: 'w-1/3'
 										}`}
@@ -229,51 +233,22 @@ function OrderDetailPublic() {
 						<span className="hashtag-bullet">#</span> Detail Pesanan
 					</h3>
 					<div className="card-white p-4 w-full">
-						<ul className="flex flex-col gap-y-6">
-							<li className="detail-col-grid">
-								<div className="detail-left-grid">Nomor Pesanan</div>
-								<div className="w-full sm:w-3/4">{orderId}</div>
+						<ul className="flex flex-col gap-y-2 text-[0.8125rem] leading-normal font-normal">
+							<li>Nomor {orderId}</li>
+							<li>{format(startDate, 'PPP', { locale: localeId })}</li>
+							<li className="w-full py-2">
+								<div className="bg-gray-300 w-full h-[1px]" />
 							</li>
-							<li className="detail-col-grid">
-								<div className="detail-left-grid">Dibuat</div>
-								<div className="w-full sm:w-3/4">
-									{format(startDate, 'd/M/yy', { locale: localeId })}
-								</div>
+							<li>
+								{customer.name} – {customer.phone}
 							</li>
-							<li className="detail-col-grid">
-								<div className="detail-left-grid">Pemesan</div>
-								<div className="w-full sm:w-3/4">{customer.name}</div>
+							<li className="whitespace-pre-wrap">{customer.address}</li>
+							<li className="w-full py-2">
+								<div className="bg-gray-300 w-full h-[1px]" />
 							</li>
-							<li className="detail-col-grid">
-								<div className="detail-left-grid">Telepon</div>
-								<div className="w-full sm:w-3/4">{customer.phone}</div>
-							</li>
-							<li className="detail-col-grid">
-								<div className="detail-left-grid">Alamat</div>
-								<div className="w-full sm:w-3/4 whitespace-pre-wrap">
-									{customer.address}
-								</div>
-							</li>
-							<li className="detail-col-grid">
-								<div className="detail-left-grid">Status Pesanan</div>
-								<div className="w-full sm:w-3/4 flex items-center font-medium">
-									<img
-										src={orderPaid ? iconPaid : iconUnpaid}
-										alt=""
-										className={`w-5 h-5 ml-[-2px] mr-1.5 ${
-											orderPaid ? 'filter-green-600' : 'filter-orange-600'
-										}`}
-									/>
-									{orderPaid ? (
-										<p className="text-green-600">Lunas</p>
-									) : (
-										<p className="text-red-500">Belum lunas</p>
-									)}
-								</div>
-							</li>
-							<li className="detail-col-grid">
-								<div className="detail-left-grid">Pembayaran</div>
-								<div className="w-full sm:w-3/4 flex items-center font-medium">
+							<li className="flex items-center gap-x-3">
+								<p className="w-[7rem]">Pembayaran:</p>
+								<div className="flex items-center">
 									<img
 										src={
 											paymentMethod === 'Transfer'
@@ -281,14 +256,14 @@ function OrderDetailPublic() {
 												: iconBanknotes
 										}
 										alt=""
-										className="w-5 h-5 ml-[-2px] filter-green-600 mr-1.5"
+										className="w-5 h-5 filter-green-600 mr-1.5"
 									/>
-									<p className="text-green-600">{paymentMethod}</p>
+									<p className="text-green-600 font-medium">{paymentMethod}</p>
 								</div>
 							</li>
-							<li className="detail-col-grid">
-								<div className="detail-left-grid">Pengiriman</div>
-								<div className="w-full sm:w-3/4 flex items-center font-medium">
+							<li className="flex items-center gap-x-3">
+								<p className="w-[7rem]">Pengiriman:</p>
+								<div className="flex items-center">
 									<img
 										src={
 											shippingMethod === 'Antar sendiri'
@@ -296,14 +271,33 @@ function OrderDetailPublic() {
 												: iconTruck
 										}
 										alt=""
-										className="w-5 h-5 ml-[-2px] mr-1.5 filter-green-600"
+										className="w-5 h-5 mr-1.5 filter-green-600"
 									/>
-									<p className="text-green-600">{shippingMethod}</p>
+									<p className="text-green-600 font-medium">{shippingMethod}</p>
 								</div>
 							</li>
-							<li className="detail-col-grid">
-								<div className="detail-left-grid">Catatan</div>
-								<div className="w-full sm:w-3/4 whitespace-pre-wrap">{notes}</div>
+							<li className="flex items-center gap-x-3">
+								<p className="w-[7rem]">Status pesanan:</p>
+								<div className="flex items-center">
+									<img
+										src={orderPaid ? iconPaid : iconUnpaid}
+										alt=""
+										className={`w-5 h-5 mr-1.5 ${
+											orderPaid ? 'filter-green-600' : 'filter-orange-600'
+										}`}
+									/>
+									{orderPaid ? (
+										<p className="text-green-600 font-medium">Lunas</p>
+									) : (
+										<p className="text-red-500 font-medium">Belum lunas</p>
+									)}
+								</div>
+							</li>
+							<li className="w-full py-2">
+								<div className="bg-gray-300 w-full h-[1px]" />
+							</li>
+							<li>
+								<p>{notes.length > 0 ? notes : 'Tidak ada catatan'}</p>
 							</li>
 						</ul>
 					</div>
@@ -420,9 +414,28 @@ function OrderDetailPublic() {
 				</section>
 
 				<p className="mb-6">Powered by Supersewa</p>
-
-				{/* breakpoint 768px */}
+				<div className="h-[4.625rem] min-[768px]:mb-6" />
 			</main>
+			<div className="w-full flex flex-col items-center fixed bottom-0 left-0">
+				<div className="page-container">
+					<section className="page-section">
+						<div className="card-white p-4 rounded-b-none min-[768px]:rounded-b">
+							<button
+								className="button-color h-[2.5rem] font-medium flex items-center justify-center gap-1 w-60 min-[768px]:w-fit"
+								style={{
+									backgroundColor: '#22c55e',
+									borderColor: '#22c55e',
+									outlineColor: '#22c55e',
+								}}
+							>
+								<img src={iconWhatsApp} alt="" className="invert w-4" />
+								Hubungi rental
+							</button>
+						</div>
+						<div className="pb-6 hidden min-[768px]:block" />
+					</section>
+				</div>
+			</div>
 		</div>
 	);
 }
