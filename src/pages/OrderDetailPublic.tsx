@@ -3,19 +3,19 @@ import { useParams } from 'react-router-dom';
 import { id as localeId } from 'date-fns/locale';
 import { format } from 'date-fns';
 import { OrderDetailSpec } from './OrderDetail';
-import formatPrice from '../lib/formatPrice';
-import OrderDetailServiceCard from '../components/OrderDetailServiceCard';
-import iconWhatsApp from '../assets/icon-brand-whatsapp.svg';
-import iconNotes from '../assets/noun-notes-5752576.svg';
-import iconWater from '../assets/noun-water-4923007.svg';
-import iconBasket from '../assets/noun-basket-745994.svg';
-import iconCheck from '../assets/noun-checkmark-3772773.svg';
-import iconPaid from '../assets/icon-badgecheck.svg';
-import iconUnpaid from '../assets/icon-xcircle.svg';
-import iconCreditCard from '../assets/icon-creditcard.svg';
-import iconBanknotes from '../assets/icon-banknotes.svg';
-import iconStorefront from '../assets/icon-storefront.svg';
-import iconTruck from '../assets/icon-truck.svg';
+import formatPrice from '@lib/formatPrice';
+import OrderDetailServiceCard from '@/src/components/order-detail/OrderDetailServiceCard';
+import iconWhatsApp from '@assets/icon-brand-whatsapp.svg';
+import iconNotes from '@assets/noun-notes-5752576.svg';
+import iconWater from '@assets/noun-water-4923007.svg';
+import iconBasket from '@assets/noun-basket-745994.svg';
+import iconCheck from '@assets/noun-checkmark-3772773.svg';
+import iconPaid from '@assets/icon-badgecheck.svg';
+import iconUnpaid from '@assets/icon-xcircle.svg';
+import iconCreditCard from '@assets/icon-creditcard.svg';
+import iconBanknotes from '@assets/icon-banknotes.svg';
+import iconStorefront from '@assets/icon-storefront.svg';
+import iconTruck from '@assets/icon-truck.svg';
 
 const orderPublicDummy: OrderDetailSpec = {
 	order_id: 30,

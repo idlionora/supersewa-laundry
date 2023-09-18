@@ -1,4 +1,4 @@
-import useTrackedModalStore from '../stores/modalStore';
+import useTrackedModalStore from '@stores/modalStore';
 // Modal handler uses global state management
 
 const ModalWindow = () => {

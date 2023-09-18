@@ -1,11 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState } from 'react';
-import useTrackedModalStore from '../stores/modalStore';
-import { FeeType, useTrackedOrderStore } from '../stores/orderStore.tsx';
+import useTrackedModalStore from '@stores/modalStore';
+import { FeeType, useTrackedOrderStore } from '@stores/orderStore.tsx';
 import { ChevronDown } from 'lucide-react';
-import iconClose from '../assets/icon-x.svg';
-import iconExclamation from '../assets/icon-exclamation-circle.svg';
-import CustomDropdown from './CustomDropdown.tsx';
+import iconClose from '@assets/icon-x.svg';
+import iconExclamation from '@assets/icon-exclamation-circle.svg';
+import CustomDropdown from '../CustomDropdown.tsx';
 
 const AddFeeModal = () => {
 	const orderStore = useTrackedOrderStore();

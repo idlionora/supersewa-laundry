@@ -1,31 +1,31 @@
 import { useEffect, useRef, useState } from 'react';
-import useTrackedModalStore from '../stores/modalStore';
-import { useTrackedOrderStore, PaymentType } from '../stores/orderStore';
+import useTrackedModalStore from '@stores/modalStore';
+import { useTrackedOrderStore, PaymentType } from '@stores/orderStore';
 import { id as localeId } from 'date-fns/locale';
 import { format } from 'date-fns';
-import { cn } from '../lib/utils';
-import { Button } from './ui/button';
+import { cn } from '@lib/utils';
+import { Button } from '../ui/button';
 import { Calendar as CalendarIcon } from 'lucide-react';
-import { Calendar } from './ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
-import iconClose from '../assets/icon-x.svg';
-import iconDownArrow from '../assets/icon-downarrow.svg';
-import iconExclamation from '../assets/icon-exclamation-circle.svg';
+import { Calendar } from '../ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import iconClose from '@assets/icon-x.svg';
+import iconDownArrow from '@assets/icon-downarrow.svg';
+import iconExclamation from '@assets/icon-exclamation-circle.svg';
 
 const NewPaymentModal = () => {
 	const orderStore = useTrackedOrderStore();
 	const state = useTrackedModalStore();
-	const paydateRef = useRef<HTMLButtonElement>(null)
+	const paydateRef = useRef<HTMLButtonElement>(null);
 	const [paydate, setPaydate] = useState<Date | undefined>(new Date());
 	const [desc, setDesc] = useState('');
 	const [price, setPrice] = useState('0');
 	const [invalidCols, setinvalidCols] = useState<string[] | null>(null);
-	
+
 	useEffect(() => {
-		paydateRef.current?.focus()
-		setDesc('')
-		setPrice('0')
-	}, [state.modalDisplay])
+		paydateRef.current?.focus();
+		setDesc('');
+		setPrice('0');
+	}, [state.modalDisplay]);
 
 	function setPriceWithoutZeroAtFront(priceInString: string) {
 		if (priceInString.length > 1 && priceInString.startsWith('0')) {
@@ -52,12 +52,14 @@ const NewPaymentModal = () => {
 			return;
 		}
 
-		setConfirmedPayment()
+		setConfirmedPayment();
 		state.closeModal();
 	}
 
 	function setConfirmedPayment() {
-		let newPayments: PaymentType[] | null = orderStore.payments ? [...orderStore.payments] : null;
+		let newPayments: PaymentType[] | null = orderStore.payments
+			? [...orderStore.payments]
+			: null;
 		const paymentToAdd: PaymentType | null = {
 			paydate: paydate!,
 			desc,
@@ -65,12 +67,12 @@ const NewPaymentModal = () => {
 		};
 
 		if (newPayments) {
-			newPayments.push(paymentToAdd)
+			newPayments.push(paymentToAdd);
 		} else {
-			newPayments = [paymentToAdd]
+			newPayments = [paymentToAdd];
 		}
-		
-		orderStore.setPayments(newPayments)
+
+		orderStore.setPayments(newPayments);
 	}
 
 	return (

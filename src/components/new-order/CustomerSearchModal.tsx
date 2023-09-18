@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import useTrackedModalStore from '../stores/modalStore';
-import { CustomerType, useTrackedOrderStore } from '../stores/orderStore';
-import customers from '../../data/customers.json';
-import iconClose from '../assets/icon-x.svg';
-import iconSearch from '../assets/icon-search.svg';
-import iconPlus from '../assets/icon-plus.svg';
+import useTrackedModalStore from '@stores/modalStore';
+import { CustomerType, useTrackedOrderStore } from '@stores/orderStore';
+import customers from '@/data/customers.json';
+import iconClose from '@assets/icon-x.svg';
+import iconSearch from '@assets/icon-search.svg';
+import iconPlus from '@assets/icon-plus.svg';
 import NewCustomerModal from './NewCustomerModal';
 
 const CustomerSearchModal = () => {
@@ -13,12 +13,12 @@ const CustomerSearchModal = () => {
 	const inputRef = useRef<HTMLInputElement>(null);
 	const timeoutId = useRef<NodeJS.Timeout | undefined>(undefined);
 	const [customerList, setCustomerList] = useState<CustomerType[] | null>(null);
-	const [nameFilter, setNameFilter] = useState<string>('')
-	const [filteredList, setFilteredList] = useState<CustomerType[] | null>(null)
+	const [nameFilter, setNameFilter] = useState<string>('');
+	const [filteredList, setFilteredList] = useState<CustomerType[] | null>(null);
 	const [activeCol, setActiveCol] = useState<CustomerType | null>(null);
 
-	const CustomerCard = ({customerDesc}: {customerDesc: CustomerType}) => {
-		const {id, name, phone, address, img} = customerDesc
+	const CustomerCard = ({ customerDesc }: { customerDesc: CustomerType }) => {
+		const { id, name, phone, address, img } = customerDesc;
 		return (
 			<button
 				key={`list-customer-${id}`}
@@ -39,7 +39,7 @@ const CustomerSearchModal = () => {
 				</div>
 			</button>
 		);
-	}
+	};
 
 	useEffect(() => {
 		inputRef.current?.focus();
@@ -49,13 +49,13 @@ const CustomerSearchModal = () => {
 	useEffect(() => {
 		clearInterval(timeoutId.current);
 		timeoutId.current = setTimeout(() => {
-			filterCustomerByName(nameFilter)
-		}, 500)
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [nameFilter])
+			filterCustomerByName(nameFilter);
+		}, 500);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [nameFilter]);
 
 	function filterCustomerByName(nameFilter: string) {
-		let newFilteredCustomers: CustomerType[] | null = null
+		let newFilteredCustomers: CustomerType[] | null = null;
 
 		if (nameFilter.length < 1 || !customerList) {
 			setFilteredList(null);
@@ -63,8 +63,8 @@ const CustomerSearchModal = () => {
 		}
 
 		newFilteredCustomers = customerList.filter((customer) =>
-		customer.name.toLowerCase().includes(nameFilter.toLowerCase())		
-		)
+			customer.name.toLowerCase().includes(nameFilter.toLowerCase())
+		);
 		setFilteredList(newFilteredCustomers);
 	}
 

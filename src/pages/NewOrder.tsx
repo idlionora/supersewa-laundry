@@ -1,22 +1,22 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { ServiceType, FeeType, useTrackedOrderStore } from '../stores/orderStore.tsx';
-import useTrackedModalStore from '../stores/modalStore';
+import { ServiceType, FeeType, useTrackedOrderStore } from '@stores/orderStore.tsx';
+import useTrackedModalStore from '@stores/modalStore';
 import id from 'date-fns/locale/id';
 import { format } from 'date-fns';
 import { Calendar as CalendarIcon, ChevronDown } from 'lucide-react';
-import { cn } from '../lib/utils';
-import { Button } from '../components/ui/button';
-import { Calendar } from '../components/ui/calendar';
-import CustomerSearchModal from '../components/CustomerSearchModal.tsx';
-import ServiceSearchModal from '../components/ServiceSearchModal.tsx';
-import AddFeeModal from '../components/AddFeeModal.tsx';
-import NewOrderServiceCard from '../components/NewOrderServiceCard.tsx';
-import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
-import { Label } from '../components/ui/label';
-import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
-import CustomDropdown from '../components/CustomDropdown.tsx';
-import iconClose from '../assets/icon-x.svg';
-import iconExclamation from '../assets/icon-exclamation-circle.svg';
+import { cn } from '@lib/utils';
+import { Button } from '@components/ui/button';
+import { Calendar } from '@components/ui/calendar';
+import CustomerSearchModal from '@components/new-order/CustomerSearchModal';
+import ServiceSearchModal from '@components/new-order/ServiceSearchModal';
+import AddFeeModal from '@/src/components/order-detail/AddFeeModal';
+import NewOrderServiceCard from '@components/new-order/NewOrderServiceCard';
+import { RadioGroup, RadioGroupItem } from '@components/ui/radio-group';
+import { Label } from '@components/ui/label';
+import { Popover, PopoverContent, PopoverTrigger } from '@components/ui/popover';
+import CustomDropdown from '@components/CustomDropdown.tsx';
+import iconClose from '@assets/icon-x.svg';
+import iconExclamation from '@assets/icon-exclamation-circle.svg';
 
 function NewOrder() {
 	const store = useTrackedOrderStore();

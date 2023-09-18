@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
-import useTrackedModalStore from '../stores/modalStore';
-import { ServiceType, useTrackedOrderStore } from '../stores/orderStore';
-import servicePackages from '../../data/service_packages.json';
-import { ServicePackageSpec } from '../lib/typesForComponents';
-import imgList from '../lib/imgList';
-import iconClose from '../assets/icon-x.svg';
-import iconSearch from '../assets/icon-search.svg';
+import useTrackedModalStore from '@stores/modalStore';
+import { ServiceType, useTrackedOrderStore } from '@stores/orderStore';
+import servicePackages from '@/data/service_packages.json';
+import { ServicePackageSpec } from '@lib/typesForComponents';
+import imgList from '@lib/imgList';
+import iconClose from '@assets/icon-x.svg';
+import iconSearch from '@assets/icon-search.svg';
 import ServiceEditModal from './ServiceEditModal';
 
 const ServiceAddModal = () => {

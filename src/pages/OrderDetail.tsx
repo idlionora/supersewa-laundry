@@ -6,31 +6,31 @@ import {
 	CustomerType,
 	PaymentType,
 	useTrackedOrderStore,
-} from '../stores/orderStore';
-import useTrackedModalStore from '../stores/modalStore';
+} from '@stores/orderStore';
+import useTrackedModalStore from '@stores/modalStore';
 import { id as localeId } from 'date-fns/locale';
 import { format } from 'date-fns';
-import OrderDetailServiceCard from '../components/OrderDetailServiceCard';
-import AddFeeModal from '../components/AddFeeModal';
-import NewPaymentModal from '../components/NewPaymentModal';
-import PaidDescModal from '../components/PaidDescModal';
-import ServiceAddModal from '../components/ServiceAddModal';
-import CustomDropdown from '../components/CustomDropdown';
-import formatPrice from '../lib/formatPrice';
+import OrderDetailServiceCard from '@components/order-detail/OrderDetailServiceCard';
+import AddFeeModal from '@components/order-detail/AddFeeModal';
+import NewPaymentModal from '@components/order-detail/NewPaymentModal';
+import PaidDescModal from '@components/order-detail/PaidDescModal';
+import ServiceAddModal from '@components/order-detail/ServiceAddModal';
+import CustomDropdown from '@components/CustomDropdown';
+import formatPrice from '@lib/formatPrice';
 import { Copy, ExternalLink } from 'lucide-react';
-import iconArrowLeft from '../assets/icon-arrowleft.svg';
-import iconWhatsApp from '../assets/icon-brand-whatsapp.svg';
-import iconPencil from '../assets/icon-pencil.svg';
-import iconPaid from '../assets/icon-badgecheck.svg';
-import iconUnpaid from '../assets/icon-xcircle.svg';
-import iconCreditCard from '../assets/icon-creditcard.svg';
-import iconBanknotes from '../assets/icon-banknotes.svg';
-import iconStorefront from '../assets/icon-storefront.svg';
-import iconTruck from '../assets/icon-truck.svg';
-import iconClose from '../assets/icon-x.svg';
-import iconPlus from '../assets/icon-plus.svg';
-import CustomPopover from '../components/CustomPopover';
-import useCopyToClipboard from '../lib/useCopyToClipboard';
+import iconArrowLeft from '@assets/icon-arrowleft.svg';
+import iconWhatsApp from '@assets/icon-brand-whatsapp.svg';
+import iconPencil from '@assets/icon-pencil.svg';
+import iconPaid from '@assets/icon-badgecheck.svg';
+import iconUnpaid from '@assets/icon-xcircle.svg';
+import iconCreditCard from '@assets/icon-creditcard.svg';
+import iconBanknotes from '@assets/icon-banknotes.svg';
+import iconStorefront from '@assets/icon-storefront.svg';
+import iconTruck from '@assets/icon-truck.svg';
+import iconClose from '@assets/icon-x.svg';
+import iconPlus from '@assets/icon-plus.svg';
+import CustomPopover from '@components/CustomPopover';
+import useCopyToClipboard from '@lib/useCopyToClipboard';
 
 export type OrderDetailSpec = {
 	order_id: number;
@@ -191,7 +191,7 @@ function OrderDetail() {
 
 	useEffect(() => {
 		if (copyResult?.state === 'success') {
-			if (publicLinkRef?.current) publicLinkRef.current.select()
+			if (publicLinkRef?.current) publicLinkRef.current.select();
 			setCopyButtonInner('Berhasil disalin');
 			setActivePopover({ ...activePopover, copyButton: true });
 		} else if (copyResult === null) {

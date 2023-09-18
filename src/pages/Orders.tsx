@@ -4,12 +4,12 @@ import {
 	parseOrdersData,
 	parseActiveData,
 	parseUnpaidOrdersData,
-} from '../lib/ordersDataParse.tsx';
+} from '@lib/ordersDataParse.tsx';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import orderDataDummy from '../lib/orderDataDummy.tsx';
-import OrdersDataCard from '../components/OrdersDataCard.tsx';
-import CustomDropdown from '../components/CustomDropdown.tsx';
-import iconSearch from '../assets/icon-search.svg';
+import orderDataDummy from '@lib/orderDataDummy.tsx';
+import OrdersDataCard from '@components/orders/OrdersDataCard';
+import CustomDropdown from '@components/CustomDropdown.tsx';
+import iconSearch from '@assets/icon-search.svg';
 import { ChevronDown } from 'lucide-react';
 
 type OrderPageType = {

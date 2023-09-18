@@ -1,4 +1,4 @@
-import orders from '../../data/orders.json'
+import orders from '@/data/orders.json'
 import orderDataDummy from './orderDataDummy'
 
 export type OrderBasicSpec = {
