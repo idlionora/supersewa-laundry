@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import useTrackedModalStore from '@stores/modalStore';
 import { FeeType, useTrackedOrderStore } from '@stores/orderStore.tsx';
-import { ChevronDown } from 'lucide-react';
+import Icon from '@components/ui/Icon';
 import iconClose from '@assets/icon-x.svg';
 import iconExclamation from '@assets/icon-exclamation-circle.svg';
 import CustomDropdown from '../CustomDropdown.tsx';
@@ -144,7 +144,10 @@ const AddFeeModal = () => {
 					}
 				>
 					<p>{category}</p>
-					<ChevronDown className="h-4 w-4 opacity-50 absolute right-3 bottom-1/2 translate-y-1/2" />
+					<Icon
+						name="chevron-down"
+						className="h-4 w-4 opacity-50 absolute right-3 bottom-1/2 translate-y-1/2"
+					/>
 				</button>
 			</CustomDropdown>
 			<form onSubmit={(e) => confirmFee(e)}>

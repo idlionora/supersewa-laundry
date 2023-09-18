@@ -3,7 +3,7 @@ import { ServiceType, FeeType, useTrackedOrderStore } from '@stores/orderStore.t
 import useTrackedModalStore from '@stores/modalStore';
 import id from 'date-fns/locale/id';
 import { format } from 'date-fns';
-import { Calendar as CalendarIcon, ChevronDown } from 'lucide-react';
+import Icon from '@components/ui/Icon';
 import { cn } from '@lib/utils';
 import { Button } from '@components/ui/button';
 import { Calendar } from '@components/ui/calendar';
@@ -300,7 +300,7 @@ function NewOrder() {
 										invalidCols?.includes('startDate') && 'form-invalid'
 									)}
 								>
-									<CalendarIcon className="mr-2 h-4 w-4" />
+									<Icon name="calendar" className="mr-2 h-4 w-4" />
 									{startDate ? (
 										format(startDate, 'PPP', { locale: id })
 									) : (
@@ -518,7 +518,10 @@ function NewOrder() {
 								}
 							>
 								<p>{paymentMethod}</p>
-								<ChevronDown className="h-4 w-4 opacity-50 absolute right-3 bottom-1/2 translate-y-1/2" />
+								<Icon
+									name="chevron-down"
+									className="h-4 w-4 opacity-50 absolute right-3 bottom-1/2 translate-y-1/2"
+								/>
 							</button>
 						</CustomDropdown>
 						<h4 className="mt-4">Metode Pengiriman</h4>
@@ -545,7 +548,10 @@ function NewOrder() {
 								}
 							>
 								<p>{shippingMethod}</p>
-								<ChevronDown className="h-4 w-4 opacity-50 absolute right-3 bottom-1/2 translate-y-1/2" />
+								<Icon
+									name="chevron-down"
+									className="h-4 w-4 opacity-50 absolute right-3 bottom-1/2 translate-y-1/2"
+								/>
 							</button>
 						</CustomDropdown>
 						<h4 className="mt-4">Pembayaran</h4>

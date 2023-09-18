@@ -17,7 +17,7 @@ import PaidDescModal from '@components/order-detail/PaidDescModal';
 import ServiceAddModal from '@components/order-detail/ServiceAddModal';
 import CustomDropdown from '@components/CustomDropdown';
 import formatPrice from '@lib/formatPrice';
-import { Copy, ExternalLink } from 'lucide-react';
+import Icon from '@components/ui/Icon';
 import iconArrowLeft from '@assets/icon-arrowleft.svg';
 import iconWhatsApp from '@assets/icon-brand-whatsapp.svg';
 import iconPencil from '@assets/icon-pencil.svg';
@@ -583,7 +583,11 @@ function OrderDetail() {
 											// eslint-disable-next-line @typescript-eslint/no-misused-promises
 											onClick={() => clickCopyButton()}
 										>
-											<Copy strokeWidth={'2.25px'} size={'1rem'} />
+											<Icon
+												name="copy"
+												strokeWidth={'2.25px'}
+												size={'1rem'}
+											/>
 										</button>
 									</CustomPopover>
 								</div>
@@ -610,7 +614,11 @@ function OrderDetail() {
 											})
 										}
 									>
-										<ExternalLink strokeWidth={'2px'} size={'1rem'} />
+										<Icon
+											name="external-link"
+											strokeWidth={'2px'}
+											size={'1rem'}
+										/>
 									</a>
 								</CustomPopover>
 							</div>

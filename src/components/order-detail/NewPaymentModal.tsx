@@ -5,7 +5,7 @@ import { id as localeId } from 'date-fns/locale';
 import { format } from 'date-fns';
 import { cn } from '@lib/utils';
 import { Button } from '../ui/button';
-import { Calendar as CalendarIcon } from 'lucide-react';
+import Icon from '@components/ui/Icon';
 import { Calendar } from '../ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import iconClose from '@assets/icon-x.svg';
@@ -95,7 +95,7 @@ const NewPaymentModal = () => {
 							invalidCols?.includes('paydate') && 'form-invalid'
 						)}
 					>
-						<CalendarIcon className="mr-2 h-4 w-4" />
+						<Icon name="calendar" className="mr-2 h-4 w-4" />
 						{paydate ? (
 							format(paydate, 'PPP', { locale: localeId })
 						) : (

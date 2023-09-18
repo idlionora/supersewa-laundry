@@ -10,7 +10,7 @@ import orderDataDummy from '@lib/orderDataDummy.tsx';
 import OrdersDataCard from '@components/orders/OrdersDataCard';
 import CustomDropdown from '@components/CustomDropdown.tsx';
 import iconSearch from '@assets/icon-search.svg';
-import { ChevronDown } from 'lucide-react';
+import Icon from '@components/ui/Icon';
 
 type OrderPageType = {
 	cardsCategory: string;
@@ -198,7 +198,7 @@ function Orders({ cardsCategory }: OrderPageType) {
 								onClick={() => setIsDropdownActive(!isDropdownActive)}
 							>
 								<p className="whitespace-nowrap">{cardsCategory}</p>
-								<ChevronDown className="h-4 w-4 opacity-50" />
+								<Icon name="chevron-down" className="h-4 w-4 opacity-50" />
 							</button>
 						</CustomDropdown>
 					</div>
