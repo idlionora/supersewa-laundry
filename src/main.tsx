@@ -12,6 +12,7 @@ import NewOrder from './pages/NewOrder.tsx';
 import OrderDetail from './pages/OrderDetail.tsx';
 import OrderDetailPublic from './pages/OrderDetailPublic.tsx';
 import DummyPage from './pages/DummyPage.tsx';
+import NotFound from './pages/NotFound.tsx';
 import './index.css';
 
 const router = createBrowserRouter(
@@ -26,6 +27,7 @@ const router = createBrowserRouter(
 					<Route path=":id" element={<OrderDetail />} />
 				</Route>
 				<Route path="new-order" element={<NewOrder />} />
+
 				<Route path="items" element={<DummyPage />} />
 				<Route path="products" element={<DummyPage />} />
 				<Route path="customers" element={<DummyPage />} />
@@ -37,6 +39,7 @@ const router = createBrowserRouter(
 			<Route path="/unrestricted">
 				<Route path="orders/:id" element={<OrderDetailPublic />} />
 			</Route>
+			<Route path='*' element={<NotFound/>}/>
 		</Route>
 	)
 );
