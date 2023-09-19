@@ -1,5 +1,4 @@
 import * as React from "react"
-import Icon from '@components/ui/Icon';
 import { DayPicker } from "react-day-picker"
 import { cn } from "@lib/utils"
 import { buttonVariants } from "./button"
@@ -51,8 +50,8 @@ function Calendar({
 				...classNames,
 			}}
 			components={{
-				IconLeft: ({ ...props }) => <img src={iconArrowLeft} alt="" className="h-4 w-4" />,
-				IconRight: ({ ...props }) => <img src={iconArrowRight} alt="" className="h-4 w-4" />,
+				IconLeft: () => <img src={iconArrowLeft} alt="" className="h-4 w-4" />,
+				IconRight: () => <img src={iconArrowRight} alt="" className="h-4 w-4" />,
 			}}
 			{...props}
 		/>
