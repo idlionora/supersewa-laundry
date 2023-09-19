@@ -4,13 +4,13 @@ import {
 	parseOrdersData,
 	parseActiveData,
 	parseUnpaidOrdersData,
-} from '../lib/ordersDataParse.tsx';
+} from '@lib/ordersDataParse.tsx';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import orderDataDummy from '../lib/orderDataDummy.tsx';
-import OrdersDataCard from '../components/OrdersDataCard.tsx';
-import DropdownComp from '../components/DropdownComp.tsx';
-import iconSearch from '../assets/icon-search.svg';
-import { ChevronDown } from 'lucide-react';
+import orderDataDummy from '@lib/orderDataDummy.tsx';
+import OrdersDataCard from '@components/orders/OrdersDataCard';
+import CustomDropdown from '@components/CustomDropdown.tsx';
+import iconSearch from '@assets/icon-search.svg';
+import iconArrowDown from '@assets/icon-arrow-down.svg'
 
 type OrderPageType = {
 	cardsCategory: string;
@@ -176,7 +176,7 @@ function Orders({ cardsCategory }: OrderPageType) {
 								/>
 							</div>
 						</div>
-						<DropdownComp
+						<CustomDropdown
 							title="cards-category"
 							dropdownStatus={{
 								isOpen: isDropdownActive,
@@ -198,9 +198,11 @@ function Orders({ cardsCategory }: OrderPageType) {
 								onClick={() => setIsDropdownActive(!isDropdownActive)}
 							>
 								<p className="whitespace-nowrap">{cardsCategory}</p>
-								<ChevronDown className="h-4 w-4 opacity-50" />
+								<div className="h-4 w-4">
+									<img src={iconArrowDown} alt="" className="w-full opacity-50" />
+								</div>
 							</button>
-						</DropdownComp>
+						</CustomDropdown>
 					</div>
 				</div>
 				<div className="w-full mb-4 px-2.5 min-[575px]:px-0 flex justify-center sm:justify-start items-center">

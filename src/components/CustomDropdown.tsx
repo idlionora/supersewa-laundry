@@ -1,5 +1,5 @@
-import { Check } from 'lucide-react';
 import { ReactNode, forwardRef, useEffect, useState } from 'react';
+import iconCheck from '@assets/icon-check.svg'
 
 // type DropdownRefProps = {
 //     ref: React.RefObject<HTMLDivElement>,
@@ -27,7 +27,7 @@ import { ReactNode, forwardRef, useEffect, useState } from 'react';
 //     dropdowns.forEach((dropdown) => deactivateDropdownByClick(dropdown))
 // }
 
-type DropdownCompProps = {
+type CustomDropdownProps = {
 	title: string;
 	dropdownStatus: {
 		isOpen: boolean;
@@ -42,7 +42,7 @@ type DropdownCompProps = {
 	children: ReactNode | ReactNode[];
 };
 
-const DropdownComp = forwardRef<HTMLDivElement, DropdownCompProps>(
+const CustomDropdown = forwardRef<HTMLDivElement, CustomDropdownProps>(
 	({ title, dropdownStatus, options, styling, children }, ref) => {
 		const [dropdownDisplay, setDropdownDisplay] = useState<boolean>(false);
 		const [dropdownOpacity, setDropdownOpacity] = useState<boolean>(false);
@@ -82,11 +82,17 @@ const DropdownComp = forwardRef<HTMLDivElement, DropdownCompProps>(
 										className={`flex items-center gap-x-2.5 py-4 px-2 text-sm rounded-sm outline-none outline-0 ring-0 hover:bg-slate-100 focus:bg-slate-100 w-full`}
 										onClick={() => selectDropdown(optionValue)}
 									>
-										<Check
-											className={`h-4 w-4 ${
-												options.selected === optionValue ? '' : 'opacity-0'
-											}`}
-										/>
+										<div className="h-4 w-4">
+											<img
+												src={iconCheck}
+												alt=""
+												className={
+													options.selected === optionValue
+														? ''
+														: 'hidden'
+												}
+											/>
+										</div>
 										<p className="text-left">{optionValue}</p>
 									</button>
 								</li>
@@ -101,4 +107,4 @@ const DropdownComp = forwardRef<HTMLDivElement, DropdownCompProps>(
 	}
 );
 
-export default DropdownComp
+export default CustomDropdown

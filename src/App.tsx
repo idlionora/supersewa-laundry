@@ -1,21 +1,21 @@
 import { NavLink, Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useState } from 'react';
 
-import iconHome from './assets/icon-home.svg';
-import iconAnnounce from './assets/icon-speakerphone.svg';
-import logoSupersewa from './assets/logo-supersewa.png';
-import iconCalendar from './assets/icon-calendar.svg';
-import iconPlus from './assets/icon-plus.svg';
-import iconShopBag from './assets/icon-shoppingbag.svg';
-import iconArchive from './assets/icon-archive.svg';
-import iconUser from './assets/icon-user.svg';
-import iconCog from './assets/icon-cog.svg';
-import iconChart from './assets/icon-presentchart.svg';
-import iconQuestion from './assets/icon-questionmark-outline.svg';
-import iconWhatsApp from './assets/icon-brand-whatsapp.svg';
-import iconDots from './assets/icon-dotsvertical.svg';
+import iconHome from '@assets/icon-home.svg';
+import iconAnnounce from '@assets/icon-speakerphone.svg';
+import logoSupersewa from '@assets/logo-supersewa.png';
+import iconCalendar from '@assets/icon-calendar.svg';
+import iconPlus from '@assets/icon-plus.svg';
+import iconShopBag from '@assets/icon-shoppingbag.svg';
+import iconArchive from '@assets/icon-archive.svg';
+import iconUser from '@assets/icon-user.svg';
+import iconCog from '@assets/icon-cog.svg';
+import iconChart from '@assets/icon-presentchart.svg';
+import iconQuestion from '@assets/icon-questionmark-outline.svg';
+import iconWhatsApp from '@assets/icon-brand-whatsapp.svg';
+import iconDots from '@assets/icon-dotsvertical.svg';
 import './App.css';
-import ModalWindow from './components/ModalWindow';
+import ModalWindow from '@components/ModalWindow';
 
 
 function App() {

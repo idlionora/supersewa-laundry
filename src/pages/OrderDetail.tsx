@@ -6,30 +6,34 @@ import {
 	CustomerType,
 	PaymentType,
 	useTrackedOrderStore,
-} from '../stores/orderStore';
-import useTrackedModalStore from '../stores/modalStore';
+} from '@stores/orderStore';
+import useTrackedModalStore from '@stores/modalStore';
 import { id as localeId } from 'date-fns/locale';
 import { format } from 'date-fns';
-import OrderDetailServiceCard from '../components/OrderDetailServiceCard';
-import AddFeeModal from '../components/AddFeeModal';
-import NewPaymentModal from '../components/NewPaymentModal';
-import PaidDescModal from '../components/PaidDescModal';
-import ServiceAddModal from '../components/ServiceAddModal';
-import DropdownComp from '../components/DropdownComp';
-import formatPrice from '../lib/formatPrice';
-import iconArrowLeft from '../assets/icon-arrowleft.svg';
-import iconWhatsApp from '../assets/icon-brand-whatsapp.svg';
-import iconPencil from '../assets/icon-pencil.svg';
-import iconCreditCard from '../assets/icon-creditcard.svg';
-import iconBanknotes from '../assets/icon-banknotes.svg';
-import iconPaid from '../assets/icon-badgecheck.svg';
-import iconUnpaid from '../assets/icon-xcircle.svg';
-import iconStorefront from '../assets/icon-storefront.svg';
-import iconTruck from '../assets/icon-truck.svg';
-import iconClose from '../assets/icon-x.svg';
-import iconPlus from '../assets/icon-plus.svg';
+import OrderDetailServiceCard from '@components/order-detail/OrderDetailServiceCard';
+import AddFeeModal from '@components/order-detail/AddFeeModal';
+import NewPaymentModal from '@components/order-detail/NewPaymentModal';
+import PaidDescModal from '@components/order-detail/PaidDescModal';
+import ServiceAddModal from '@components/order-detail/ServiceAddModal';
+import CustomDropdown from '@components/CustomDropdown';
+import CustomPopover from '@components/CustomPopover';
+import formatPrice from '@lib/formatPrice';
+import useCopyToClipboard from '@lib/useCopyToClipboard';
+import iconNavBack from '@assets/icon-arrow-back.svg';
+import iconWhatsApp from '@assets/icon-brand-whatsapp.svg';
+import iconPencil from '@assets/icon-pencil.svg';
+import iconPaid from '@assets/icon-check-badge.svg';
+import iconUnpaid from '@assets/icon-xcircle.svg';
+import iconCreditCard from '@assets/icon-creditcard.svg';
+import iconBanknotes from '@assets/icon-banknotes.svg';
+import iconStorefront from '@assets/icon-storefront.svg';
+import iconTruck from '@assets/icon-truck.svg';
+import iconCopy from '@assets/icon-copy.svg';
+import iconToExternal from '@assets/icon-external-link.svg';
+import iconClose from '@assets/icon-x.svg';
+import iconPlus from '@assets/icon-plus.svg';
 
-type OrderDetailSpec = {
+export type OrderDetailSpec = {
 	order_id: number;
 	customer: CustomerType;
 	start_date: Date;
@@ -40,6 +44,7 @@ type OrderDetailSpec = {
 	payments: PaymentType[] | null;
 	current_bill: number;
 	notes_internal: string;
+	notes_invoice: string;
 	method_payment: string;
 	method_shipping: string;
 	order_paid: boolean;
@@ -86,6 +91,7 @@ const orderDetailDummy: OrderDetailSpec = {
 	payments: null,
 	current_bill: 160000,
 	notes_internal: '',
+	notes_invoice: 'Pemilihan pengharum diserahkan pada pihak laundry pada saat pemesanan',
 	method_payment: 'Transfer',
 	method_shipping: 'Kurir pihak ketiga',
 	order_paid: false,
@@ -98,6 +104,7 @@ const paymentsDummy = [
 ];
 
 function OrderDetail() {
+	const baseUrl = window.location.origin;
 	const { id: paramId } = useParams();
 	const navigate = useNavigate();
 	const store = useTrackedOrderStore();
@@ -111,7 +118,6 @@ function OrderDetail() {
 
 	const notesRef = useRef<HTMLTextAreaElement>(null);
 	const paymentMethodRef = useRef<HTMLDivElement>(null);
-	const orderPaidRef = useRef<HTMLDivElement>(null);
 	const shippingMethodRef = useRef<HTMLDivElement>(null);
 	const orderStatusRef = useRef<HTMLDivElement>(null);
 
@@ -122,39 +128,20 @@ function OrderDetail() {
 	const [orderStatus, setOrderStatus] = useState<string>(orderDetailDummy.order_status);
 	const [activeDropdown, setActiveDropdown] = useState<string>('');
 
+	const publicLinkRef = useRef<HTMLInputElement>(null);
+	const [copyToClipboard, copyResult] = useCopyToClipboard();
+	const [copyButtonInner, setCopyButtonInner] = useState<string>('Salin Link');
+	const [activePopover, setActivePopover] = useState<{
+		copyButton: boolean;
+		externalLink: boolean;
+	}>({ copyButton: false, externalLink: false });
+
 	const [services, setServices] = useState<ServiceType[] | null>(orderDetailDummy.services);
 	const [servicesPrice, setServicesPrice] = useState(0);
 	const [addFees, setAddFees] = useState<FeeType[] | null>(orderDetailDummy.add_fees);
 	const [netPrice, setNetPrice] = useState<number>(orderDetailDummy.net_price);
 	const [payments, setPayments] = useState<PaymentType[] | null>(paymentsDummy);
 	const [currentBill, setCurrentBill] = useState<number>(orderDetailDummy.current_bill);
-
-	function deleteItemInArray<T>(
-		array: T[] | null,
-		index: number,
-		setter: React.Dispatch<React.SetStateAction<T[] | null>>
-	) {
-		let newArray: T[] | null = [...array!];
-
-		if (newArray.length > 1 && newArray[index]) {
-			newArray.splice(index, 1);
-		} else {
-			newArray = null;
-		}
-		setter(newArray);
-	}
-
-	function setOrderPaidFromDropDown(input: string) {
-		if (input === 'Lunas') {
-			setOrderPaid(true);
-		} else {
-			setOrderPaid(false);
-		}
-	}
-
-	function setActiveMenuByString(value: string) {
-		activeDropdown === value ? setActiveDropdown('') : setActiveDropdown(value);
-	}
 
 	useEffect(() => {
 		store.resetOrderStore();
@@ -184,7 +171,6 @@ function OrderDetail() {
 		const clickTarget = event.target as Node;
 		const dropdowns = [
 			{ ref: paymentMethodRef, activeLabel: 'payment-method' },
-			{ ref: orderPaidRef, activeLabel: 'order-paid' },
 			{ ref: shippingMethodRef, activeLabel: 'shipping-method' },
 			{ ref: orderStatusRef, activeLabel: 'order-status' },
 		];
@@ -199,6 +185,47 @@ function OrderDetail() {
 		}
 
 		dropdowns.forEach(({ ref, activeLabel }) => deactivateDropdownByClick(ref, activeLabel));
+	}
+
+	async function clickCopyButton() {
+		await copyToClipboard(publicLinkRef.current?.value || '');
+	}
+
+	useEffect(() => {
+		if (copyResult?.state === 'success') {
+			if (publicLinkRef?.current) publicLinkRef.current.select();
+			setCopyButtonInner('Berhasil disalin');
+			setActivePopover({ ...activePopover, copyButton: true });
+		} else if (copyResult === null) {
+			setActivePopover({ ...activePopover, copyButton: false });
+			setTimeout(() => {
+				setCopyButtonInner('Salin Link');
+			}, 210);
+		} else {
+			setCopyButtonInner('Gagal menyalin');
+			setActivePopover({ ...activePopover, copyButton: true });
+			console.log(copyResult.message);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [copyResult]);
+
+	function deleteItemInArray<T>(
+		array: T[] | null,
+		index: number,
+		setter: React.Dispatch<React.SetStateAction<T[] | null>>
+	) {
+		let newArray: T[] | null = [...array!];
+
+		if (newArray.length > 1 && newArray[index]) {
+			newArray.splice(index, 1);
+		} else {
+			newArray = null;
+		}
+		setter(newArray);
+	}
+
+	function setActiveMenuByString(value: string) {
+		activeDropdown === value ? setActiveDropdown('') : setActiveDropdown(value);
 	}
 
 	useEffect(() => {
@@ -245,14 +272,25 @@ function OrderDetail() {
 		});
 
 		setCurrentBill(newBill);
+		updateOrderPaid(newBill);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [payments, netPrice]);
+
+	function updateOrderPaid(remainingBill: number) {
+		if (remainingBill <= 0 && !orderPaid) {
+			setOrderPaid(true);
+		}
+		if (remainingBill > 0 && orderPaid) {
+			setOrderPaid(false);
+		}
+	}
 
 	return (
 		<main className="page-container pt-4">
 			<section className="page-section my-4">
 				<div className="w-full flex items-center gap-x-4 mb-6 px-2 min-[575px]:px-0">
 					<button className="button-gray p-[0.375rem]" onClick={() => navigate(-1)}>
-						<img src={iconArrowLeft} alt="Tombol Kembali" className="w-5 h-5" />
+						<img src={iconNavBack} alt="Tombol Kembali" className="w-5 h-5" />
 					</button>
 					<h3 className="mb-0">Pesanan - {paramId}</h3>
 				</div>
@@ -361,9 +399,26 @@ function OrderDetail() {
 							)}
 						</li>
 						<li className="detail-col-grid">
+							<div className="detail-left-grid">Status Bayar</div>
+							<div className="w-full sm:w-3/4 flex items-center font-medium">
+								<img
+									src={orderPaid ? iconPaid : iconUnpaid}
+									alt=""
+									className={`w-5 h-5 ml-[-2px] mr-1.5 ${
+										orderPaid ? 'filter-green-600' : 'filter-orange-600'
+									}`}
+								/>
+								{orderPaid ? (
+									<p className="text-green-600">Lunas</p>
+								) : (
+									<p className="text-orange-600">Belum lunas</p>
+								)}
+							</div>
+						</li>
+						<li className="detail-col-grid">
 							<div className="detail-left-grid">Metode Bayar</div>
 							<div className="w-full sm:w-3/4 font-medium">
-								<DropdownComp
+								<CustomDropdown
 									title="payment-method"
 									dropdownStatus={{
 										isOpen: activeDropdown === 'payment-method',
@@ -400,58 +455,13 @@ function OrderDetail() {
 											className="w-4 h-4 filter-orange-600"
 										/>
 									</button>
-								</DropdownComp>
-							</div>
-						</li>
-						<li className="detail-col-grid">
-							<div className="detail-left-grid">Status Bayar</div>
-							<div className="w-full sm:w-3/4 font-medium">
-								<DropdownComp
-									title="order-paid"
-									dropdownStatus={{
-										isOpen: activeDropdown === 'order-paid',
-										setStatus: setActiveDropdown,
-									}}
-									options={{
-										values: ['Lunas', 'Belum lunas'],
-										selected: orderPaid ? 'Lunas' : 'Belum lunas',
-										setSelected: setOrderPaidFromDropDown,
-									}}
-									styling={{
-										parentClass: 'flex items-center w-fit',
-										childClass: '',
-									}}
-									ref={orderPaidRef}
-								>
-									<img
-										src={orderPaid ? iconPaid : iconUnpaid}
-										alt=""
-										className={`w-5 h-5 ml-[-2px] mr-1.5 ${
-											orderPaid ? 'filter-green-600' : 'filter-orange-600'
-										}`}
-									/>
-									{orderPaid ? (
-										<p className="text-green-600">Lunas</p>
-									) : (
-										<p className="text-orange-600">Belum lunas</p>
-									)}
-									<button
-										className="ml-3"
-										onClick={() => setActiveMenuByString('order-paid')}
-									>
-										<img
-											src={iconPencil}
-											alt="Ubah"
-											className="w-4 h-4 filter-orange-600"
-										/>
-									</button>
-								</DropdownComp>
+								</CustomDropdown>
 							</div>
 						</li>
 						<li className="detail-col-grid">
 							<div className="detail-left-grid">Metode Kirim</div>
 							<div className="w-full sm:w-3/4 font-medium">
-								<DropdownComp
+								<CustomDropdown
 									title="shipping-method"
 									dropdownStatus={{
 										isOpen: activeDropdown === 'shipping-method',
@@ -492,13 +502,13 @@ function OrderDetail() {
 											className="w-4 h-4 filter-orange-600"
 										/>
 									</button>
-								</DropdownComp>
+								</CustomDropdown>
 							</div>
 						</li>
 						<li className="detail-col-grid">
 							<div className="detail-left-grid">Status Pesanan</div>
 							<div className="w-full sm:w-3/4 flex items-center font-medium">
-								<DropdownComp
+								<CustomDropdown
 									title="order-status"
 									dropdownStatus={{
 										isOpen: activeDropdown === 'order-status',
@@ -536,7 +546,75 @@ function OrderDetail() {
 											className="w-4 h-4 filter-orange-600"
 										/>
 									</button>
-								</DropdownComp>
+								</CustomDropdown>
+							</div>
+						</li>
+						<li className="detail-col-grid">
+							<div className="detail-left-grid">Link Publik</div>
+							<div className="w-full sm:w-3/4 flex items-center font-medium gap-x-4">
+								<div className="w-full flex items-center">
+									<input
+										ref={publicLinkRef}
+										value={`${baseUrl}/unrestricted/orders/${
+											paramId ?? ''
+										}`}
+										type="text"
+										readOnly
+										className="form-input rounded-r-none border-r-0 mb-0 h-[2.375rem] w-full focus:border-gray-300 focus:outline-none"
+									/>
+									<CustomPopover
+										isPopoverOpen={activePopover.copyButton}
+										popoverContent={copyButtonInner}
+									>
+										<button
+											className="button-gray rounded-l-none h-[2.375rem] w-[2.875rem] flex items-center justify-center"
+											onMouseEnter={() =>
+												setActivePopover({
+													...activePopover,
+													copyButton: true,
+												})
+											}
+											onMouseLeave={() =>
+												copyResult?.state === 'success'
+													? null
+													: setActivePopover({
+															...activePopover,
+															copyButton: false,
+													})
+											}
+											// eslint-disable-next-line @typescript-eslint/no-misused-promises
+											onClick={() => clickCopyButton()}
+										>
+											<img src={iconCopy} alt="Salin Link" className='w-[1rem]' />
+										</button>
+									</CustomPopover>
+								</div>
+								<CustomPopover
+									isPopoverOpen={activePopover.externalLink}
+									popoverContent="Buka Link"
+								>
+									<a
+										href={`${baseUrl}/unrestricted/orders/${
+											paramId ?? ''
+										}`}
+										target="_blank"
+										className="button-gray h-[2.375rem] w-[2.875rem] flex items-center justify-center"
+										onMouseEnter={() =>
+											setActivePopover({
+												...activePopover,
+												externalLink: true,
+											})
+										}
+										onMouseLeave={() =>
+											setActivePopover({
+												...activePopover,
+												externalLink: false,
+											})
+										}
+									>
+										<img src={iconToExternal} alt="Buka Link" className='w-[1rem]'/>
+									</a>
+								</CustomPopover>
 							</div>
 						</li>
 					</ul>
@@ -558,6 +636,7 @@ function OrderDetail() {
 										? 'last'
 										: index
 								}
+								cardCategory="editor"
 							/>
 						</React.Fragment>
 					))}

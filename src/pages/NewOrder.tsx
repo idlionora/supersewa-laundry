@@ -1,22 +1,23 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { ServiceType, FeeType, useTrackedOrderStore } from '../stores/orderStore.tsx';
-import useTrackedModalStore from '../stores/modalStore';
+import { ServiceType, FeeType, useTrackedOrderStore } from '@stores/orderStore.tsx';
+import useTrackedModalStore from '@stores/modalStore';
 import id from 'date-fns/locale/id';
 import { format } from 'date-fns';
-import { Calendar as CalendarIcon, ChevronDown } from 'lucide-react';
-import { cn } from '../lib/utils';
-import { Button } from '../components/ui/button';
-import { Calendar } from '../components/ui/calendar';
-import CustomerSearchModal from '../components/CustomerSearchModal.tsx';
-import ServiceSearchModal from '../components/ServiceSearchModal.tsx';
-import AddFeeModal from '../components/AddFeeModal.tsx';
-import NewOrderServiceCard from '../components/NewOrderServiceCard.tsx';
-import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
-import { Label } from '../components/ui/label';
-import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
-import DropdownComp from '../components/DropdownComp.tsx';
-import iconClose from '../assets/icon-x.svg';
-import iconExclamation from '../assets/icon-exclamation-circle.svg';
+import { cn } from '@lib/utils';
+import { Button } from '@components/ui/button';
+import { Calendar } from '@components/ui/calendar';
+import CustomerSearchModal from '@components/new-order/CustomerSearchModal';
+import ServiceSearchModal from '@components/new-order/ServiceSearchModal';
+import AddFeeModal from '@/src/components/order-detail/AddFeeModal';
+import NewOrderServiceCard from '@components/new-order/NewOrderServiceCard';
+import { RadioGroup, RadioGroupItem } from '@components/ui/radio-group';
+import { Label } from '@components/ui/label';
+import { Popover, PopoverContent, PopoverTrigger } from '@components/ui/popover';
+import CustomDropdown from '@components/CustomDropdown.tsx';
+import iconCalendar from '@assets/icon-calendar.svg'
+import iconClose from '@assets/icon-x.svg';
+import iconArrowDown from '@assets/icon-arrow-down.svg'
+import iconExclamation from '@assets/icon-exclamation-circle.svg';
 
 function NewOrder() {
 	const store = useTrackedOrderStore();
@@ -300,7 +301,7 @@ function NewOrder() {
 										invalidCols?.includes('startDate') && 'form-invalid'
 									)}
 								>
-									<CalendarIcon className="mr-2 h-4 w-4" />
+									<img src={iconCalendar} alt="" className="mr-2 h-[1.125rem] w-[1.125rem]" />
 									{startDate ? (
 										format(startDate, 'PPP', { locale: id })
 									) : (
@@ -495,7 +496,7 @@ function NewOrder() {
 							placeholder="catatan yang akan muncul di tagihan"
 						/>
 						<h4>Metode Pembayaran</h4>
-						<DropdownComp
+						<CustomDropdown
 							title="payment-method"
 							dropdownStatus={{
 								isOpen: activeDropdown === 'payment-method',
@@ -518,11 +519,15 @@ function NewOrder() {
 								}
 							>
 								<p>{paymentMethod}</p>
-								<ChevronDown className="h-4 w-4 opacity-50 absolute right-3 bottom-1/2 translate-y-1/2" />
+								<img
+									src={iconArrowDown}
+									alt=""
+									className="h-4 w-4 opacity-50 absolute right-3 bottom-1/2 translate-y-1/2"
+								/>
 							</button>
-						</DropdownComp>
+						</CustomDropdown>
 						<h4 className="mt-4">Metode Pengiriman</h4>
-						<DropdownComp
+						<CustomDropdown
 							title="shipping-method"
 							dropdownStatus={{
 								isOpen: activeDropdown === 'shipping-method',
@@ -545,9 +550,13 @@ function NewOrder() {
 								}
 							>
 								<p>{shippingMethod}</p>
-								<ChevronDown className="h-4 w-4 opacity-50 absolute right-3 bottom-1/2 translate-y-1/2" />
+								<img
+									src={iconArrowDown}
+									alt=""
+									className="h-4 w-4 opacity-50 absolute right-3 bottom-1/2 translate-y-1/2"
+								/>
 							</button>
-						</DropdownComp>
+						</CustomDropdown>
 						<h4 className="mt-4">Pembayaran</h4>
 						<RadioGroup value={orderPaid} onValueChange={setOrderPaid}>
 							<div className="w-full max-w-xs flex flex-col sm:flex-row justify-between pt-2 gap-y-6 mb-4">

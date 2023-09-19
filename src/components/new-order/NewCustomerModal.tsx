@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import useTrackedModalStore from '../stores/modalStore';
-import { useTrackedOrderStore } from '../stores/orderStore';
-import iconExclamation from '../assets/icon-exclamation-circle.svg';
-import iconClose from '../assets/icon-x.svg';
+import useTrackedModalStore from '@stores/modalStore';
+import { useTrackedOrderStore } from '@stores/orderStore';
+import iconExclamation from '@assets/icon-exclamation-circle.svg';
+import iconClose from '@assets/icon-x.svg';
 
 const NewCustomerModal = () => {
 	const orderStore = useTrackedOrderStore();

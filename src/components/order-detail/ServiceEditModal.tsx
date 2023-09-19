@@ -1,10 +1,10 @@
 import { useEffect, useState, useRef } from 'react';
-import { DataInsertAndMarkPosition } from '../lib/typesForComponents.tsx';
-import useTrackedModalStore from '../stores/modalStore';
-import { ServiceType, useTrackedOrderStore } from '../stores/orderStore.tsx';
-import imgList from '../lib/imgList.tsx';
-import iconClose from '../assets/icon-x.svg';
-import iconExclamation from '../assets/icon-exclamation-circle.svg';
+import { DataInsertAndMarkPosition } from '@lib/typesForComponents.tsx';
+import useTrackedModalStore from '@stores/modalStore';
+import { ServiceType, useTrackedOrderStore } from '@stores/orderStore.tsx';
+import imgList from '@lib/imgList.tsx';
+import iconClose from '@assets/icon-x.svg';
+import iconExclamation from '@assets/icon-exclamation-circle.svg';
 
 const ServiceEditModal = ({ data, childNum }: DataInsertAndMarkPosition<ServiceType>) => {
 	const orderStore = useTrackedOrderStore();

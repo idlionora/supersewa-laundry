@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { ServiceType } from '../stores/orderStore';
-import imgList from '../lib/imgList';
+import { ServiceType } from '@stores/orderStore';
+import imgList from '@lib/imgList';
 
 type NewOrderServiceCardType = {
 	serviceData: ServiceType;

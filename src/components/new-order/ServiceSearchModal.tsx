@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import useTrackedModalStore from '../stores/modalStore';
-import { ServiceType, useTrackedOrderStore } from '../stores/orderStore';
-import servicePackages from '../../data/service_packages.json';
-import { ServicePackageSpec } from '../lib/typesForComponents';
-import iconClose from '../assets/icon-x.svg';
-import iconSearch from '../assets/icon-search.svg';
-import imgList from '../lib/imgList';
+import useTrackedModalStore from '@stores/modalStore';
+import { ServiceType, useTrackedOrderStore } from '@stores/orderStore';
+import servicePackages from '@/data/service_packages.json';
+import { ServicePackageSpec } from '@lib/typesForComponents';
+import iconClose from '@assets/icon-x.svg';
+import iconSearch from '@assets/icon-search.svg';
+import imgList from '@lib/imgList';
 
 const ServiceSearchModal = () => {
 	const orderStore = useTrackedOrderStore();
