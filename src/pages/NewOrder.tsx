@@ -3,7 +3,6 @@ import { ServiceType, FeeType, useTrackedOrderStore } from '@stores/orderStore.t
 import useTrackedModalStore from '@stores/modalStore';
 import id from 'date-fns/locale/id';
 import { format } from 'date-fns';
-import Icon from '@components/ui/Icon';
 import { cn } from '@lib/utils';
 import { Button } from '@components/ui/button';
 import { Calendar } from '@components/ui/calendar';
@@ -15,7 +14,9 @@ import { RadioGroup, RadioGroupItem } from '@components/ui/radio-group';
 import { Label } from '@components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@components/ui/popover';
 import CustomDropdown from '@components/CustomDropdown.tsx';
+import iconCalendar from '@assets/icon-calendar.svg'
 import iconClose from '@assets/icon-x.svg';
+import iconArrowDown from '@assets/icon-arrow-down.svg'
 import iconExclamation from '@assets/icon-exclamation-circle.svg';
 
 function NewOrder() {
@@ -300,7 +301,7 @@ function NewOrder() {
 										invalidCols?.includes('startDate') && 'form-invalid'
 									)}
 								>
-									<Icon name="calendar" className="mr-2 h-4 w-4" />
+									<img src={iconCalendar} alt="" className="mr-2 h-[1.125rem] w-[1.125rem]" />
 									{startDate ? (
 										format(startDate, 'PPP', { locale: id })
 									) : (
@@ -518,8 +519,9 @@ function NewOrder() {
 								}
 							>
 								<p>{paymentMethod}</p>
-								<Icon
-									name="chevron-down"
+								<img
+									src={iconArrowDown}
+									alt=""
 									className="h-4 w-4 opacity-50 absolute right-3 bottom-1/2 translate-y-1/2"
 								/>
 							</button>
@@ -548,8 +550,9 @@ function NewOrder() {
 								}
 							>
 								<p>{shippingMethod}</p>
-								<Icon
-									name="chevron-down"
+								<img
+									src={iconArrowDown}
+									alt=""
 									className="h-4 w-4 opacity-50 absolute right-3 bottom-1/2 translate-y-1/2"
 								/>
 							</button>

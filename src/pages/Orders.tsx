@@ -10,7 +10,7 @@ import orderDataDummy from '@lib/orderDataDummy.tsx';
 import OrdersDataCard from '@components/orders/OrdersDataCard';
 import CustomDropdown from '@components/CustomDropdown.tsx';
 import iconSearch from '@assets/icon-search.svg';
-import Icon from '@components/ui/Icon';
+import iconArrowDown from '@assets/icon-arrow-down.svg'
 
 type OrderPageType = {
 	cardsCategory: string;
@@ -198,7 +198,9 @@ function Orders({ cardsCategory }: OrderPageType) {
 								onClick={() => setIsDropdownActive(!isDropdownActive)}
 							>
 								<p className="whitespace-nowrap">{cardsCategory}</p>
-								<Icon name="chevron-down" className="h-4 w-4 opacity-50" />
+								<div className="h-4 w-4">
+									<img src={iconArrowDown} alt="" className="w-full opacity-50" />
+								</div>
 							</button>
 						</CustomDropdown>
 					</div>

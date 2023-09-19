@@ -1,9 +1,10 @@
 import * as React from "react"
 import Icon from '@components/ui/Icon';
 import { DayPicker } from "react-day-picker"
-
 import { cn } from "@lib/utils"
 import { buttonVariants } from "./button"
+import iconArrowLeft from '@assets/icon-arrow-left.svg'
+import iconArrowRight from '@assets/icon-arrow-right.svg'
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>
 
@@ -15,7 +16,6 @@ function Calendar({
 }: CalendarProps) {
   return (
 		<DayPicker
-      
 			showOutsideDays={showOutsideDays}
 			className={cn('p-3 pb-4 w-screen max-w-md md:w-full overflow-y-auto', className)}
 			classNames={{
@@ -51,8 +51,8 @@ function Calendar({
 				...classNames,
 			}}
 			components={{
-				IconLeft: ({ ...props }) => <Icon name="chevron-left" className="h-4 w-4" />,
-				IconRight: ({ ...props }) => <Icon name="chevron-right" className="h-4 w-4" />,
+				IconLeft: ({ ...props }) => <img src={iconArrowLeft} alt="" className="h-4 w-4" />,
+				IconRight: ({ ...props }) => <img src={iconArrowRight} alt="" className="h-4 w-4" />,
 			}}
 			{...props}
 		/>

@@ -3,7 +3,7 @@ import { OrderBasicSpec } from '@lib/ordersDataParse';
 import { Link } from 'react-router-dom';
 import id from 'date-fns/locale/id';
 import { format } from 'date-fns';
-import iconPaid from '@assets/icon-badgecheck.svg';
+import iconPaid from '@assets/icon-check-badge.svg';
 
 const OrdersDataCard = ({ data, childNum }: DataInsertAndMarkPosition<OrderBasicSpec>) => {
 	const {

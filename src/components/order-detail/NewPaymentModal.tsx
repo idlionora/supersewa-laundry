@@ -5,11 +5,11 @@ import { id as localeId } from 'date-fns/locale';
 import { format } from 'date-fns';
 import { cn } from '@lib/utils';
 import { Button } from '../ui/button';
-import Icon from '@components/ui/Icon';
 import { Calendar } from '../ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import iconClose from '@assets/icon-x.svg';
-import iconDownArrow from '@assets/icon-downarrow.svg';
+import iconCalendar from '@assets/icon-calendar.svg'
+import iconArrowDown from '@assets/icon-arrow-down.svg';
 import iconExclamation from '@assets/icon-exclamation-circle.svg';
 
 const NewPaymentModal = () => {
@@ -95,14 +95,14 @@ const NewPaymentModal = () => {
 							invalidCols?.includes('paydate') && 'form-invalid'
 						)}
 					>
-						<Icon name="calendar" className="mr-2 h-4 w-4" />
+						<img src={iconCalendar} alt="" className="h-[1.125rem] w-[1.125rem] mr-2" />
 						{paydate ? (
 							format(paydate, 'PPP', { locale: localeId })
 						) : (
 							<span>Pick a date</span>
 						)}
 						<img
-							src={iconDownArrow}
+							src={iconArrowDown}
 							alt=""
 							className="absolute h-4 w-4 opacity-50 right-3"
 						/>

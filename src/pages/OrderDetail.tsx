@@ -16,21 +16,22 @@ import NewPaymentModal from '@components/order-detail/NewPaymentModal';
 import PaidDescModal from '@components/order-detail/PaidDescModal';
 import ServiceAddModal from '@components/order-detail/ServiceAddModal';
 import CustomDropdown from '@components/CustomDropdown';
+import CustomPopover from '@components/CustomPopover';
 import formatPrice from '@lib/formatPrice';
-import Icon from '@components/ui/Icon';
-import iconArrowLeft from '@assets/icon-arrowleft.svg';
+import useCopyToClipboard from '@lib/useCopyToClipboard';
+import iconNavBack from '@assets/icon-arrow-back.svg';
 import iconWhatsApp from '@assets/icon-brand-whatsapp.svg';
 import iconPencil from '@assets/icon-pencil.svg';
-import iconPaid from '@assets/icon-badgecheck.svg';
+import iconPaid from '@assets/icon-check-badge.svg';
 import iconUnpaid from '@assets/icon-xcircle.svg';
 import iconCreditCard from '@assets/icon-creditcard.svg';
 import iconBanknotes from '@assets/icon-banknotes.svg';
 import iconStorefront from '@assets/icon-storefront.svg';
 import iconTruck from '@assets/icon-truck.svg';
+import iconCopy from '@assets/icon-copy.svg';
+import iconToExternal from '@assets/icon-external-link.svg';
 import iconClose from '@assets/icon-x.svg';
 import iconPlus from '@assets/icon-plus.svg';
-import CustomPopover from '@components/CustomPopover';
-import useCopyToClipboard from '@lib/useCopyToClipboard';
 
 export type OrderDetailSpec = {
 	order_id: number;
@@ -103,6 +104,7 @@ const paymentsDummy = [
 ];
 
 function OrderDetail() {
+	const baseUrl = window.location.origin;
 	const { id: paramId } = useParams();
 	const navigate = useNavigate();
 	const store = useTrackedOrderStore();
@@ -288,7 +290,7 @@ function OrderDetail() {
 			<section className="page-section my-4">
 				<div className="w-full flex items-center gap-x-4 mb-6 px-2 min-[575px]:px-0">
 					<button className="button-gray p-[0.375rem]" onClick={() => navigate(-1)}>
-						<img src={iconArrowLeft} alt="Tombol Kembali" className="w-5 h-5" />
+						<img src={iconNavBack} alt="Tombol Kembali" className="w-5 h-5" />
 					</button>
 					<h3 className="mb-0">Pesanan - {paramId}</h3>
 				</div>
@@ -553,7 +555,7 @@ function OrderDetail() {
 								<div className="w-full flex items-center">
 									<input
 										ref={publicLinkRef}
-										value={`http://laundry.supersewa.id/unrestricted/orders/${
+										value={`${baseUrl}/unrestricted/orders/${
 											paramId ?? ''
 										}`}
 										type="text"
@@ -583,11 +585,7 @@ function OrderDetail() {
 											// eslint-disable-next-line @typescript-eslint/no-misused-promises
 											onClick={() => clickCopyButton()}
 										>
-											<Icon
-												name="copy"
-												strokeWidth={'2.25px'}
-												size={'1rem'}
-											/>
+											<img src={iconCopy} alt="Salin Link" className='w-[1rem]' />
 										</button>
 									</CustomPopover>
 								</div>
@@ -596,7 +594,7 @@ function OrderDetail() {
 									popoverContent="Buka Link"
 								>
 									<a
-										href={`http://localhost:5173/unrestricted/orders/${
+										href={`${baseUrl}/unrestricted/orders/${
 											paramId ?? ''
 										}`}
 										target="_blank"
@@ -614,11 +612,7 @@ function OrderDetail() {
 											})
 										}
 									>
-										<Icon
-											name="external-link"
-											strokeWidth={'2px'}
-											size={'1rem'}
-										/>
+										<img src={iconToExternal} alt="Buka Link" className='w-[1rem]'/>
 									</a>
 								</CustomPopover>
 							</div>

@@ -10,7 +10,7 @@ import iconNotes from '@assets/noun-notes-5752576.svg';
 import iconWater from '@assets/noun-water-4923007.svg';
 import iconBasket from '@assets/noun-basket-745994.svg';
 import iconCheck from '@assets/noun-checkmark-3772773.svg';
-import iconPaid from '@assets/icon-badgecheck.svg';
+import iconPaid from '@assets/icon-check-badge.svg';
 import iconUnpaid from '@assets/icon-xcircle.svg';
 import iconCreditCard from '@assets/icon-creditcard.svg';
 import iconBanknotes from '@assets/icon-banknotes.svg';
@@ -87,6 +87,7 @@ const StatusCircle = ({ fill }: { fill: boolean }) => {
 };
 
 function OrderDetailPublic() {
+	const baseUrl = window.location.origin;
 	const { id: paramId } = useParams();
 	const invoiceStartMessage = invoiceConfig.message_start;
 	const invoiceEndMessage = invoiceConfig.message_end;
@@ -309,7 +310,7 @@ function OrderDetailPublic() {
 					<div className="card-white px-4 w-full">
 						<div className="py-4 w-full overflow-x-auto">
 							<a href="#" className="text-theme-blue">
-								{`http://laundry.supersewa.id/unrestricted/orders/${
+								{`${baseUrl}/unrestricted/orders/${
 									paramId ? paramId : '0'
 								}/xendit`}
 							</a>
