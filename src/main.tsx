@@ -19,9 +19,7 @@ import Redirect from './pages/Redirect.tsx';
 const router = createBrowserRouter(
 	createRoutesFromElements(
 		<Route path="/" element={<Redirect />}>
-			<Route path="unrestricted">
-				<Route path="orders/:id" element={<OrderDetailPublic />} />
-			</Route>
+			<Route path="unrestricted/orders/:id" element={<OrderDetailPublic />}/>
 			<Route element={<App />}>
 				<Route path="orders">
 					<Route index element={<Orders cardsCategory="Masih Proses" />} />
