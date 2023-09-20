@@ -14,10 +14,14 @@ import OrderDetailPublic from './pages/OrderDetailPublic.tsx';
 import DummyPage from './pages/DummyPage.tsx';
 import NotFound from './pages/NotFound.tsx';
 import './index.css';
+import Redirect from './pages/Redirect.tsx';
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
-		<Route>
+		<Route path='' element={<Redirect/>}>
+			<Route path="/unrestricted">
+				<Route path="orders/:id" element={<OrderDetailPublic />} />
+			</Route>
 			<Route path="/" element={<App />}>
 				<Route path="orders">
 					<Route index element={<Orders cardsCategory="Masih Proses" />} />
@@ -36,10 +40,7 @@ const router = createBrowserRouter(
 				<Route path="guides" element={<DummyPage />} />
 				<Route path="announcement" element={<DummyPage />} />
 			</Route>
-			<Route path="/unrestricted">
-				<Route path="orders/:id" element={<OrderDetailPublic />} />
-			</Route>
-			<Route path='*' element={<NotFound/>}/>
+			<Route path="*" element={<NotFound />} />
 		</Route>
 	)
 );
