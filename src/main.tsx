@@ -6,6 +6,7 @@ import {
 } from 'react-router-dom';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import Redirect from './pages/Redirect.tsx';
 import App from './App.tsx';
 import Orders from './pages/Orders.tsx';
 import NewOrder from './pages/NewOrder.tsx';
@@ -17,7 +18,7 @@ import './index.css';
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
-		<Route>
+		<Route element={<Redirect/>}>
 			<Route path="unrestricted">
 				<Route path="orders/:id" element={<OrderDetailPublic />} />
 			</Route>

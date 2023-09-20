@@ -3,7 +3,7 @@ import { Navigate, Outlet, useLocation } from 'react-router-dom';
 function Redirect() {
     const location = useLocation();
 
-    if (location.pathname === '/') {
+    if (location.pathname === '' || location.pathname === '/') {
 		return <Navigate to="orders" />;
 	}
 
