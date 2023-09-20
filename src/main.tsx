@@ -18,27 +18,27 @@ import Redirect from './pages/Redirect.tsx';
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
-		<Route path="/" element={<Redirect />}>
-			<Route path="unrestricted/orders/:id" element={<OrderDetailPublic />}/>
-			<Route element={<App />}>
-				<Route path="orders">
-					<Route index element={<Orders cardsCategory="Masih Proses" />} />
-					<Route path="all" element={<Orders cardsCategory="Semua Data" />} />
-					<Route path="ongoing" element={<Orders cardsCategory="Masih Proses" />} />
-					<Route path="unpaid" element={<Orders cardsCategory="Belum Bayar" />} />
-					<Route path=":id" element={<OrderDetail />} />
-				</Route>
-				<Route path="new-order" element={<NewOrder />} />
+		<Route element={<Redirect />}>
+				<Route path="/unrestricted/orders/:id" element={<OrderDetailPublic />} />
+				<Route path="/" element={<App />}>
+					<Route path="orders">
+						<Route index element={<Orders cardsCategory="Masih Proses" />} />
+						<Route path="all" element={<Orders cardsCategory="Semua Data" />} />
+						<Route path="ongoing" element={<Orders cardsCategory="Masih Proses" />} />
+						<Route path="unpaid" element={<Orders cardsCategory="Belum Bayar" />} />
+						<Route path=":id" element={<OrderDetail />} />
+					</Route>
+					<Route path="new-order" element={<NewOrder />} />
 
-				<Route path="items" element={<DummyPage />} />
-				<Route path="products" element={<DummyPage />} />
-				<Route path="customers" element={<DummyPage />} />
-				<Route path="settings" element={<DummyPage />} />
-				<Route path="analytics" element={<DummyPage />} />
-				<Route path="guides" element={<DummyPage />} />
-				<Route path="announcement" element={<DummyPage />} />
-			</Route>
-			<Route path="*" element={<NotFound />} />
+					<Route path="items" element={<DummyPage />} />
+					<Route path="products" element={<DummyPage />} />
+					<Route path="customers" element={<DummyPage />} />
+					<Route path="settings" element={<DummyPage />} />
+					<Route path="analytics" element={<DummyPage />} />
+					<Route path="guides" element={<DummyPage />} />
+					<Route path="announcement" element={<DummyPage />} />
+				</Route>
+				<Route path="/*" element={<NotFound />} />
 		</Route>
 	)
 );
