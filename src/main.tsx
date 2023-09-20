@@ -14,14 +14,14 @@ import OrderDetailPublic from './pages/OrderDetailPublic.tsx';
 import DummyPage from './pages/DummyPage.tsx';
 import NotFound from './pages/NotFound.tsx';
 import './index.css';
-import Redirect from './pages/Redirect.tsx';
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
-		<Route element={<Redirect />}>
-			<Route path="/">
-				<Route path="unrestricted/orders/:id" element={<OrderDetailPublic />} />
-				<Route element={<App />}>
+		<Route>
+			<Route path="unrestricted">
+				<Route path="orders/:id" element={<OrderDetailPublic />} />
+			</Route>
+			<Route path="/" element={<App />}>
 					<Route path="orders">
 						<Route index element={<Orders cardsCategory="Masih Proses" />} />
 						<Route path="all" element={<Orders cardsCategory="Semua Data" />} />
@@ -38,9 +38,8 @@ const router = createBrowserRouter(
 					<Route path="analytics" element={<DummyPage />} />
 					<Route path="guides" element={<DummyPage />} />
 					<Route path="announcement" element={<DummyPage />} />
-				</Route>
-				<Route path="*" element={<NotFound />} />
 			</Route>
+			<Route path="*" element={<NotFound />} />
 		</Route>
 	)
 );

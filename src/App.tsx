@@ -1,4 +1,4 @@
-import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { NavLink, Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import iconHome from '@assets/icon-home.svg';
 import iconAnnounce from '@assets/icon-speakerphone.svg';
@@ -35,6 +35,9 @@ function App() {
 		setEmail('taufiqm@outlook.com');
 	}
 
+	if (location.pathname === '/') {
+		return <Navigate to="orders" />;
+	}
 	const pathnames: string[] = location.pathname
 		.split('/')
 		.filter((path) => path !== '')

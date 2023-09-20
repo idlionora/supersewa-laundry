@@ -133,19 +133,16 @@ function OrderDetailPublic() {
 					</div>
 				</section>
 				<section className="page-section py-6">
-					<div className="card-white p-4 w-full">
+					<div className="card-white py-4 px-5 w-full">
 						<div className="w-full flex justify-between">
-							<div className="order-status-square mb-3.5 flex flex-col items-center text-center">
+							<div className="order-status-square mb-1">
 								<img
 									src={iconNotes}
 									alt=""
 									className="w-full relative translate-y-[15%] translate-x-[5%]"
 								/>
-								<p>
-									memasukan<br></br>pesanan
-								</p>
 							</div>
-							<div className="order-status-square mb-3.5 flex flex-col items-center text-center">
+							<div className="order-status-square mb-1">
 								<img
 									src={iconWater}
 									alt=""
@@ -157,9 +154,8 @@ function OrderDetailPublic() {
 											: 'filter-icon-grey'
 									}`}
 								/>
-								<p>proses cuci</p>
 							</div>
-							<div className="order-status-square mb-3.5">
+							<div className="order-status-square mb-1">
 								<img
 									src={iconBasket}
 									alt=""
@@ -171,7 +167,7 @@ function OrderDetailPublic() {
 									}`}
 								/>
 							</div>
-							<div className="order-status-square mb-3.5">
+							<div className="order-status-square mb-1">
 								<img
 									src={iconCheck}
 									alt=""
@@ -181,6 +177,24 @@ function OrderDetailPublic() {
 											: 'filter-icon-grey'
 									}`}
 								/>
+							</div>
+						</div>
+						<div className="w-full flex justify-between">
+							<div className="order-status-text">
+								<p className="leading-tight text-xs">
+									pesanan
+									<br />
+									masuk
+								</p>
+							</div>
+							<div className="order-status-text">
+								<p className="leading-tight text-xs">proses cuci</p>
+							</div>
+							<div className="order-status-text">
+								<p className="leading-tight text-xs">siap ambil</p>
+							</div>
+							<div className="order-status-text">
+								<p className="leading-tight text-xs">pesanan selesai</p>
 							</div>
 						</div>
 						<div className="w-full flex relative min-h-[1rem] pb-[3%] mb-4">
@@ -424,7 +438,7 @@ function OrderDetailPublic() {
 					<section className="page-section">
 						<div className="card-white p-4 rounded-b-none min-[768px]:rounded-b flex justify-center">
 							<button
-								className="button-color h-[2.5rem] font-medium flex items-center justify-center gap-1 w-60 min-[768px]:w-fit"
+								className="button-color h-[2.5rem] font-medium flex items-center justify-center gap-1 w-56"
 								style={{
 									backgroundColor: '#22c55e',
 									borderColor: '#22c55e',
