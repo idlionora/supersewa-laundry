@@ -135,14 +135,17 @@ function OrderDetailPublic() {
 				<section className="page-section py-6">
 					<div className="card-white p-4 w-full">
 						<div className="w-full flex justify-between">
-							<div className="order-status-square mb-3.5">
+							<div className="order-status-square mb-3.5 flex flex-col items-center text-center">
 								<img
 									src={iconNotes}
 									alt=""
 									className="w-full relative translate-y-[15%] translate-x-[5%]"
 								/>
+								<p>
+									memasukan<br></br>pesanan
+								</p>
 							</div>
-							<div className="order-status-square mb-3.5">
+							<div className="order-status-square mb-3.5 flex flex-col items-center text-center">
 								<img
 									src={iconWater}
 									alt=""
@@ -154,6 +157,7 @@ function OrderDetailPublic() {
 											: 'filter-icon-grey'
 									}`}
 								/>
+								<p>proses cuci</p>
 							</div>
 							<div className="order-status-square mb-3.5">
 								<img
@@ -310,9 +314,7 @@ function OrderDetailPublic() {
 					<div className="card-white px-4 w-full">
 						<div className="py-4 w-full overflow-x-auto">
 							<a href="#" className="text-theme-blue">
-								{`${baseUrl}/unrestricted/orders/${
-									paramId ? paramId : '0'
-								}/xendit`}
+								{`${baseUrl}/unrestricted/orders/${paramId ? paramId : '0'}/xendit`}
 							</a>
 						</div>
 					</div>
@@ -420,7 +422,7 @@ function OrderDetailPublic() {
 			<div className="w-full flex flex-col items-center fixed bottom-0 left-0">
 				<div className="page-container">
 					<section className="page-section">
-						<div className="card-white p-4 rounded-b-none min-[768px]:rounded-b">
+						<div className="card-white p-4 rounded-b-none min-[768px]:rounded-b flex justify-center">
 							<button
 								className="button-color h-[2.5rem] font-medium flex items-center justify-center gap-1 w-60 min-[768px]:w-fit"
 								style={{
